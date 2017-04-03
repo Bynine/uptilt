@@ -1,0 +1,255 @@
+package entities;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import main.GlobalRepo;
+import main.PlatformerEngine;
+import timers.Timer;
+
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+
+public abstract class Entity {
+	final Vector2 position = new Vector2();
+	final Vector2 velocity = new Vector2();
+	State state;
+	Direction direction = Direction.RIGHT;
+	Sprite image;
+	Collision collision;
+
+	int jumpSquatFrames = 4;
+	float fallSpeed = -7f, fastFallSpeed = -8f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
+	float jumpStrength = 5f;
+	float gravity = -0.35f;
+	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
+	float friction = 0.9f, airFriction = 0.95f;
+
+	boolean toRemove = false;
+	private final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
+	public final Timer hitstunTimer = new Timer(10, false);
+	final Timer jumpTimer = new Timer(8, false);
+	final Timer inActionTimer = new Timer(0, false);
+	final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitstunTimer, jumpTimer, inActionTimer));
+
+	public Entity(float posX, float posY){
+		position.x = posX;
+		position.y = posY;
+	}
+
+	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+		updateState();
+		handleDirection();
+		handleMovement();
+		limitingForces(rectangleList, entityList);
+		if (deltaTime > 1) handleTouch(entityList);
+		updateTimers();
+		updatePosition();
+		updateImagePosition(deltaTime);
+	}
+
+	void updateState() {
+		/* */
+	}
+
+	void handleDirection(){
+		/* */
+	}
+
+	void handleMovement(){
+		/* */
+	}
+
+	private void handleTouch(List<Entity> entityList){
+		for (Entity e: entityList) if (e != this) handleTouchHelper(e);
+	}
+
+	void handleTouchHelper(Entity e){
+		/* */
+	}
+
+	void updatePosition(){
+		position.x += velocity.x;
+		position.y += velocity.y;
+	}
+
+	final void updateImagePosition(int deltaTime){
+		image.setX(position.x);
+		image.setY(position.y);
+	}
+
+	void updateTimers(){
+		for (Timer t: timerList) t.countUp();
+	}
+	
+	private final float lowerLimit = 0.01f;
+	void limitingForces(List<Rectangle> mapRectangleList, List<Entity> entityList){
+		handleGravity();
+		handleFriction();
+
+		if (!hitstunTimer.timeUp() && !isGrounded()) MathUtils.clamp(velocity.x, -airSpeed, airSpeed);
+		else if (state == State.RUN) MathUtils.clamp(velocity.x, -runSpeed, runSpeed);
+
+		if (hitstunTimer.timeUp() && velocity.y < fallSpeed) velocity.y = fallSpeed;
+		setupRectangles(mapRectangleList, entityList);
+		checkWalls();
+		checkFloor();
+		if (Math.abs(velocity.x) < lowerLimit) velocity.x = 0;
+		if (Math.abs(velocity.y) < lowerLimit) velocity.y = 0;
+	}
+
+	void handleGravity(){
+		velocity.y += gravity;
+	}
+	
+	void handleFriction(){
+		if (!isGrounded() && !hitstunTimer.timeUp()) {}
+		else if (!isGrounded()) velocity.x *= airFriction;
+		else velocity.x *= friction;
+	}
+
+	private void setupRectangles(List<Rectangle> mapRectangleList, List<Entity> entityList){
+		tempRectangleList.clear();
+		tempRectangleList.addAll(mapRectangleList);
+		for (Entity en: entityList){
+			if (en.getCollision() == Collision.SOLID) tempRectangleList.add(en.getImage().getBoundingRectangle());
+		}
+	}
+
+	private final int collisionCheck = 4;
+	private final float softening = .8f;
+	private final float bounce = -0.75f;
+	void checkWalls(){
+		for (int i = 0; i < collisionCheck; ++i)
+			if (checkCollision(position.x + velocity.x, position.y)) {
+				if (!hitstunTimer.timeUp()) {
+					// TODO: make actually hit wall. right now bounces off before it even touches
+					velocity.x *= bounce;
+					PlatformerEngine.causeHitlag((int)(velocity.x / 3));
+					return;
+				}
+				else velocity.x *= softening;
+			}
+		if (checkCollision(position.x + velocity.x, position.y)) {
+			velocity.x = 0;
+		}
+	}
+
+	void checkFloor(){
+		for (int i = 0; i < collisionCheck; ++i)
+			if (checkCollision(position.x, position.y + velocity.y)) {
+				velocity.y *= softening;
+			}
+		if (checkCollision(position.x, position.y + velocity.y)) velocity.y = 0;
+		if (checkCollision(position.x + velocity.x, position.y + velocity.y)) velocity.y = 0; // checks for diagonal floor
+	}
+
+	boolean checkCollision(float x, float y){
+		if (collision == Collision.GHOST) return false;
+		for (Rectangle r : tempRectangleList){
+			Rectangle thisR = getHurtBox(x, y);
+			boolean upThroughThinPlatform = r.getHeight() <= 1 && r.getY() - this.getPosition().y > 0;
+			if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
+		}
+		return false;
+	}
+
+	Rectangle getHurtBox(float x, float y){
+		Rectangle r = image.getBoundingRectangle();
+		r.setX(x); r.setY(y);
+		return r;
+	}
+	
+	public Rectangle getHurtBox(){
+		return image.getBoundingRectangle();
+	}
+
+	void flip(){
+		if (direction == Direction.LEFT){
+			setDirection(Direction.RIGHT);
+			image.setFlip(false, false);
+		}
+		else{
+			setDirection(Direction.LEFT);
+			image.setFlip(true, false);
+		}
+	}
+
+	public int direct(){
+		if (direction == Direction.RIGHT) return 1;
+		else return -1;
+	}
+
+	public boolean isOOB(int mapWidth, int mapHeight) {
+		int OOBGrace = 2;
+		if (position.x < (0 - image.getWidth()*OOBGrace) || (mapWidth + image.getWidth()*OOBGrace) < position.x) return true;
+		if (position.y < (0 - image.getHeight()*OOBGrace) || (mapHeight + image.getHeight()*OOBGrace) < position.y) return true;
+		return false;
+	}
+
+	public boolean isTouching(Entity en, int decrement){
+		Rectangle hitboxRect = en.getImage().getBoundingRectangle();
+		hitboxRect.setWidth(hitboxRect.getWidth() - decrement);
+		hitboxRect.setHeight(hitboxRect.getHeight() - decrement);
+		hitboxRect.setX(hitboxRect.getX() + decrement/2);
+		hitboxRect.setY(hitboxRect.getY() + decrement/2);
+		return Intersector.overlaps(image.getBoundingRectangle(), hitboxRect);
+	}
+
+	public void setPosition(Vector2 startPosition) {
+		position.x = GlobalRepo.TILE * startPosition.x;
+		position.y = GlobalRepo.TILE * startPosition.y;
+		velocity.x = 0;
+		velocity.y = 0;
+	}
+
+	void setAnimation(Animation ani, int deltaTime){
+		image.setRegion(ani.getKeyFrame(deltaTime));
+		if (direction == Direction.LEFT) image.flip(true, false);
+	}
+
+	void setImage(TextureRegion tr){
+		boolean flipped = image.isFlipX();
+		float x = image.getX();
+		float y = image.getY();
+		image = new Sprite(tr);
+		image.setFlip(flipped, false);
+		image.setX(x);
+		image.setY(y);
+	}
+	
+	private final float aboveGround = 1f;
+	public boolean isGrounded(){ 
+		return checkCollision(position.x, position.y - aboveGround); 
+	}
+	
+	public void ground(){ 
+		/* */
+	}
+	
+	public void fallOffScreen() {
+		collision = Collision.GHOST;
+		gravity = -0.5f;
+	}
+	
+	public void setRemove() { toRemove = true; }
+	public boolean toRemove() { return toRemove; } 
+
+	public Vector2 getPosition() { return position; }
+	public Vector2 getVelocity() { return velocity; }
+	public Direction getDirection() { return direction; }
+	public void setDirection (Direction d) { direction = d; }
+	public Collision getCollision() { return collision; }
+	public Sprite getImage() { return image; }
+
+	static enum Direction{ LEFT, RIGHT }
+	static enum State{ STAND, WALK, DASH, RUN, JUMP, FALL, WALLSLIDE, CROUCH, HELPLESS }
+	static enum Collision{ SOLID, CREATURE, GHOST }
+
+}
