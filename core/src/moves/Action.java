@@ -1,5 +1,8 @@
 package moves;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+
 import entities.Fighter;
 import main.MapHandler;
 
@@ -37,6 +40,19 @@ public abstract class Action {
 			if (velX != noChange) user.getVelocity().x = velX;
 			if (velY != noChange) user.getVelocity().y = velY;
 		}
+	}
+	
+	public static class SFX extends Action{
+		final Sound sfx;
+
+		SFX(String sfxUrl){
+			 sfx = Gdx.audio.newSound(Gdx.files.internal(sfxUrl));
+		}
+		
+		void performAction() {
+			sfx.play(0.01f);
+		}
+		
 	}
 	
 }

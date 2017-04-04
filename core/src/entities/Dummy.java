@@ -2,6 +2,8 @@ package entities;
 
 import java.util.List;
 
+import main.CPUInputHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,7 +15,7 @@ public class Dummy extends Fighter {
 	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.PNG")));
 
 	public Dummy(float posX, float posY) {
-		super(posX, posY, null);
+		super(posX, posY, new CPUInputHandler());
 		image = new Sprite(texture);
 		gravity = -0.5f;
 		weight = 125;

@@ -9,6 +9,8 @@ import entities.Fighter;
 
 public class Hitbox extends ActionCircle{
 	private final float BKB, KBG, DAM, ANG;
+	private float heldCharge = 1;
+	private final Effect.Charge charge;
 	public static final int SAMURAIANGLE = 361;
 
 	/**
@@ -27,9 +29,35 @@ public class Hitbox extends ActionCircle{
 		this.KBG = KBG;
 		this.DAM = DAM;
 		this.ANG = ANG;
+		charge = null;
+	}
+
+	/**
+	 * @param User (this)
+	 * @param BaseKnockback
+	 * @param KnockbackGrowth
+	 * @param Damage
+	 * @param Angle
+	 * @param HDisplacement
+	 * @param VDisplacement
+	 * @param Size
+	 * @param Charge
+	 */
+	public Hitbox(Fighter user, float BKB, float KBG, float DAM, float ANG, float dispX, float dispY, int size, Effect.Charge charge){
+		super(user, dispX, dispY, size);
+		this.BKB = BKB;
+		this.KBG = KBG;
+		this.DAM = DAM;
+		this.ANG = ANG;
+		this.charge = charge;
 	}
 
 	public void setProperty(Property property) { this.property = property; }
+	
+	@Override
+	public Color getColor() {
+		return new Color(1, 0.2f, 0.2f, 0.75f);
+	}
 
 	private final int meteorAngleSize = 50;
 	private final int downAngle = 270;
@@ -37,24 +65,26 @@ public class Hitbox extends ActionCircle{
 	private final float meteorGroundMod = -0.75f;
 	public void hitTarget(Fighter target){
 		if (!didHitTarget(target)) return;
-		
+
 		Vector2 knockback = new Vector2();
+		if (null != charge) heldCharge = charge.getHeldCharge();
 		knockback.set(knockbackFormula(target), knockbackFormula(target));
 		if (ANG == SAMURAIANGLE) setSamuraiAngle(target, knockback);
 		else knockback.setAngle(ANG);
 		if (user.getPosition().x > target.getPosition().x) knockback.x *= -1;
 		int hitstun = hitstunFormula( knockbackFormula(target) );
-		if (target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize)) ){
+		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
+		if (groundedMeteor){
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		target.takeKnockback(knockback, DAM, hitstun);
-		
+		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
+
 		PlatformerEngine.causeHitlag( hitlagFormula(knockbackFormula(target)) );
 		// TODO: create graphic
 		hit = true;
 	}
-	
+
 	private final float minSamuraiKnockback = 4;
 	private final float samuraiKnockbackAngle = 45;
 	private void setSamuraiAngle(Fighter target, Vector2 knockback){
@@ -79,15 +109,11 @@ public class Hitbox extends ActionCircle{
 
 	private final float kbgMod = 0.04f;
 	private final float weightMod = 0.01f;
+	private final float minKnockback = 0.25f;
 	private float knockbackFormula(Fighter target){
-		float knockback = BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) );
-		if (knockback < 0.25f) return 0;
+		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
+		if (knockback < minKnockback) return 0;
 		else return knockback;
-	}
-	
-	@Override
-	public Color getColor() {
-		return new Color(1, 0.2f, 0.2f, 0.75f);
 	}
 
 	public enum Property { NORMAL, ELECTRIC }

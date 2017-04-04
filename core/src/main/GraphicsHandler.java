@@ -22,14 +22,14 @@ public class GraphicsHandler {
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final int camAdjustmentSpeed = 8;
-	private static final float ZOOM = 1f;
+	private static final float ZOOM = 1/2f;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	static BitmapFont font = new BitmapFont();
 	
-	public static final int SCREENWIDTH  = (int) ((60 * GlobalRepo.TILE)/ZOOM);
-	public static final int SCREENHEIGHT = (int) ((40 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENWIDTH  = (int) ((40 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENHEIGHT = (int) ((25 * GlobalRepo.TILE)/ZOOM);
 	
 	public static void begin() {
 		batch = new SpriteBatch();
@@ -74,10 +74,14 @@ public class GraphicsHandler {
 
 		batch.begin();  // render entities
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
-			if (!e.hitstunTimer.timeUp()) batch.setColor(1, 0.5f, 0.5f, 1);
-			else batch.setColor(1, 1, 1, 1);
+			if (e instanceof Fighter) {
+				Fighter fi = (Fighter) e;
+				drawFighterPercentage(fi);
+				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
+				if (!fi.attackTimer.timeUp()) batch.setColor(0f, 1f, 0f, 1);
+			}
 			batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
-			if (e instanceof Fighter) drawFighterPercentage(e);
+			batch.setColor(1, 1, 1, 1);
 		}
 		batch.end();
 
@@ -101,8 +105,8 @@ public class GraphicsHandler {
 
 	private static void drawFighterPercentage(Entity e) {
 		Fighter fi = (Fighter) e;
-		float darken = fi.getPercentage()*0.005f;
-		font.setColor(0.5f + darken, 1 - darken, 1 - darken, 1);
+		float darken = fi.getPercentage()*0.0075f;
+		font.setColor(1, 1 - darken, 1 - (darken*1.1f), 1);
 		font.draw(batch, (int)fi.getPercentage() + "%", fi.getPosition().x, fi.getPosition().y + fi.getHurtBox().getHeight() + font.getLineHeight());
 	}
 

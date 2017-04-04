@@ -1,10 +1,12 @@
 package moves;
 
+import java.util.List;
+
 import entities.Fighter;
 
 public abstract class Effect extends Action{
 
-	private final int start, end;
+	protected int start, end;
 	
 	Effect(int start, int end){
 		this.start = start;
@@ -29,6 +31,36 @@ public abstract class Effect extends Action{
 		void performAction(){
 			if (velX != noChange) user.getVelocity().x = velX;
 			if (velY != noChange) user.getVelocity().y = velY;
+		}
+	}
+	
+	public static class Charge extends Effect{
+		private float heldCharge = 1;
+		private final float chargeSpeed;
+		private final Move move;
+		private final Fighter user;
+		private final int maxTime;
+
+		Charge(int start, int maxTime, float chargeSpeed, Fighter user, Move move) {
+			super(start, start+1);
+			this.chargeSpeed = chargeSpeed;
+			this.move = move;
+			this.user = user;
+			this.maxTime = maxTime;
+		}
+		
+		void performAction() {
+			if (user.isCharging() && move.duration.getCounter() <= maxTime){
+				this.end += 1;
+				List<Integer> actionStartTimes = move.actionList.actionStartTimes;
+				for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
+				move.duration.setEndTime(move.duration.getEndTime() + 1);
+			}
+			heldCharge += chargeSpeed;
+		}
+		
+		float getHeldCharge(){
+			return heldCharge;
 		}
 	}
 	

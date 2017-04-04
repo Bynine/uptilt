@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import maps.Level;
-import maps.Level_Test;
+import maps.Level_Stages;
 import maps.Room;
 import moves.ActionCircle;
 import com.badlogic.gdx.Gdx;
@@ -28,7 +28,7 @@ public class MapHandler {
 
 	static void begin(Fighter playern){
 		player = playern;
-		activeLevel = new Level_Test();
+		activeLevel = new Level_Stages();
 		activeRoom = activeLevel.getRoom(0);
 		activeMap = activeRoom.getMap();
 		PlatformerEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
@@ -41,10 +41,7 @@ public class MapHandler {
 		while (entityIter.hasNext()) {
 			Entity en = entityIter.next();
 			boolean shouldUpdate = PlatformerEngine.outOfHitlag() || en instanceof Graphic;
-			if (shouldUpdate) { 
-				en.update(rectangleList, activeRoom.getEntityList(), PlatformerEngine.getDeltaTime()); 
-				if (en instanceof Fighter) fighterHitboxInteract(en);
-			}
+			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), PlatformerEngine.getDeltaTime()); 
 			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
 				if (en instanceof Fighter){
 					Fighter fi = (Fighter) en;
@@ -53,8 +50,14 @@ public class MapHandler {
 				else entityIter.remove();
 			}
 		}
-		removeActionCircles();
 		if (player.isOOB(mapWidth, mapHeight)) resetRoom();
+	}
+	
+	static void updateActionCircleInteractions(){
+		for (Entity en: activeRoom.getEntityList()){
+			if (en instanceof Fighter) fighterHitboxInteract(en);
+		}
+		removeActionCircles();
 	}
 
 	private static void removeActionCircles(){

@@ -14,11 +14,11 @@ public class Grabbox extends ActionCircle {
 	public void hitTarget(Fighter target) {
 		if (!didHitTarget(target)) return;
 		
-		target.setCaught(user, target, caughtTimeFormula(target));
+		target.takeGrab(user, target, caughtTimeFormula(target));
 		hit = true;
 	}
 	
-	private final int minGrabTime = 40;
+	private final int minGrabTime = 20;
 	private int caughtTimeFormula(Fighter target){
 		return (int) (minGrabTime + target.getPercentage());
 	}

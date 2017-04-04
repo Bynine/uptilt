@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,13 +22,9 @@ public abstract class Entity {
 	Direction direction = Direction.RIGHT;
 	Sprite image;
 	Collision collision;
-
-	int jumpSquatFrames = 4;
-	float fallSpeed = -7f, fastFallSpeed = -8f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
-	float jumpStrength = 5f;
+	
 	float gravity = -0.35f;
-	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
-	float friction = 0.9f, airFriction = 0.95f;
+	float friction = 0.85f, airFriction = 0.95f;
 
 	boolean toRemove = false;
 	private final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
@@ -92,11 +87,8 @@ public abstract class Entity {
 	void limitingForces(List<Rectangle> mapRectangleList, List<Entity> entityList){
 		handleGravity();
 		handleFriction();
-
-		if (!hitstunTimer.timeUp() && !isGrounded()) MathUtils.clamp(velocity.x, -airSpeed, airSpeed);
-		else if (state == State.RUN) MathUtils.clamp(velocity.x, -runSpeed, runSpeed);
-
-		if (hitstunTimer.timeUp() && velocity.y < fallSpeed) velocity.y = fallSpeed;
+		limitSpeeds();
+		
 		setupRectangles(mapRectangleList, entityList);
 		checkWalls();
 		checkFloor();
@@ -113,6 +105,10 @@ public abstract class Entity {
 		else if (!isGrounded()) velocity.x *= airFriction;
 		else velocity.x *= friction;
 	}
+	
+	void limitSpeeds(){
+		/* */
+	}
 
 	private void setupRectangles(List<Rectangle> mapRectangleList, List<Entity> entityList){
 		tempRectangleList.clear();
@@ -127,7 +123,7 @@ public abstract class Entity {
 	private final float bounce = -0.75f;
 	void checkWalls(){
 		for (int i = 0; i < collisionCheck; ++i)
-			if (checkCollision(position.x + velocity.x, position.y)) {
+			if (doesCollide(position.x + velocity.x, position.y)) {
 				if (!hitstunTimer.timeUp()) {
 					// TODO: make actually hit wall. right now bounces off before it even touches
 					velocity.x *= bounce;
@@ -136,21 +132,21 @@ public abstract class Entity {
 				}
 				else velocity.x *= softening;
 			}
-		if (checkCollision(position.x + velocity.x, position.y)) {
+		if (doesCollide(position.x + velocity.x, position.y)) {
 			velocity.x = 0;
 		}
 	}
 
 	void checkFloor(){
 		for (int i = 0; i < collisionCheck; ++i)
-			if (checkCollision(position.x, position.y + velocity.y)) {
+			if (doesCollide(position.x, position.y + velocity.y)) {
 				velocity.y *= softening;
 			}
-		if (checkCollision(position.x, position.y + velocity.y)) velocity.y = 0;
-		if (checkCollision(position.x + velocity.x, position.y + velocity.y)) velocity.y = 0; // checks for diagonal floor
+		if (doesCollide(position.x, position.y + velocity.y)) velocity.y = 0;
+		if (doesCollide(position.x + velocity.x, position.y + velocity.y)) velocity.y = 0; // checks for diagonal floor
 	}
 
-	boolean checkCollision(float x, float y){
+	boolean doesCollide(float x, float y){
 		if (collision == Collision.GHOST) return false;
 		for (Rectangle r : tempRectangleList){
 			Rectangle thisR = getHurtBox(x, y);
@@ -170,7 +166,7 @@ public abstract class Entity {
 		return image.getBoundingRectangle();
 	}
 
-	void flip(){
+	public void flip(){
 		if (direction == Direction.LEFT){
 			setDirection(Direction.RIGHT);
 			image.setFlip(false, false);
@@ -226,7 +222,7 @@ public abstract class Entity {
 	
 	private final float aboveGround = 1f;
 	public boolean isGrounded(){ 
-		return checkCollision(position.x, position.y - aboveGround); 
+		return doesCollide(position.x, position.y - aboveGround); 
 	}
 	
 	public void ground(){ 

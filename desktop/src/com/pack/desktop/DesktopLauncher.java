@@ -9,7 +9,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.title = "UPTILT";
+		cfg.title = "Up Tilt";
 		cfg.width = GraphicsHandler.SCREENWIDTH;
 		cfg.height= GraphicsHandler.SCREENHEIGHT;
 		new LwjglApplication(new PlatformerEngine(), cfg);

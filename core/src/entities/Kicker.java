@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import main.InputHandler;
 
-public class Fast extends Fighter {
+public class Kicker extends Fighter {
 	
 	private TextureRegion standImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/stand.PNG")));
 	private TextureRegion runImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/run.PNG")));
@@ -16,9 +16,19 @@ public class Fast extends Fighter {
 	private TextureRegion slideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/slide.PNG")));
 	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/crouch.PNG")));
 	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/helpless.PNG")));
+	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/dash.PNG")));
 
-	public Fast(float posX, float posY, InputHandler inputHandler) {
+	public Kicker(float posX, float posY, InputHandler inputHandler) {
 		super(posX, posY, inputHandler);
+		runAcc = 1.35f;
+		runSpeed = 8f;
+		walkAcc = 0.75f;
+		walkSpeed = 3f;
+		friction = 0.82f;
+		gravity = -0.55f;
+		jumpAcc = 0.85f;
+		doubleJumpStrength = 9;
+		fastFallSpeed = -10;
 	}
 	
 	@Override
@@ -36,9 +46,10 @@ public class Fast extends Fighter {
 		case WALLSLIDE: setImage(slideImage); break;
 		case CROUCH: setImage(crouchImage); break;
 		case HELPLESS: setImage(helplessImage); break;
+		case DASH: setImage(dashImage); break;
 		default: setImage(standImage); break;
 		}
-		if (checkCollision(position.x, position.y)) setImage(prevImage);
+		if (doesCollide(position.x, position.y)) setImage(prevImage);
 	}
 
 }

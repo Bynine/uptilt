@@ -3,9 +3,10 @@ package moves;
 import java.util.ArrayList;
 import java.util.List;
 
+import moves.Effect.Charge;
 import entities.Fighter;
 
-public class ActionList {
+public class EventList {
 
 	List<Action> actionList = new ArrayList<Action>();
 	List<Effect> effectList = new ArrayList<Effect>();
@@ -33,9 +34,22 @@ public class ActionList {
 		actionList.add(new Action.ChangeVelocity(user, velX, velY));
 		actionStartTimes.add(start);
 	}
+	
+	void addSound(String sfxUrl, int start){
+		actionList.add(new Action.SFX(sfxUrl));
+		actionStartTimes.add(start);
+	}
+	
+	/* effects */
 
 	void addConstantVelocity(Fighter user, int start, int end, float velX, float velY) {
 		effectList.add(new Effect.ConstantVelocity(user, velX, velY, start, end));
+		actionStartTimes.add(start);
+	}
+
+	void addCharge(Fighter user, Charge c) {
+		effectList.add(c);
+		// actionStartTimes.add(start); ???
 	}
 
 }

@@ -20,8 +20,10 @@ public class PlatformerEngine extends ApplicationAdapter {
 	private static Fighter player1;
 	
 	@Override public void create () {
-		player1 = new Fast(0, 0, new InputHandler());
-		new InputHandler().begin(player1);
+		ControllerInputHandler ch = new ControllerInputHandler();
+		ch.setupController(0);
+		player1 = new Kicker(0, 0, ch);
+		ch.begin(player1);
 		GraphicsHandler.begin();
 		MapHandler.begin(player1);
 	}
@@ -29,9 +31,9 @@ public class PlatformerEngine extends ApplicationAdapter {
 	@Override public void render () {
 		deltaTime++;
 		updateTimers();
-		player1.getInputHandler().updatePlayer(player1);
 		
 		MapHandler.activeRoom.update();
+		MapHandler.updateActionCircleInteractions();
 		if (outOfHitlag()) MapHandler.updateEntities();
 		GraphicsHandler.updateGraphics();
 		GraphicsHandler.updateCamera(player1);
