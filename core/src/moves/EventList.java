@@ -49,7 +49,6 @@ public class EventList {
 
 	void addCharge(Fighter user, Charge c) {
 		effectList.add(c);
-		// actionStartTimes.add(start); ???
 	}
 
 }

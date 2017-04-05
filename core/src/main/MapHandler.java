@@ -8,6 +8,8 @@ import maps.Level;
 import maps.Level_Stages;
 import maps.Room;
 import moves.ActionCircle;
+import moves.Grabbox;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
@@ -31,8 +33,8 @@ public class MapHandler {
 		activeLevel = new Level_Stages();
 		activeRoom = activeLevel.getRoom(0);
 		activeMap = activeRoom.getMap();
-		PlatformerEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
-		activeRoom.getMusic().setVolume(PlatformerEngine.getVolume());
+		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
+		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
 
@@ -40,8 +42,8 @@ public class MapHandler {
 		Iterator<Entity> entityIter = activeRoom.getEntityList().iterator();
 		while (entityIter.hasNext()) {
 			Entity en = entityIter.next();
-			boolean shouldUpdate = PlatformerEngine.outOfHitlag() || en instanceof Graphic;
-			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), PlatformerEngine.getDeltaTime()); 
+			boolean shouldUpdate = UptiltEngine.outOfHitlag() || en instanceof Graphic;
+			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), UptiltEngine.getDeltaTime()); 
 			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
 				if (en instanceof Fighter){
 					Fighter fi = (Fighter) en;
@@ -55,7 +57,10 @@ public class MapHandler {
 	
 	static void updateActionCircleInteractions(){
 		for (Entity en: activeRoom.getEntityList()){
-			if (en instanceof Fighter) fighterHitboxInteract(en);
+			if (en instanceof Fighter) {
+				fighterHitboxInteract(en);
+				removeGrabboxes();
+			}
 		}
 		removeActionCircles();
 	}
@@ -65,6 +70,14 @@ public class MapHandler {
 		while (actionCircleIter.hasNext()) {
 			ActionCircle ac = actionCircleIter.next();
 			if (ac.toRemove()) actionCircleIter.remove();
+		}
+	}
+	
+	private static void removeGrabboxes(){
+		Iterator<ActionCircle> actionCircleIter = activeRoom.getActionCircleList().iterator();
+		while (actionCircleIter.hasNext()) {
+			ActionCircle ac = actionCircleIter.next();
+			if (ac.toRemove() && ac instanceof Grabbox) actionCircleIter.remove();
 		}
 	}
 
@@ -85,7 +98,7 @@ public class MapHandler {
 	}
 
 	static void resetRoom() {
-		PlatformerEngine.changeRoom(activeRoom, activeRoom.getStartPosition()); 
+		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition()); 
 	}
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }

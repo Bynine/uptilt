@@ -8,7 +8,7 @@ public class Move {
 	final Timer duration;
 	final EventList actionList = new EventList();
 	boolean helpless = false;
-	boolean special = false;
+	private boolean continueOnLanding = false;
 
 	Move(Fighter user, int dur){
 		this.user = user;
@@ -23,7 +23,8 @@ public class Move {
 	public boolean done(){ return duration.timeUp(); }
 	public boolean causesHelpless() { return helpless; }
 	public int getDuration() { return duration.getEndTime(); }
-	public boolean isSpecial() { return special; }
+	public boolean continuesOnLanding() { return continueOnLanding; }
+	public void setContinueOnLanding() { continueOnLanding = true; }
 	// abstract Animation getAnimation();
 
 }

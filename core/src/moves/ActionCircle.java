@@ -50,6 +50,6 @@ public abstract class ActionCircle {
 	
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp() || hit; }
-	boolean didHitTarget(Fighter target){ return target != user && Intersector.overlaps(area, target.getHurtBox()); }
+	boolean didHitTarget(Fighter target){ return target != user && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()); }
 	
 }

@@ -50,13 +50,15 @@ public abstract class Effect extends Action{
 		}
 		
 		void performAction() {
-			if (user.isCharging() && move.duration.getCounter() <= maxTime){
-				this.end += 1;
-				List<Integer> actionStartTimes = move.actionList.actionStartTimes;
-				for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
-				move.duration.setEndTime(move.duration.getEndTime() + 1);
-			}
+			if (user.isCharging() && move.duration.getCounter() <= maxTime) hold();
 			heldCharge += chargeSpeed;
+		}
+		
+		private void hold(){
+			this.end += 1;
+			List<Integer> actionStartTimes = move.actionList.actionStartTimes;
+			for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
+			move.duration.setEndTime(move.duration.getEndTime() + 1);
 		}
 		
 		float getHeldCharge(){

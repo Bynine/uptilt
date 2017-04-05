@@ -7,7 +7,7 @@ import entities.Fighter;
 import main.MapHandler;
 
 public abstract class Action {
-	
+
 	abstract void performAction();
 
 	public static class MakeHitbox extends Action{

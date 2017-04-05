@@ -1,7 +1,7 @@
 package com.pack.desktop;
 
 import main.GraphicsHandler;
-import main.PlatformerEngine;
+import main.UptiltEngine;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -12,6 +12,6 @@ public class DesktopLauncher {
 		cfg.title = "Up Tilt";
 		cfg.width = GraphicsHandler.SCREENWIDTH;
 		cfg.height= GraphicsHandler.SCREENHEIGHT;
-		new LwjglApplication(new PlatformerEngine(), cfg);
+		new LwjglApplication(new UptiltEngine(), cfg);
 	}
 }

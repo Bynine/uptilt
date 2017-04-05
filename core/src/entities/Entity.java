@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
-import main.PlatformerEngine;
+import main.UptiltEngine;
 import timers.Timer;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -127,7 +127,7 @@ public abstract class Entity {
 				if (!hitstunTimer.timeUp()) {
 					// TODO: make actually hit wall. right now bounces off before it even touches
 					velocity.x *= bounce;
-					PlatformerEngine.causeHitlag((int)(velocity.x / 3));
+					UptiltEngine.causeHitlag((int)(velocity.x / 3));
 					return;
 				}
 				else velocity.x *= softening;
@@ -244,8 +244,8 @@ public abstract class Entity {
 	public Collision getCollision() { return collision; }
 	public Sprite getImage() { return image; }
 
-	static enum Direction{ LEFT, RIGHT }
-	static enum State{ STAND, WALK, DASH, RUN, JUMP, FALL, WALLSLIDE, CROUCH, HELPLESS }
-	static enum Collision{ SOLID, CREATURE, GHOST }
+	public static enum Direction{ LEFT, RIGHT }
+	public static enum State{ STAND, WALK, DASH, RUN, JUMP, FALL, WALLSLIDE, CROUCH, HELPLESS }
+	public static enum Collision{ SOLID, CREATURE, GHOST }
 
 }

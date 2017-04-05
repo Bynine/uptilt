@@ -49,7 +49,7 @@ public class GraphicsHandler {
 		cam.position.x = MathUtils.round(MathUtils.clamp(cam.position.x, screenBoundary(SCREENWIDTH), MapHandler.mapWidth - screenBoundary(SCREENWIDTH)));
 		cam.position.y = MathUtils.round(MathUtils.clamp(cam.position.y, screenBoundary(SCREENHEIGHT), MapHandler.mapHeight - screenBoundary(SCREENHEIGHT)));
 		
-		if (!PlatformerEngine.outOfHitlag()) shakeScreen();
+		if (!UptiltEngine.outOfHitlag()) shakeScreen();
 		
 		cam.update();
 		renderer.setView(cam);

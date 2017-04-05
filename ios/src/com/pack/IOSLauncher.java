@@ -1,6 +1,6 @@
 package com.pack;
 
-import main.PlatformerEngine;
+import main.UptiltEngine;
 
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;
@@ -12,7 +12,7 @@ public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
-        return new IOSApplication(new PlatformerEngine(), config);
+        return new IOSApplication(new UptiltEngine(), config);
     }
 
     public static void main(String[] argv) {

@@ -1,6 +1,6 @@
 package moves;
 
-import main.PlatformerEngine;
+import main.UptiltEngine;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -80,8 +80,7 @@ public class Hitbox extends ActionCircle{
 		}
 		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
 
-		PlatformerEngine.causeHitlag( hitlagFormula(knockbackFormula(target)) );
-		// TODO: create graphic
+		UptiltEngine.causeHitlag( hitlagFormula(knockbackFormula(target)) );
 		hit = true;
 	}
 
