@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class Entity {
 	final Vector2 position = new Vector2();
 	final Vector2 velocity = new Vector2();
-	State state;
+	State state, prevState;
 	Direction direction = Direction.RIGHT;
 	Sprite image;
 	Collision collision;
@@ -36,14 +36,15 @@ public abstract class Entity {
 	public Entity(float posX, float posY){
 		position.x = posX;
 		position.y = posY;
+		prevState = state;
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		updateState();
 		handleDirection();
 		handleMovement();
-		limitingForces(rectangleList, entityList);
 		if (deltaTime > 1) handleTouch(entityList);
+		limitingForces(rectangleList, entityList);
 		updateTimers();
 		updatePosition();
 		updateImagePosition(deltaTime);

@@ -22,7 +22,7 @@ public class Dummy extends Fighter {
 	}
 	
 	@Override
-	void updateImage(){
+	void updateImage(float deltaTime){
 		setImage(texture);
 	}
 	

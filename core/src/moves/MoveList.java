@@ -56,15 +56,19 @@ public abstract class MoveList {
 	public abstract Move airGrab(Fighter user);
 	
 	/* misc */
+	public abstract Move land(Fighter user);
+	public abstract Move skid(Fighter user);
 	private final float boost = 7.2f;
 	public Move boost(Fighter user){
 		Move m = new Move(user, 15);
-		m.helpless = true;
+		m.setHelpless();
 		m.actionList.addConstantVelocity(user, 0, 10, user.getStickX() * boost, -user.getStickY() * boost);
 		m.actionList.addVelocityChange(user, 11, user.getStickX() * boost, -user.getStickY() * boost);
 		m.actionList.addVelocityChange(user, 14, 0, 0);
 		return m;
 	}
+	
+	/* Move Selection */
 	
 	public Move selectNormalMove(Fighter user){
 		if (user.isGrounded()) {
@@ -88,6 +92,7 @@ public abstract class MoveList {
 		else if (user.holdDown()) return dSpecial(user);
 		else if (user.holdForward()) return sSpecial(user);
 		else if (user.holdBack()) {
+			user.flip();
 			return sSpecial(user);
 		}
 		else return nSpecial(user);

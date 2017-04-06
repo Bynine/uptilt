@@ -18,7 +18,7 @@ public abstract class Action {
 		}
 
 		void performAction(){
-			ac.checkConnected();
+			ac.checkGroup();
 			if (ac.toRemove()) return;
 			ac.updatePosition();
 			MapHandler.addActionCircle(ac);

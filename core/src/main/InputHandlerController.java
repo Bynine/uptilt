@@ -35,7 +35,7 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 		return true;
 	}
 	
-	private final float flick = 0.6f;
+	private final float flick = 0.86f;
 	private final float pushed = 0.95f;
 	private float lastCX = 0;
 	private float lastCY = 0;

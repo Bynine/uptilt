@@ -40,7 +40,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		deltaTime++;
 		updateTimers();
 
-		MapHandler.activeRoom.update();
+		MapHandler.activeRoom.update(deltaTime);
 		MapHandler.updateActionCircleInteractions();
 		if (outOfHitlag()) MapHandler.updateEntities();
 		GraphicsHandler.updateGraphics();

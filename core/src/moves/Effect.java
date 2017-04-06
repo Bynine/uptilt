@@ -58,7 +58,8 @@ public abstract class Effect extends Action{
 			this.end += 1;
 			List<Integer> actionStartTimes = move.actionList.actionStartTimes;
 			for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
-			move.duration.setEndTime(move.duration.getEndTime() + 1);
+			move.addFrame();
+			user.attackTimer.countDown();
 		}
 		
 		float getHeldCharge(){

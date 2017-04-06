@@ -22,14 +22,15 @@ public class GraphicsHandler {
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final int camAdjustmentSpeed = 8;
-	private static final float ZOOM = 1/2f;
+	private static final float ZOOM = 1/1f;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
-	static BitmapFont font = new BitmapFont();
+	private static BitmapFont font = new BitmapFont();
+	private static boolean debug = true;
 	
-	public static final int SCREENWIDTH  = (int) ((40 * GlobalRepo.TILE)/ZOOM);
-	public static final int SCREENHEIGHT = (int) ((25 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENWIDTH  = (int) ((60 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENHEIGHT = (int) ((40 * GlobalRepo.TILE)/ZOOM);
 	
 	public static void begin() {
 		batch = new SpriteBatch();
@@ -44,7 +45,7 @@ public class GraphicsHandler {
 	
 	static void updateCamera(Fighter player){
 		cam.position.x = (cam.position.x*(camAdjustmentSpeed-1) + player.getPosition().x)/camAdjustmentSpeed;
-		cam.position.y = (cam.position.y*(camAdjustmentSpeed-1) + player.getPosition().y)/camAdjustmentSpeed;
+		cam.position.y = (cam.position.y*(camAdjustmentSpeed-1) + GlobalRepo.TILE * 2 + player.getPosition().y)/camAdjustmentSpeed;
 		
 		cam.position.x = MathUtils.round(MathUtils.clamp(cam.position.x, screenBoundary(SCREENWIDTH), MapHandler.mapWidth - screenBoundary(SCREENWIDTH)));
 		cam.position.y = MathUtils.round(MathUtils.clamp(cam.position.y, screenBoundary(SCREENHEIGHT), MapHandler.mapHeight - screenBoundary(SCREENHEIGHT)));
@@ -78,16 +79,19 @@ public class GraphicsHandler {
 				Fighter fi = (Fighter) e;
 				drawFighterPercentage(fi);
 				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
-				if (!fi.attackTimer.timeUp()) batch.setColor(0f, 1f, 0f, 1);
+				else if (debug && !fi.attackTimer.timeUp()) batch.setColor(1f, 1f, 0f, 1);
+				else if (debug) batch.setColor(0f, 1f, 1f, 1);
 			}
 			batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 			batch.setColor(1, 1, 1, 1);
 		}
 		batch.end();
+		font.setColor(1, 1, 1, 1);
 
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
 		
+		if (!debug) return;
 		Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		debugRenderer.setProjectionMatrix(cam.combined);
@@ -100,7 +104,6 @@ public class GraphicsHandler {
 			}
 		}
 		debugRenderer.end();
-		font.setColor(1, 1, 1, 1);
 	}
 
 	private static void drawFighterPercentage(Entity e) {

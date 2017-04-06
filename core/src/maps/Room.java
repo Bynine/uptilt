@@ -63,10 +63,10 @@ public abstract class Room {
 		actionCircleList.add(ac);
 	}
 
-	public void update(){
+	public void update(int deltaTime){
 		for (Entity e: newEntityList) entityList.add(e);
 		newEntityList.clear();
-		for (ActionCircle ac: actionCircleList) ac.update();
+		for (ActionCircle ac: actionCircleList) ac.update(deltaTime);
 	}
 
 	void clearOut(){

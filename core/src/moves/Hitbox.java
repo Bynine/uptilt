@@ -91,11 +91,11 @@ public class Hitbox extends ActionCircle{
 		else knockback.setAngle(samuraiKnockbackAngle);
 	}
 
-	private final int hitlagCap = 12;
-	private final float hitlagRatio = 0.5f;
+	private final int hitlagCap = 16;
+	private final float hitlagRatio = 0.48f;
 	private final float electricHitlagMultiplier = 1.5f;
 	private int hitlagFormula(float knockback) {
-		int hitlag = (int) (knockback * hitlagRatio);
+		int hitlag = 1 + (int) (knockback * hitlagRatio);
 		if (hitlag > hitlagCap) hitlag = hitlagCap;
 		if (property == Property.ELECTRIC) hitlag *= electricHitlagMultiplier;
 		return hitlag;
@@ -113,6 +113,10 @@ public class Hitbox extends ActionCircle{
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
 		if (knockback < minKnockback) return 0;
 		else return knockback;
+	}
+	
+	public void update(int deltaTime){
+		super.update(deltaTime);
 	}
 
 	public enum Property { NORMAL, ELECTRIC }

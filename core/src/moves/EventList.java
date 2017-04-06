@@ -44,7 +44,7 @@ public class EventList {
 
 	void addConstantVelocity(Fighter user, int start, int end, float velX, float velY) {
 		effectList.add(new Effect.ConstantVelocity(user, velX, velY, start, end));
-		actionStartTimes.add(start);
+		//actionStartTimes.add(start);
 	}
 
 	void addCharge(Fighter user, Charge c) {

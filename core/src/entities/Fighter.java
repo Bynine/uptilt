@@ -26,15 +26,15 @@ public abstract class Fighter extends Entity{
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
 
-	private boolean doubleJumped, fastFall = false;
+	private boolean doubleJumped = false;
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(4, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
 	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(24, false);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
 	int jumpSquatFrames = 4;
-	float fallSpeed = -7f, fastFallSpeed = -8f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
-	float jumpStrength = 5f, dashStrength = 2.4f;
+	float fallSpeed = -7f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
+	float jumpStrength = 5f, dashStrength = 5f;
 	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
 
 	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.PNG")));
@@ -55,27 +55,19 @@ public abstract class Fighter extends Entity{
 		state = State.STAND;
 	}
 
-	private final float minFastFallStickFlick = 0.85f;
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		stickX = inputHandler.getXInput();
 		stickY = inputHandler.getYInput();
 		inputHandler.update();
-		boolean canFastFall = canMove() && velocity.y < 0 && Math.abs(stickY - prevStickY) > minFastFallStickFlick && stickY > 0;
-		if (canFastFall) activateFastFall();
 
 		if (!grabbingTimer.timeUp()) handleThrow();
 		if (null != activeMove) handleMove();
 
 		super.update(rectangleList, entityList, deltaTime);
-		updateImage();
+		updateImage(deltaTime);
 
 		prevStickX = stickX;
 		prevStickY = stickY;
-	}
-
-	private void activateFastFall(){
-		velocity.y = fastFallSpeed;
-		fastFall = true;
 	}
 
 	private void handleThrow(){
@@ -97,10 +89,29 @@ public abstract class Fighter extends Entity{
 			activeMove = null;
 		}
 	}
+	
+	void handleTouchHelper(Entity e){
+		if (e instanceof Fighter){
+			Fighter fi = (Fighter) e;
+			if (isTouching(fi, 18) && Math.abs(fi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1
+					&& e.isGrounded() && isGrounded()){
+				pushAway(fi);
+				((Fighter) fi).pushAway(this);
+			}
+		}
+		
+	}
+	
+	private final float pushForce = 0.04f;
+	private void pushAway(Entity e){
+		float dirPush = Math.signum(e.position.x - this.position.x);
+		velocity.x -= dirPush * pushForce;
+	}
 
 	void updateState(){
 		if (isGrounded()) updateGroundedState();
 		else updateAerialState();
+		prevState = state;
 	}
 
 	private void updateGroundedState(){
@@ -110,9 +121,12 @@ public abstract class Fighter extends Entity{
 			if (isRun()) state = State.RUN;
 			else if (state == State.DASH && !dashTimer.timeUp()) state = State.DASH;
 			else state = State.WALK;
-			if (canAct() && Math.signum(velocity.x) != direct()) flip();
+			boolean noWalls = (!doesCollide(position.x - 2, position.y) && direction == Direction.LEFT)
+					|| (!doesCollide(position.x + 2, position.y) && direction == Direction.RIGHT);
+			if (canAct() && noWalls && Math.signum(velocity.x) != direct()) flip();
 		}
 		else state = State.STAND;
+		if (prevState == State.RUN && (Math.signum(velocity.x) != Math.signum(stickX) )) startAttack(moveList.skid(this));
 	}
 
 	private boolean isRun(){
@@ -129,14 +143,14 @@ public abstract class Fighter extends Entity{
 	}
 
 	private boolean tryDash(){
-		if (!isGrounded() || isRun()) return false;
+		if (!inGroundedState() || isRun()) return false;
 		dashTimer.restart();
 		velocity.x = Math.signum(stickX) * dashStrength;
 		state = State.DASH;
 		return true;
 	}
 
-	void updateImage(){
+	void updateImage(float deltaTime){
 		/* */
 	}
 
@@ -145,9 +159,9 @@ public abstract class Fighter extends Entity{
 		else velocity.y += gravity;
 	}
 
-	private final float minTurn = 0.5f;
+	private final float minTurn = 0.2f;
 	void handleDirection(){
-		if (Math.abs(stickX) < unregisteredInputMax || !canAct() || !isGrounded()) return;
+		if (Math.abs(stickX) < unregisteredInputMax || !canAct() || !isGrounded() || state == State.CROUCH) return;
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
 		boolean turnRight = stickX > minTurn && (prevStickX < minTurn)  && getDirection() == Direction.LEFT;
 		if (turnLeft || turnRight) flip();
@@ -170,10 +184,7 @@ public abstract class Fighter extends Entity{
 	}
 
 	void limitSpeeds(){
-		if (hitstunTimer.timeUp()) {
-			if (!fastFall && velocity.y < fallSpeed) velocity.y = fallSpeed;
-			if (fastFall && velocity.y < fastFallSpeed) velocity.y = fastFallSpeed;
-		}
+		if (hitstunTimer.timeUp() && velocity.y < fallSpeed) velocity.y = fallSpeed;
 	}
 
 	private void addSpeed(float speed, float acc){ 
@@ -203,7 +214,7 @@ public abstract class Fighter extends Entity{
 
 	private final int wallSlideDistance = 1;
 	private boolean isWallSliding() {
-		if (isGrounded() || velocity.y > 0) return false;
+		if (isGrounded() || velocity.y > 0 || !canAct()) return false;
 		boolean canWS = false;
 		if (prevStickX < -unregisteredInputMax) {
 			canWS = doesCollide(position.x - wallSlideDistance, position.y);
@@ -236,7 +247,6 @@ public abstract class Fighter extends Entity{
 	}
 
 	public boolean trySpecial(){
-		fastFall = false;
 		startAttack(moveList.selectSpecialMove(this));
 		return true;
 	}
@@ -287,18 +297,18 @@ public abstract class Fighter extends Entity{
 	public boolean tryStickDown(){
 		return true; 
 	}
+	
+	private final float minDirect = 0.9f;
+	public boolean holdUp() 		{ return -stickY > minDirect; }
+	public boolean holdDown()		{ return stickY > minDirect; }
+	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
+	public boolean holdBack() 		{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 
 	private void startAttack(Move m){
 		activeMove = m;
 		attackTimer.setEndTime(m.getDuration() + 1);
 		attackTimer.restart();
 	}
-
-	private final float minDirect = 0.9f;
-	public boolean holdUp() 		{ return -stickY > minDirect; }
-	public boolean holdDown()		{ return stickY > minDirect; }
-	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
-	public boolean holdBack() 		{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 
 	public void takeKnockback(Vector2 knockback, float DAM, int hitstun) {
 		knockback.setAngle(directionalInfluenceAngle(knockback));
@@ -320,11 +330,11 @@ public abstract class Fighter extends Entity{
 		return knockback.angle();
 	}
 
-	private final float heldDistance = 18;
+	private final float heldDistance = 24;
 	public void takeGrab(Fighter user, Fighter target, int caughtTime) {
 		user.isNowGrabbing(target, caughtTime);
 		float newPosX = user.position.x + (heldDistance * user.direct());
-		float newPosY = user.position.y + image.getHeight()/2;
+		float newPosY = user.position.y + image.getHeight()/4;
 		if (!doesCollide(newPosX, newPosY)) position.set(newPosX, newPosY);
 		else position.y = newPosY; // won't move target's X coordinate if that would put target in a wall
 		caughtTimer.setEndTime(caughtTime);
@@ -338,14 +348,17 @@ public abstract class Fighter extends Entity{
 	}
 
 	public void ground(){
+		if (!hitstunTimer.timeUp() && hitstunTimer.getCounter() > 1) {
+			// ????
+			return;
+		}
 		super.ground();
 		if (null != activeMove && !activeMove.continuesOnLanding()) {
 			activeMove = null;
 			attackTimer.end();
 		}
-		if (hitstunTimer.getCounter() > 1) hitstunTimer.end();
+		//if (activeMove == null) startAttack(moveList.land(this));
 		doubleJumped = false;
-		fastFall = false;
 	}
 
 	public void handleJumpCommand(boolean button) {
