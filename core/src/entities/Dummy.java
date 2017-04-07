@@ -20,7 +20,7 @@ public class Dummy extends Fighter {
 		setInputHandler(new InputHandlerCPU(this, Brain.Recover.class));
 		image = new Sprite(texture);
 		gravity = -0.5f;
-		weight = 125;
+		weight = 100;
 	}
 	
 	@Override

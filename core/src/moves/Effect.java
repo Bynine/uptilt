@@ -29,7 +29,7 @@ public abstract class Effect extends Action{
 		}
 		
 		void performAction(){
-			if (velX != noChange) user.getVelocity().x = velX;
+			if (velX != noChange) user.getVelocity().x = velX * user.direct();
 			if (velY != noChange) user.getVelocity().y = velY;
 		}
 	}
@@ -56,7 +56,7 @@ public abstract class Effect extends Action{
 		
 		private void hold(){
 			this.end += 1;
-			List<Integer> actionStartTimes = move.actionList.actionStartTimes;
+			List<Integer> actionStartTimes = move.eventList.actionStartTimes;
 			for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
 			move.addFrame();
 			user.attackTimer.countDown();

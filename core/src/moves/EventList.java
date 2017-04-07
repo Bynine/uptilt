@@ -5,6 +5,7 @@ import java.util.List;
 
 import moves.Effect.Charge;
 import entities.Fighter;
+import entities.Projectile;
 
 public class EventList {
 
@@ -37,6 +38,11 @@ public class EventList {
 	
 	void addSound(String sfxUrl, int start){
 		actionList.add(new Action.SFX(sfxUrl));
+		actionStartTimes.add(start);
+	}
+	
+	<T extends Projectile> void addProjectile(Fighter user, Class<T> proj, int start){
+		actionList.add(new Action.MakeProjectile<>(user, proj));
 		actionStartTimes.add(start);
 	}
 	

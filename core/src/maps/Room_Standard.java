@@ -10,7 +10,7 @@ public class Room_Standard extends Room {
 	public Room_Standard(Level superLevel){
 		super(superLevel);
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/song of storm crow.mp3"));
-		startPosition.x = 45;
+		startPosition.x = 40;
 		startPosition.y = 11;
 		setup();
 	}

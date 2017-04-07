@@ -9,9 +9,7 @@ public class ActionCircleGroup {
 	
 	ActionCircleGroup(List<ActionCircle> list){
 		connectedCircles.addAll(list);
-		for (ActionCircle ac: connectedCircles){
-			ac.group = this;
-		}
+		for (ActionCircle ac: connectedCircles) ac.group = this;
 	}
 	
 }

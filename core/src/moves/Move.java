@@ -11,9 +11,8 @@ import timers.Timer;
 public class Move {
 	final Fighter user;
 	final Timer duration;
-	final EventList actionList = new EventList();
-	private boolean helpless = false;
-	private boolean continueOnLanding = false;
+	final EventList eventList = new EventList();
+	private boolean helpless = false, continueOnLanding = false, noTurn = false;
 	Animation animation = null;
 	int addedFrames = 0;
 
@@ -24,7 +23,7 @@ public class Move {
 
 	public void update(){
 		duration.countUp();
-		actionList.update(duration.getCounter());
+		eventList.update(duration.getCounter());
 	}
 
 	public boolean done(){ return duration.timeUp(); }
@@ -32,6 +31,8 @@ public class Move {
 	public boolean causesHelpless() { return helpless; }
 	public void setHelpless() { helpless = true; }
 	public boolean continuesOnLanding() { return continueOnLanding; }
+	public boolean isNoTurn() { return noTurn; }
+	public void dontTurn() { noTurn = true; }
 	public void setContinueOnLanding() { continueOnLanding = true; }
 	public Animation getAnimation() { return animation; }
 	public int getFrame() { return duration.getCounter() + addedFrames; }

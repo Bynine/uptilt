@@ -22,7 +22,7 @@ public abstract class Entity {
 	Direction direction = Direction.RIGHT;
 	Sprite image;
 	Collision collision;
-	
+
 	float gravity = -0.35f;
 	float friction = 0.85f, airFriction = 0.95f;
 
@@ -62,7 +62,7 @@ public abstract class Entity {
 		/* */
 	}
 
-	private void handleTouch(List<Entity> entityList){
+	void handleTouch(List<Entity> entityList){
 		for (Entity e: entityList) if (e != this) handleTouchHelper(e);
 	}
 
@@ -83,13 +83,13 @@ public abstract class Entity {
 	void updateTimers(){
 		for (Timer t: timerList) t.countUp();
 	}
-	
+
 	private final float lowerLimit = 0.01f;
 	void limitingForces(List<Rectangle> mapRectangleList, List<Entity> entityList){
 		handleGravity();
 		handleFriction();
 		limitSpeeds();
-		
+
 		setupRectangles(mapRectangleList, entityList);
 		checkWalls();
 		checkFloor();
@@ -100,13 +100,13 @@ public abstract class Entity {
 	void handleGravity(){
 		velocity.y += gravity;
 	}
-	
+
 	void handleFriction(){
 		if (!isGrounded() && !hitstunTimer.timeUp()) {}
 		else if (!isGrounded()) velocity.x *= airFriction;
 		else velocity.x *= friction;
 	}
-	
+
 	void limitSpeeds(){
 		/* */
 	}
@@ -162,7 +162,7 @@ public abstract class Entity {
 		r.setX(x); r.setY(y);
 		return r;
 	}
-	
+
 	public Rectangle getHurtBox(){
 		return image.getBoundingRectangle();
 	}
@@ -212,29 +212,34 @@ public abstract class Entity {
 	}
 
 	void setImage(TextureRegion tr){
-		boolean flipped = image.isFlipX();
-		float x = image.getX();
-		float y = image.getY();
+		float x = 0;
+		float y = 0;
+		boolean flipped = false;
+		if (image != null){
+			flipped = image.isFlipX();
+			x = image.getX();
+			y = image.getY();
+		}
 		image = new Sprite(tr);
 		image.setFlip(flipped, false);
 		image.setX(x);
 		image.setY(y);
 	}
-	
+
 	private final float aboveGround = 1f;
 	public boolean isGrounded(){ 
 		return doesCollide(position.x, position.y - aboveGround); 
 	}
-	
+
 	public void ground(){ 
 		/* */
 	}
-	
+
 	public void fallOffScreen() {
 		collision = Collision.GHOST;
 		gravity = -0.5f;
 	}
-	
+
 	public void setRemove() { toRemove = true; }
 	public boolean toRemove() { return toRemove; } 
 

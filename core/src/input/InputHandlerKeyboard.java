@@ -15,14 +15,11 @@ public class InputHandlerKeyboard extends InputHandler implements InputProcessor
 	@Override
 	public void update() {
 		super.update();
-		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandJumpX);
+		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandJump);
 		if (Gdx.input.isKeyJustPressed(Keys.J)) handleCommand(commandAttack);
 		if (Gdx.input.isKeyJustPressed(Keys.K)) handleCommand(commandSpecial);
 		if (Gdx.input.isKeyJustPressed(Keys.L)) handleCommand(commandGrab);
-		if (Gdx.input.isKeyJustPressed(Keys.T)) handleCommand(commandCUp);
-		if (Gdx.input.isKeyJustPressed(Keys.F)) handleCommand(commandCLeft);
-		if (Gdx.input.isKeyJustPressed(Keys.G)) handleCommand(commandCDown);
-		if (Gdx.input.isKeyJustPressed(Keys.H)) handleCommand(commandCRight);
+		if (Gdx.input.isKeyJustPressed(Keys.T)) handleCommand(commandSpecial);
 		boolean jump = (Gdx.input.isKeyPressed(Keys.I));
 		player.handleJumpCommand(jump);
 	}

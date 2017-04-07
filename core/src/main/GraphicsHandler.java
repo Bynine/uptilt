@@ -98,10 +98,9 @@ public class GraphicsHandler {
 		debugRenderer.begin(ShapeType.Filled);
 		for (ActionCircle ac: MapHandler.activeRoom.getActionCircleList()){
 			Circle c = ac.getArea();
-			if (!ac.toRemove()) {
-				debugRenderer.setColor(ac.getColor());
-				debugRenderer.circle(c.x, c.y, c.radius);
-			}
+			debugRenderer.setColor(ac.getColor());
+			if (ac.toRemove()) debugRenderer.setColor(0.9f, 1, 1, 0.5f);
+			debugRenderer.circle(c.x, c.y, c.radius);
 		}
 		debugRenderer.end();
 	}

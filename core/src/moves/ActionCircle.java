@@ -17,7 +17,8 @@ public abstract class ActionCircle {
 	final Circle area;
 	final Timer duration = new Timer(5, true);
 	final Timer refreshTimer = new Timer(6, true);
-	boolean initialHit, remove = false;
+	private boolean initialHit;
+	boolean remove = false;
 	boolean doesRefresh = false;
 	Property property = Property.NORMAL;
 	ActionCircleGroup group = null;
@@ -33,7 +34,7 @@ public abstract class ActionCircle {
 	public abstract Color getColor();
 
 	public void checkGroup(){ 
-		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.initialHit) remove = true;
+		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.isInitialHit()) remove = true;
 	}
 
 	public void setDuration(int dur){
@@ -43,9 +44,9 @@ public abstract class ActionCircle {
 	public void update(int deltaTime){
 		duration.countUp();
 		if (UptiltEngine.outOfHitlag()){
-			area.x += user.getVelocity().x;
-			area.y += user.getVelocity().y;
-			if (initialHit) remove = true;
+			area.x = getX();
+			area.y = getY();
+			if (isInitialHit()) remove = true;
 		}
 	}
 
@@ -56,11 +57,11 @@ public abstract class ActionCircle {
 
 	public void reset(){
 		remove = false;
-		initialHit = false;
+		setInitialHit(false);
 	}
 
-	private float getX(){ return user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX); }
-	private float getY(){ return user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY; }
+	float getX(){ return user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX); }
+	float getY(){ return user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY; }
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 
@@ -69,6 +70,14 @@ public abstract class ActionCircle {
 	public void setRefresh(int time) { 
 		refreshTimer.setEndTime(time);
 		doesRefresh = true; 
+	}
+
+	public boolean isInitialHit() {
+		return initialHit;
+	}
+
+	public void setInitialHit(boolean initialHit) {
+		this.initialHit = initialHit;
 	}
 
 }

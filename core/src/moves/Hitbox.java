@@ -72,7 +72,7 @@ public class Hitbox extends ActionCircle{
 		knockback.set(knockbackFormula(target), knockbackFormula(target));
 		if (ANG == SAMURAIANGLE) setSamuraiAngle(target, knockback);
 		else knockback.setAngle(ANG);
-		if (user.getPosition().x > target.getPosition().x) knockback.x *= -1;
+		knockback.x *= applyReverseHitbox(target);
 		int hitstun = hitstunFormula( knockbackFormula(target) );
 		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
 		if (groundedMeteor){
@@ -80,9 +80,8 @@ public class Hitbox extends ActionCircle{
 			hitstun *= meteorHitstunMod;
 		}
 		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
-
-		UptiltEngine.causeHitlag( hitlagFormula(knockbackFormula(target)) );
-		initialHit = true;
+		startHitlag(target);
+		setInitialHit(true);
 	}
 
 	private final float minSamuraiKnockback = 4;
@@ -91,12 +90,17 @@ public class Hitbox extends ActionCircle{
 		if (knockbackFormula(target) < minSamuraiKnockback && target.isGrounded()) knockback.setAngle(0);
 		else knockback.setAngle(samuraiKnockbackAngle);
 	}
+	
+	void startHitlag(Fighter target){
+		int hitlag = hitlagFormula(knockbackFormula(target));
+		UptiltEngine.causeHitlag(hitlag);
+	}
 
 	private final int hitlagCap = 16;
-	private final float hitlagRatio = 0.48f;
+	private final float hitlagRatio = 0.5f;
 	private final float electricHitlagMultiplier = 1.5f;
 	private int hitlagFormula(float knockback) {
-		int hitlag = 1 + (int) (knockback * hitlagRatio);
+		int hitlag = (int) (knockback * hitlagRatio);
 		if (hitlag > hitlagCap) hitlag = hitlagCap;
 		if (property == Property.ELECTRIC) hitlag *= electricHitlagMultiplier;
 		return hitlag;
@@ -124,6 +128,16 @@ public class Hitbox extends ActionCircle{
 			if (group != null) for (ActionCircle ac: group.connectedCircles) ac.reset();
 			refreshTimer.restart();
 		}
+	}
+	
+	private float applyReverseHitbox(Fighter target){
+		if (null == user) {
+			//System.out.println( (area.x - area.radius) + " hits " + target + " at " + target.getPosition().x);
+			if (area.x - area.radius/2 > target.getPosition().x) return -1;
+			else return 1;
+		}
+		else if (user.getPosition().x > target.getPosition().x) return -1;
+		else return 1;
 	}
 
 	public enum Property { NORMAL, ELECTRIC }

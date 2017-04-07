@@ -10,7 +10,7 @@ public abstract class MoveList {
 	public abstract Move sWeak(Fighter user);
 	public abstract Move dWeak(Fighter user);
 	public abstract Move slide(Fighter user);
-	
+
 	/* charge attacks */
 	public abstract Move sCharge(Fighter user);
 	public Move fCharge(Fighter user){
@@ -26,20 +26,20 @@ public abstract class MoveList {
 	}
 	public abstract Move uCharge(Fighter user);
 	public abstract Move dCharge(Fighter user);
-	
+
 	/* aerial normals */
 	public abstract Move nAir(Fighter user);
 	public abstract Move fAir(Fighter user);
 	public abstract Move bAir(Fighter user);
 	public abstract Move uAir(Fighter user);
 	public abstract Move dAir(Fighter user);
-	
+
 	/* specials */
 	public abstract Move nSpecial(Fighter user);
 	public abstract Move sSpecial(Fighter user);
 	public abstract Move uSpecial(Fighter user);
 	public abstract Move dSpecial(Fighter user);
-	
+
 	/* throws */
 	public abstract Move fThrow(Fighter user);
 	public abstract Move bThrow(Fighter user);
@@ -49,27 +49,31 @@ public abstract class MoveList {
 	public abstract Move bAirThrow(Fighter user);
 	public abstract Move uAirThrow(Fighter user);
 	public abstract Move dAirThrow(Fighter user);
-	
+
 	/* grabs */
 	public abstract Move grab(Fighter user);
 	public abstract Move dashGrab(Fighter user);
 	public abstract Move airGrab(Fighter user);
-	
+	public Move airBackGrab(Fighter user){
+		user.flip();
+		return airGrab(user);
+	}
+
 	/* misc */
 	public abstract Move land(Fighter user);
 	public abstract Move skid(Fighter user);
 	private final float boost = 7.2f;
 	public Move boost(Fighter user){
-		Move m = new Move(user, 15);
+		Move m = new Move(user, 10);
 		m.setHelpless();
-		m.actionList.addConstantVelocity(user, 0, 10, user.getStickX() * boost, -user.getStickY() * boost);
-		m.actionList.addVelocityChange(user, 11, user.getStickX() * boost, -user.getStickY() * boost);
-		m.actionList.addVelocityChange(user, 14, 0, 0);
+		m.dontTurn();
+		m.eventList.addConstantVelocity(user, 0, 7, user.direct() * user.getStickX() * boost, -user.getStickY() * boost);
+		m.eventList.addVelocityChange(user, 8, 0, 0);
 		return m;
 	}
-	
+
 	/* Move Selection */
-	
+
 	public Move selectNormalMove(Fighter user){
 		if (user.isGrounded()) {
 			if (user.isDashing()) return slide(user);
@@ -78,13 +82,7 @@ public abstract class MoveList {
 			else if (user.holdForward()) return sWeak(user);
 			else return nWeak(user);
 		}
-		else {
-			if (user.holdUp()) return uAir(user);
-			else if (user.holdDown()) return dAir(user);
-			else if (user.holdForward()) return fAir(user);
-			else if (user.holdBack()) return bAir(user);
-			else return nAir(user);
-		}
+		else return selectAerial(user);
 	}
 
 	public Move selectSpecialMove(Fighter user){
@@ -115,17 +113,33 @@ public abstract class MoveList {
 	}
 
 	public Move selectGrab(Fighter user){
-		if (!user.isGrounded()) return airGrab(user);
+		if (!user.isGrounded()){
+			if (user.holdBack()) return airBackGrab(user);
+			else return airGrab(user);
+		}
 		else if (user.isDashing()) return dashGrab(user);
 		else return grab(user);
 	}
 
-	public Move selectC(Fighter user, Move charge, Move rightAerial, Move leftAerial){
-		if (user.isGrounded()) return charge;
-		else {
-			if (user.getDirection() == Fighter.Direction.LEFT) return leftAerial;
-			else return rightAerial;
+	public Move selectCharge(Fighter user) {
+		if (user.isGrounded()){
+			if (user.holdUp()) return uCharge(user);
+			else if (user.holdDown()) return dCharge(user);
+			else if (user.holdBack()) {
+				user.flip();
+				return sCharge(user);
+			}
+			else return sCharge(user);
 		}
+		else return selectAerial(user);
 	}
-	
+
+	private Move selectAerial(Fighter user){
+		if (user.holdUp()) return uAir(user);
+		else if (user.holdDown()) return dAir(user);
+		else if (user.holdForward()) return fAir(user);
+		else if (user.holdBack()) return bAir(user);
+		else return nAir(user);
+	}
+
 }

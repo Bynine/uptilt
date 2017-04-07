@@ -30,7 +30,7 @@ public abstract class Fighter extends Entity{
 
 	boolean doubleJumped = false;
 	public int queuedCommand = InputHandler.commandNone;
-	public final Timer inputQueueTimer = new Timer(4, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
+	public final Timer inputQueueTimer = new Timer(6, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
 	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(18, false);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
@@ -92,19 +92,20 @@ public abstract class Fighter extends Entity{
 			activeMove = null;
 		}
 	}
-	
+
 	void handleTouchHelper(Entity e){
 		if (e instanceof Fighter){
 			Fighter fi = (Fighter) e;
-			if (isTouching(fi, 18) && Math.abs(fi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1
+			int pushDistance = 16 + 2 * ((int) image.getWidth() - defaultTexture.getRegionWidth());
+			if (isTouching(fi, pushDistance) && Math.abs(fi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1
 					&& e.isGrounded() && isGrounded()){
 				pushAway(fi);
 				((Fighter) fi).pushAway(this);
 			}
 		}
-		
+
 	}
-	
+
 	private final float pushForce = 0.04f;
 	private void pushAway(Entity e){
 		float dirPush = Math.signum(e.position.x - this.position.x);
@@ -131,7 +132,7 @@ public abstract class Fighter extends Entity{
 			if (canAct() && noWalls && Math.signum(velocity.x) != direct()) flip();
 		}
 		else state = State.STAND;
-		if (prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid(this));
+		if (canAttack() && prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid(this));
 	}
 
 	private boolean isRun(){
@@ -165,8 +166,13 @@ public abstract class Fighter extends Entity{
 	}
 
 	private final float minTurn = 0.2f;
+	private final int minFrameTurn = 3;
 	void handleDirection(){
-		if (Math.abs(stickX) < unregisteredInputMax || !canAct() || !isGrounded() || state == State.CROUCH) return;
+		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH) return;
+		if (null != activeMove){
+			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !activeMove.isNoTurn();
+			if (!canAct() && !startAttackTurn) return;
+		}
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
 		boolean turnRight = stickX > minTurn && (prevStickX < minTurn)  && getDirection() == Direction.LEFT;
 		if (turnLeft || turnRight) flip();
@@ -258,7 +264,7 @@ public abstract class Fighter extends Entity{
 		startAttack(moveList.selectSpecialMove(this));
 		return true;
 	}
-	
+
 	public boolean tryBoost(){
 		if (isGrounded() || !canAct()) return false;
 		startAttack(moveList.boost(this));
@@ -278,35 +284,20 @@ public abstract class Fighter extends Entity{
 		return true; 
 	}
 
-	public boolean tryCUp(){
-		startAttack(moveList.selectC(this, moveList.uCharge(this), moveList.uAir(this), moveList.uAir(this))); 
-		return true;
-	}
-
-	public boolean tryCForward(){
-		startAttack(moveList.selectC(this, moveList.fCharge(this), moveList.fAir(this), moveList.bAir(this)));
-		return true;
-	}
-	
-	public boolean tryCBack(){
-		startAttack(moveList.selectC(this, moveList.bCharge(this), moveList.bAir(this), moveList.fAir(this)));
-		return true;
-	}
-	
-	public boolean tryCDown(){
-		startAttack(moveList.selectC(this, moveList.dCharge(this), moveList.dAir(this), moveList.dAir(this)));
+	public boolean tryCharge(){
+		startAttack(moveList.selectCharge(this)); 
 		return true; 
 	}
-	
+
 	public boolean tryStickUp(){
 		return true; 
 	}
-	
+
 	public boolean tryStickDown(){
 		return true; 
 	}
-	
-	private final float minDirect = 0.95f;
+
+	private final float minDirect = 0.9f;
 	public boolean holdUp() 		{ return -stickY > minDirect; }
 	public boolean holdDown()		{ return stickY > minDirect; }
 	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
@@ -330,7 +321,7 @@ public abstract class Fighter extends Entity{
 		attackTimer.end();
 	}
 
-	float directionalInfluenceAngle(Vector2 knockback){
+	private float directionalInfluenceAngle(Vector2 knockback){
 		Vector2 di = new Vector2(getInputHandler().getXInput(), getInputHandler().getYInput());
 		float parallelAngle = Math.round(knockback.angle() - di.angle());
 		double sin = Math.sin(parallelAngle * Math.PI/180);

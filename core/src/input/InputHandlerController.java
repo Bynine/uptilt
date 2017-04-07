@@ -22,10 +22,10 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	Controller controller;
 	final int lastXSize = 2;
 	final List<Float> lastXPositions = new ArrayList<Float>(lastXSize);
+	private float lastShoulderInput = 0;
+	
 	public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
 	public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
-	public static final int AXIS_RIGHT_X = 3; //-1 is left | +1 is right
-	public static final int AXIS_RIGHT_Y = 2; //-1 is up | +1 is down
 	public static final int AXIS_SHOULDER = 4;
 
 	public boolean setupController(int index){
@@ -37,20 +37,12 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	
 	private final float flick = 0.80f;
 	private final float pushed = 0.95f;
-	private float lastCX = 0;
-	private float lastCY = 0;
-	private float lastShoulder = 0;
 	public void update() {
 		super.update();
 		lastXPositions.add(controller.getAxis(AXIS_LEFT_X));
-		boolean jump = controller.getButton(commandJumpX);
-		if (!jump) jump = controller.getButton(commandJumpY);
-		if (lastCX < pushed && controller.getAxis(AXIS_RIGHT_X) > pushed) handleCommand(commandCRight);
-		if (lastCX > -pushed &&controller.getAxis(AXIS_RIGHT_X) < -pushed) handleCommand(commandCLeft);
-		if (lastCY < pushed && controller.getAxis(AXIS_RIGHT_Y) > pushed) handleCommand(commandCDown);
-		if (lastCY > -pushed &&controller.getAxis(AXIS_RIGHT_Y) < -pushed) handleCommand(commandCUp);
-		if ( (controller.getAxis(AXIS_SHOULDER) > pushed && lastShoulder < pushed) || 
-				controller.getAxis(AXIS_SHOULDER) < -pushed && lastShoulder > -pushed) player.tryBoost();
+		boolean jump = controller.getButton(commandJump);
+		if ( (controller.getAxis(AXIS_SHOULDER) > pushed && lastShoulderInput < pushed) || 
+				controller.getAxis(AXIS_SHOULDER) < -pushed && lastShoulderInput > -pushed) player.tryBoost();
 		
 		float prevX = lastXPositions.remove(0);
 		float curX = lastXPositions.get(lastXSize - 1);
@@ -59,14 +51,12 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 			if (Math.signum(curX) == 1) handleCommand(commandStickRight);
 			if (Math.signum(curX) == -1) handleCommand(commandStickLeft);
 		}
-		lastCX = controller.getAxis(AXIS_RIGHT_X);
-		lastCY = controller.getAxis(AXIS_RIGHT_Y);
-		lastShoulder = controller.getAxis(AXIS_SHOULDER);
+		lastShoulderInput = controller.getAxis(AXIS_SHOULDER);
 		player.handleJumpCommand(jump);
 	}
 
 	public boolean isCharging() {
-		return Math.abs(controller.getAxis(AXIS_RIGHT_X)) > pushed || Math.abs(controller.getAxis(AXIS_RIGHT_Y)) > pushed;
+		return controller.getButton(commandCharge);
 	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {

@@ -44,13 +44,13 @@ public abstract class Brain{
 				else body.xInput = -1;
 				if (pack.isBelowStage){
 					if (!pack.hasDoubleJumped) {
-						body.handleCommand(InputHandler.commandJumpX);
+						body.handleCommand(InputHandler.commandJump);
 						waitToUseUpSpecial.restart();
 					}
 					else if (waitToUseUpSpecial.timeUp()) body.handleCommand(InputHandler.commandSpecial);
 				}
 			}
-			if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJumpX);
+			if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJump);
 			changeDI.countUp();
 			waitToUseUpSpecial.countUp();
 			if (changeDI.timeUp()) changeDI(); 
