@@ -3,7 +3,9 @@ package maps;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.UptiltEngine;
 import moves.ActionCircle;
+
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObject;
@@ -85,6 +87,8 @@ public abstract class Room {
 	}
 
 	public abstract TiledMap getMap();
+	public abstract int[] getSides();
+	public abstract float getFloor();
 
 	public List<Rectangle> getRectangleList(){ return rectangleList; }
 	public List<Entity> getEntityList(){ return entityList; }

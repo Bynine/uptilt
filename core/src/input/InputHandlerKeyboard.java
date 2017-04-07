@@ -1,10 +1,16 @@
-package main;
+package input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 
+import entities.Fighter;
+
 public class InputHandlerKeyboard extends InputHandler implements InputProcessor{
+
+	public InputHandlerKeyboard(Fighter player) {
+		super(player);
+	}
 
 	@Override
 	public void update() {

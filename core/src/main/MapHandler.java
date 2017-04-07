@@ -54,7 +54,7 @@ public class MapHandler {
 		}
 		if (player.isOOB(mapWidth, mapHeight)) resetRoom();
 	}
-	
+
 	static void updateActionCircleInteractions(){
 		for (Entity en: activeRoom.getEntityList()){
 			if (en instanceof Fighter) {
@@ -72,7 +72,7 @@ public class MapHandler {
 			if (ac.toRemove()) actionCircleIter.remove();
 		}
 	}
-	
+
 	private static void removeGrabboxes(){
 		Iterator<ActionCircle> actionCircleIter = activeRoom.getActionCircleList().iterator();
 		while (actionCircleIter.hasNext()) {
@@ -103,5 +103,13 @@ public class MapHandler {
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }
 	public static void addActionCircle(ActionCircle ac){ activeRoom.addActionCircle(ac); }
+	public static int[] getStageSides() { 
+		if (activeRoom == null) return new int[]{0, 0};
+		else return activeRoom.getSides();
+	}
+	public static float getStageFloor() {
+		if (activeRoom == null) return 0;
+		else return activeRoom.getFloor();
+	}
 
 }

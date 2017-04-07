@@ -15,7 +15,7 @@ public class Grabbox extends ActionCircle {
 		if (!didHitTarget(target)) return;
 		
 		target.takeGrab(user, target, caughtTimeFormula(target));
-		hit = true;
+		remove = true;
 	}
 	
 	private final int minGrabTime = 20;

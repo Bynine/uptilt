@@ -65,7 +65,8 @@ public class Hitbox extends ActionCircle{
 	private final float meteorGroundMod = -0.75f;
 	public void hitTarget(Fighter target){
 		if (!didHitTarget(target)) return;
-
+		
+		refreshTimer.restart();
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
 		knockback.set(knockbackFormula(target), knockbackFormula(target));
@@ -81,7 +82,7 @@ public class Hitbox extends ActionCircle{
 		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
 
 		UptiltEngine.causeHitlag( hitlagFormula(knockbackFormula(target)) );
-		hit = true;
+		initialHit = true;
 	}
 
 	private final float minSamuraiKnockback = 4;
@@ -117,6 +118,12 @@ public class Hitbox extends ActionCircle{
 	
 	public void update(int deltaTime){
 		super.update(deltaTime);
+		refreshTimer.countUp();
+		if (doesRefresh && refreshTimer.timeUp()){
+			reset();
+			if (group != null) for (ActionCircle ac: group.connectedCircles) ac.reset();
+			refreshTimer.restart();
+		}
 	}
 
 	public enum Property { NORMAL, ELECTRIC }

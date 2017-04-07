@@ -1,5 +1,7 @@
 package maps;
 
+import main.GlobalRepo;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 
@@ -15,5 +17,13 @@ public class Room_Flat extends Room {
 
 	public TiledMap getMap() {
 		return tmxMapLoader.load("maps/flat.tmx");
+	}
+
+	public int[] getSides() {
+		return new int[]{30 * GlobalRepo.TILE, 70 * GlobalRepo.TILE};
+	}
+
+	public float getFloor() {
+		return 10 * GlobalRepo.TILE;
 	}
 }

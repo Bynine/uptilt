@@ -1,4 +1,4 @@
-package main;
+package input;
 
 import entities.Fighter;
 
@@ -10,7 +10,7 @@ public abstract class InputHandler {
 	public static final int commandCUp		=30, commandCLeft 		= 31, commandCRight		= 32,commandCDown 		= 33;
 
 	Fighter player;
-	void begin(Fighter player){
+	public InputHandler(Fighter player){
 		this.player = player;
 	}
 

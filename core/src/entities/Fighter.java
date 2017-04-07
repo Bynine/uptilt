@@ -1,11 +1,13 @@
 package entities;
 
+import input.InputHandler;
+import input.InputHandlerKeyboard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
-import main.InputHandler;
 import moves.Move;
 import moves.MoveList;
 import moves.MoveList_Kicker;
@@ -26,10 +28,10 @@ public abstract class Fighter extends Entity{
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
 
-	private boolean doubleJumped = false;
+	boolean doubleJumped = false;
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(4, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
-	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(24, false);
+	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(18, false);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
 	int jumpSquatFrames = 4;
@@ -42,23 +44,24 @@ public abstract class Fighter extends Entity{
 	Move activeMove = null;
 	float percentage = 0;
 	float weight = 100;
-	final InputHandler inputHandler;
+	private InputHandler inputHandler = new InputHandlerKeyboard(this);
+	private float initialHitAngle = 0;
 	final Vector2 spawnPoint;
 	MoveList moveList = new MoveList_Kicker();
 
-	public Fighter(float posX, float posY, InputHandler inputHandler) {
+	public Fighter(float posX, float posY) {
 		super(posX, posY);
 		spawnPoint = new Vector2(posX, posY);
-		this.inputHandler = inputHandler;
+		this.setInputHandler(inputHandler);
 		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer, grabbingTimer, dashTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-		stickX = inputHandler.getXInput();
-		stickY = inputHandler.getYInput();
-		inputHandler.update();
+		stickX = getInputHandler().getXInput();
+		stickY = getInputHandler().getYInput();
+		getInputHandler().update();
 
 		if (!grabbingTimer.timeUp()) handleThrow();
 		if (null != activeMove) handleMove();
@@ -114,10 +117,12 @@ public abstract class Fighter extends Entity{
 		prevState = state;
 	}
 
+	private float minCrouchHold = 0.9f;
+	private float minRunHold = 0.5f;
 	private void updateGroundedState(){
 		if (!inGroundedState()) ground();
-		if (stickY > 0.5f) state = State.CROUCH;
-		else if (Math.abs(stickX) > 0.5f){
+		if (stickY > minCrouchHold) state = State.CROUCH;
+		else if (Math.abs(stickX) > minRunHold){
 			if (isRun()) state = State.RUN;
 			else if (state == State.DASH && !dashTimer.timeUp()) state = State.DASH;
 			else state = State.WALK;
@@ -126,7 +131,7 @@ public abstract class Fighter extends Entity{
 			if (canAct() && noWalls && Math.signum(velocity.x) != direct()) flip();
 		}
 		else state = State.STAND;
-		if (prevState == State.RUN && (Math.signum(velocity.x) != Math.signum(stickX) )) startAttack(moveList.skid(this));
+		if (prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid(this));
 	}
 
 	private boolean isRun(){
@@ -184,7 +189,8 @@ public abstract class Fighter extends Entity{
 	}
 
 	void limitSpeeds(){
-		if (hitstunTimer.timeUp() && velocity.y < fallSpeed) velocity.y = fallSpeed;
+		boolean notAMeteor = initialHitAngle > 0 && initialHitAngle < 180;
+		if ((hitstunTimer.timeUp() || notAMeteor) && velocity.y < fallSpeed) velocity.y = fallSpeed;
 	}
 
 	private void addSpeed(float speed, float acc){ 
@@ -209,6 +215,7 @@ public abstract class Fighter extends Entity{
 	private void jump(){
 		jumpTimer.restart();
 		if (velocity.y < 0) velocity.y = 0;
+		velocity.x += 2 * stickX;
 		getVelocity().y += jumpStrength;
 	}
 
@@ -238,6 +245,7 @@ public abstract class Fighter extends Entity{
 		getVelocity().y = doubleJumpStrength;
 		if (prevStickX < -unregisteredInputMax && velocity.x > 0) velocity.x = 0; 
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
+		velocity.x += 4 * stickX;
 		doubleJumped = true;
 	}
 
@@ -298,7 +306,7 @@ public abstract class Fighter extends Entity{
 		return true; 
 	}
 	
-	private final float minDirect = 0.9f;
+	private final float minDirect = 0.95f;
 	public boolean holdUp() 		{ return -stickY > minDirect; }
 	public boolean holdDown()		{ return stickY > minDirect; }
 	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
@@ -313,13 +321,17 @@ public abstract class Fighter extends Entity{
 	public void takeKnockback(Vector2 knockback, float DAM, int hitstun) {
 		knockback.setAngle(directionalInfluenceAngle(knockback));
 		velocity.set(knockback);
+		initialHitAngle = knockback.angle();
 		percentage += DAM;
 		hitstunTimer.setEndTime(hitstun);
 		hitstunTimer.restart();
+		if (state == State.HELPLESS) state = State.FALL;
+		activeMove = null;
+		attackTimer.end();
 	}
 
 	float directionalInfluenceAngle(Vector2 knockback){
-		Vector2 di = new Vector2(inputHandler.getXInput(), inputHandler.getYInput());
+		Vector2 di = new Vector2(getInputHandler().getXInput(), getInputHandler().getYInput());
 		float parallelAngle = Math.round(knockback.angle() - di.angle());
 		double sin = Math.sin(parallelAngle * Math.PI/180);
 		int signMod = 1;
@@ -357,7 +369,7 @@ public abstract class Fighter extends Entity{
 			activeMove = null;
 			attackTimer.end();
 		}
-		//if (activeMove == null) startAttack(moveList.land(this));
+		if (activeMove == null) startAttack(moveList.land(this));
 		doubleJumped = false;
 	}
 
@@ -387,14 +399,19 @@ public abstract class Fighter extends Entity{
 	public InputHandler getInputHandler() { return inputHandler; }
 
 	public boolean canAttack() { return canAct() && state != State.WALLSLIDE; }
-	public boolean canAct(){  return attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
+	public boolean canAct(){  return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
 	private boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
 	public boolean isDashing() { return state == State.RUN || state == State.DASH; }
 	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0; }
 	private boolean inGroundedState() { return groundedStates.contains(state);}
 	public boolean isCharging() {
-		if (null == inputHandler) return false;
-		else return inputHandler.isCharging();
+		if (null == getInputHandler()) return false;
+		else return getInputHandler().isCharging();
+	}
+	public InputPackage getInputPackage() { return new InputPackage(this); }
+
+	public void setInputHandler(InputHandler inputHandler) {
+		this.inputHandler = inputHandler;
 	}
 
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH));

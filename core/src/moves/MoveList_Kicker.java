@@ -21,7 +21,7 @@ public class MoveList_Kicker extends MoveList{
 		Move m = new Move(user, 28);
 		m.setAnimation("sprites/player/uweak.png", 5, 6);
 		Hitbox knee = new Hitbox(user, 4, 0, 3, 90, 24, 0, 12);
-		Hitbox kick = new Hitbox(user, 3, 3, 7, 85, 20, 12, 24);
+		Hitbox kick = new Hitbox(user, 3, 3, 7, 85, 22, 28, 12);
 		m.actionList.addActionCircle(knee, 5, 8);
 		m.actionList.addActionCircle(kick, 18, 20);
 		return m;
@@ -55,6 +55,8 @@ public class MoveList_Kicker extends MoveList{
 		m.actionList.addConstantVelocity(user, 2, 12, user.direct() * 12, Action.ChangeVelocity.noChange);
 		Hitbox early = new Hitbox(user, 3, 3, 10, 65, 16, -4, 20);
 		Hitbox late = new Hitbox(user, 2, 2, 7, 90, 24, -4, 14);
+		early.setRefresh(6);
+		late.setRefresh(6);
 		new ActionCircleGroup(Arrays.asList(early, late));
 		m.actionList.addActionCircle(early, 4, 8);
 		m.actionList.addActionCircle(late, 9, 20);
@@ -67,9 +69,9 @@ public class MoveList_Kicker extends MoveList{
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/player/scharge.png", 6, 5);
 		Effect.Charge c = new Charge(3, 23, 0.02f, user, m);
-		Hitbox h1 = new Hitbox(user, 3, 4, 15, 60, 16, 0, 8, c);
-		Hitbox h2 = new Hitbox(user, 4, 5, 18, 52, 30, 0, 8, c);
-		Hitbox h3 = new Hitbox(user, 6, 6, 22, 42, 40, 0, 10, c);
+		Hitbox h1 = new Hitbox(user, 3, 4, 15, 60, 16, 4, 8, c);
+		Hitbox h2 = new Hitbox(user, 4, 5, 18, 52, 26, 4, 8, c);
+		Hitbox h3 = new Hitbox(user, 6, 6, 22, 42, 36, 4, 10, c);
 		new ActionCircleGroup(Arrays.asList(h1, h2, h3));
 		m.actionList.addCharge(user, c);
 		m.actionList.addActionCircle(h1, 12, 16);
@@ -82,11 +84,11 @@ public class MoveList_Kicker extends MoveList{
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/player/ucharge.png", 4, 8);
 		Effect.Charge c = new Charge(3, 23, 0.02f, user, m);
-		Hitbox h1 = new Hitbox(user, 4, 5, 17, 90, 26, -16, 16, c);
-		Hitbox h2 = new Hitbox(user, 4, 4, 16, 87, 20, 8, 16, c);
-		Hitbox h3 = new Hitbox(user, 3, 4, 15, 84,  0,  26,16, c);
-		Hitbox h4 = new Hitbox(user, 3, 3, 14, 70,-20, 8, 16, c);
-		Hitbox h5 = new Hitbox(user, 2, 3, 13, 30,-26, -16, 16, c);
+		Hitbox h1 = new Hitbox(user, 4, 5, 17, 90, 26,-16, 16, c);
+		Hitbox h2 = new Hitbox(user, 4, 4, 16, 87, 20, 16, 16, c);
+		Hitbox h3 = new Hitbox(user, 3, 4, 15, 84,  0, 26, 16, c);
+		Hitbox h4 = new Hitbox(user, 3, 3, 14, 70,-20, 16, 16, c);
+		Hitbox h5 = new Hitbox(user, 2, 3, 13, 30,-26,-16, 16, c);
 		new ActionCircleGroup(Arrays.asList(h1, h2, h3, h4, h5));
 		m.actionList.addCharge(user, c);
 		m.actionList.addActionCircle(h1, 8, 9);
@@ -117,10 +119,10 @@ public class MoveList_Kicker extends MoveList{
 	public Move nAir(Fighter user) {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/player/nair.png", 1, 1);
-		Hitbox earlyBody = new Hitbox(user, 2, 3, 11, 60, -10, 0, 20);
-		Hitbox earlyFoot = new Hitbox(user, 2, 3, 12, 60, 24, -6, 12);
-		Hitbox lateBody = new Hitbox(user, 1, 2, 8, 60, -10, 0, 16);
-		Hitbox lateFoot = new Hitbox(user, 1, 2, 9, 60, 24, -6, 8);
+		Hitbox earlyBody = new Hitbox(user, 2, 2, 11, 60, -10, 0, 20);
+		Hitbox earlyFoot = new Hitbox(user, 2, 2, 12, 60, 24, -6, 12);
+		Hitbox lateBody = new Hitbox(user, 1, 1.3f, 8, 60, -10, 0, 16);
+		Hitbox lateFoot = new Hitbox(user, 1, 1.3f, 9, 60, 24, -6, 8);
 		new ActionCircleGroup(Arrays.asList(earlyBody, earlyFoot, lateBody, lateFoot));
 		m.actionList.addActionCircle(earlyBody, 3, 6);
 		m.actionList.addActionCircle(earlyFoot, 3, 6);
@@ -144,15 +146,15 @@ public class MoveList_Kicker extends MoveList{
 		Hitbox h1 = new Hitbox(user, 3, 3, 11, 270, 0, -16, 12);
 		Hitbox h2 = new Hitbox(user, 3, 4, 14, 270, 0, -28, 16);
 		new ActionCircleGroup(Arrays.asList(h1, h2));
-		m.actionList.addActionCircle(h1, 10, 14);
-		m.actionList.addActionCircle(h2, 10, 14);
+		m.actionList.addActionCircle(h1, 11, 17);
+		m.actionList.addActionCircle(h2, 11, 17);
 		return m;
 	}
 
 	public Move fAir(Fighter user) {
 		Move m = new Move(user, 36);
 		m.setAnimation("sprites/player/fair.png", 1, 1);
-		Hitbox early = new Hitbox(user, 4, 5, 15, 30, 24, 0, 16);
+		Hitbox early = new Hitbox(user, 3, 5, 14, 30, 24, 0, 16);
 		Hitbox late = new Hitbox(user, 1, 2, 5, Hitbox.SAMURAIANGLE, 27, 0, 10);
 		early.setProperty(Hitbox.Property.ELECTRIC);
 		new ActionCircleGroup(Arrays.asList(early, late));
@@ -216,6 +218,8 @@ public class MoveList_Kicker extends MoveList{
 		m.actionList.addConstantVelocity(user, 2, 12, user.direct() * 12, Action.ChangeVelocity.noChange);
 		Hitbox early = new Hitbox(user, 6, 3, 13, Hitbox.SAMURAIANGLE, 16, -4, 20);
 		Hitbox late = new Hitbox(user, 3, 3, 9, 80, 24, -4, 14);
+		early.setRefresh(4);
+		late.setRefresh(5);
 		new ActionCircleGroup(Arrays.asList(early, late));
 		m.actionList.addActionCircle(early, 4, 8);
 		m.actionList.addActionCircle(late, 9, 32);
@@ -286,7 +290,7 @@ public class MoveList_Kicker extends MoveList{
 		Move m = new Move(user, 8);
 		m.setAnimation("sprites/player/uthrow.png", 1, 1);
 		m.actionList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 4);
-		Hitbox h1 = new Hitbox(user, 4, 3, 7, 90, 16, 0, 20);
+		Hitbox h1 = new Hitbox(user, 4, 1.5f, 7, 90, 16, 0, 20);
 		m.actionList.addActionCircle(h1, 0, 1);
 		return m;
 	}
@@ -303,7 +307,7 @@ public class MoveList_Kicker extends MoveList{
 	public Move grab(Fighter user) {
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/player/grab.png", 1, 1);
-		Grabbox g1 = new Grabbox(user, 20, 0, 18);
+		Grabbox g1 = new Grabbox(user, 12, 0, 24);
 		m.actionList.addActionCircle(g1, 6, 10);
 		return m;
 	}
@@ -312,7 +316,7 @@ public class MoveList_Kicker extends MoveList{
 		Move m = new Move(user, 32);
 		m.setAnimation("sprites/player/dashgrab.png", 1, 1);
 		m.actionList.addVelocityChange(user, 4, user.direct() * 6, Action.ChangeVelocity.noChange);
-		Grabbox g1 = new Grabbox(user, 20, 0, 18);
+		Grabbox g1 = new Grabbox(user, 12, 0, 24);
 		m.actionList.addActionCircle(g1, 6, 10);
 		return m;
 	}
@@ -320,7 +324,7 @@ public class MoveList_Kicker extends MoveList{
 	public Move airGrab(Fighter user) {
 		Move m = new Move(user, 32);
 		m.setAnimation("sprites/player/airgrab.png", 1, 1);
-		Grabbox g1 = new Grabbox(user, 8, 0, 22);
+		Grabbox g1 = new Grabbox(user, 14, 0, 24);
 		m.actionList.addActionCircle(g1, 7, 10);
 		return m;
 	}
@@ -328,7 +332,7 @@ public class MoveList_Kicker extends MoveList{
 	/* MISC */
 	
 	public Move land(Fighter user){
-		Move m = new Move(user, 3);
+		Move m = new Move(user, 4);
 		m.setAnimation("sprites/player/crouch.png", 1, 1);
 		return m;
 	}

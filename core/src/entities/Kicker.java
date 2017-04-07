@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import main.InputHandler;
-
 public class Kicker extends Fighter {
 
 	private TextureRegion standImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/stand.png")));
@@ -19,9 +17,9 @@ public class Kicker extends Fighter {
 	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/helpless.png")));
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/dash.png")));
 
-	public Kicker(float posX, float posY, InputHandler inputHandler) {
-		super(posX, posY, inputHandler);
-		runAcc = 1.6f;
+	public Kicker(float posX, float posY) {
+		super(posX, posY);
+		runAcc = 2.1f;
 		runSpeed = 10f;
 		walkAcc = 0.9f;
 		walkSpeed = 4.8f;

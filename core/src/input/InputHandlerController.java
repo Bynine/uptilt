@@ -1,4 +1,4 @@
-package main;
+package input;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,12 @@ import entities.Fighter;
 
 public class InputHandlerController extends InputHandler implements ControllerListener {
 
+	public InputHandlerController(Fighter player) {
+		super(player);
+		this.player = player;
+		for (int i = 0; i < lastXSize; ++i) lastXPositions.add((float) 0);
+	}
+
 	Controller controller;
 	final int lastXSize = 2;
 	final List<Float> lastXPositions = new ArrayList<Float>(lastXSize);
@@ -22,12 +28,6 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	public static final int AXIS_RIGHT_Y = 2; //-1 is up | +1 is down
 	public static final int AXIS_SHOULDER = 4;
 
-	void begin(Fighter player){
-		super.begin(player);
-		this.player = player;
-		for (int i = 0; i < lastXSize; ++i) lastXPositions.add((float) 0);
-	}
-
 	public boolean setupController(int index){
 		Controllers.addListener(this);
 		if (Controllers.getControllers().size == 0) return false;
@@ -35,7 +35,7 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 		return true;
 	}
 	
-	private final float flick = 0.86f;
+	private final float flick = 0.80f;
 	private final float pushed = 0.95f;
 	private float lastCX = 0;
 	private float lastCY = 0;

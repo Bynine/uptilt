@@ -1,5 +1,8 @@
 package main;
 
+import input.InputHandlerController;
+import input.InputHandlerKeyboard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,20 +23,17 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static Fighter player1;
 
 	@Override public void create () {
-		InputHandlerController ch = new InputHandlerController();
+		player1 = new Kicker(0, 0);
+		InputHandlerController ch = new InputHandlerController(player1);
 		if (!ch.setupController(0)) startWithKeyboard();
-		else{
-			player1 = new Kicker(0, 0, ch);
-			ch.begin(player1);
-		}
+		else player1.setInputHandler(ch);
 		GraphicsHandler.begin();
 		MapHandler.begin(player1);
 	}
 
 	private void startWithKeyboard(){
-		InputHandlerKeyboard kh = new InputHandlerKeyboard();
-		player1 = new Kicker(0, 0, kh);
-		kh.begin(player1);
+		InputHandlerKeyboard kh = new InputHandlerKeyboard(player1);
+		player1.setInputHandler(kh);
 	}
 
 	@Override public void render () {
@@ -65,6 +65,6 @@ public class UptiltEngine extends ApplicationAdapter {
 
 	static float getVolume(){ return volume; }
 	static int getDeltaTime(){ return deltaTime; }
-	static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
+	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
 
 }

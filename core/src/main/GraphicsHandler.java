@@ -22,15 +22,15 @@ public class GraphicsHandler {
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final int camAdjustmentSpeed = 8;
-	private static final float ZOOM = 1/1f;
+	private static final float ZOOM = 1/2f;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
 	private static boolean debug = true;
 	
-	public static final int SCREENWIDTH  = (int) ((60 * GlobalRepo.TILE)/ZOOM);
-	public static final int SCREENHEIGHT = (int) ((40 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
 	
 	public static void begin() {
 		batch = new SpriteBatch();

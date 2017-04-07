@@ -1,8 +1,9 @@
 package entities;
 
-import java.util.List;
+import input.Brain;
+import input.InputHandlerCPU;
 
-import main.InputHandlerCPU;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,7 +16,8 @@ public class Dummy extends Fighter {
 	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.PNG")));
 
 	public Dummy(float posX, float posY) {
-		super(posX, posY, new InputHandlerCPU());
+		super(posX, posY);
+		setInputHandler(new InputHandlerCPU(this, Brain.Recover.class));
 		image = new Sprite(texture);
 		gravity = -0.5f;
 		weight = 125;

@@ -1,5 +1,6 @@
 package moves;
 
+import main.UptiltEngine;
 import moves.Hitbox.Property;
 import timers.Timer;
 
@@ -14,8 +15,10 @@ public abstract class ActionCircle {
 	final Fighter user;
 	final float dispX, dispY;
 	final Circle area;
-	Timer duration = new Timer(5, true);
-	boolean hit;
+	final Timer duration = new Timer(5, true);
+	final Timer refreshTimer = new Timer(6, true);
+	boolean initialHit, remove = false;
+	boolean doesRefresh = false;
 	Property property = Property.NORMAL;
 	ActionCircleGroup group = null;
 
@@ -23,15 +26,14 @@ public abstract class ActionCircle {
 		this.user = user;
 		this.dispX = dispX;
 		this.dispY = dispY;
-		area = new Circle(user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX), 
-				user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY, size);
+		area = new Circle(getX(), getY(), size);
 	}
 
 	public abstract void hitTarget(Fighter target);
 	public abstract Color getColor();
 
 	public void checkGroup(){ 
-		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.hit) hit = true;
+		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.initialHit) remove = true;
 	}
 
 	public void setDuration(int dur){
@@ -40,19 +42,33 @@ public abstract class ActionCircle {
 
 	public void update(int deltaTime){
 		duration.countUp();
-		area.x += user.getVelocity().x;
-		area.y += user.getVelocity().y;
+		if (UptiltEngine.outOfHitlag()){
+			area.x += user.getVelocity().x;
+			area.y += user.getVelocity().y;
+			if (initialHit) remove = true;
+		}
 	}
 
 	public void updatePosition() {
-		area.setX(user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX));
-		area.setY(user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY);
+		area.setX(getX());
+		area.setY(getY());
 	}
 
+	public void reset(){
+		remove = false;
+		initialHit = false;
+	}
+
+	private float getX(){ return user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX); }
+	private float getY(){ return user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY; }
 	public Circle getArea(){ return area; }
-	public boolean toRemove() { return duration.timeUp() || hit; }
+	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 
-		return !user.attackTimer.timeUp() && target != user && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()); 
+		return !remove && !user.attackTimer.timeUp() && target != user && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()); 
+	}
+	public void setRefresh(int time) { 
+		refreshTimer.setEndTime(time);
+		doesRefresh = true; 
 	}
 
 }
