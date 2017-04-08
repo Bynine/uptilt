@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
+import main.SFX;
+import moves.Hitbox;
 import moves.Move;
 import moves.MoveList;
 import moves.MoveList_Kicker;
@@ -32,6 +34,7 @@ public abstract class Fighter extends Entity{
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(6, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
 	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(18, false);
+	private final Timer knockIntoTimer = new Timer(20, false);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
 	int jumpSquatFrames = 4;
@@ -44,16 +47,18 @@ public abstract class Fighter extends Entity{
 	Move activeMove = null;
 	float percentage = 0;
 	float weight = 100;
+	float armor = 0;
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private float initialHitAngle = 0;
 	final Vector2 spawnPoint;
+	int team = 0;
 	MoveList moveList = new MoveList_Kicker();
 
 	public Fighter(float posX, float posY) {
 		super(posX, posY);
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
-		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer, grabbingTimer, dashTimer));
+		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer, grabbingTimer, dashTimer, knockIntoTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 	}
@@ -102,6 +107,9 @@ public abstract class Fighter extends Entity{
 				pushAway(fi);
 				((Fighter) fi).pushAway(this);
 			}
+			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > 3;
+			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && team == fi.team && !fi.hitstunTimer.timeUp();
+			if (knockInto && isTouching(fi, 0) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) knockBack(fi);
 		}
 
 	}
@@ -110,6 +118,19 @@ public abstract class Fighter extends Entity{
 	private void pushAway(Entity e){
 		float dirPush = Math.signum(e.position.x - this.position.x);
 		velocity.x -= dirPush * pushForce;
+	}
+
+	private final float knockbackDilute = 0.75f;
+	private void knockBack(Fighter fi){
+		Vector2 knockIntoVector = new Vector2(fi.velocity.x, fi.velocity.y);
+		knockIntoVector.x *= knockbackDilute;
+		knockIntoVector.y *= knockbackDilute;
+		float damage = (Math.abs(fi.velocity.x) +  Math.abs(fi.velocity.y)) / 3;
+		knockIntoVector.setAngle((fi.velocity.angle() + 90) / 2);
+		takeKnockback(knockIntoVector, damage, Hitbox.hitstunFormula(damage) );
+		fi.knockIntoTimer.restart();
+		knockIntoTimer.restart();
+		new SFX.LightHit().play();
 	}
 
 	void updateState(){
@@ -297,7 +318,7 @@ public abstract class Fighter extends Entity{
 		return true; 
 	}
 
-	private final float minDirect = 0.9f;
+	private final float minDirect = 0.85f;
 	public boolean holdUp() 		{ return -stickY > minDirect; }
 	public boolean holdDown()		{ return stickY > minDirect; }
 	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
@@ -313,9 +334,9 @@ public abstract class Fighter extends Entity{
 		knockback.setAngle(directionalInfluenceAngle(knockback));
 		velocity.set(knockback);
 		initialHitAngle = knockback.angle();
-		percentage += DAM;
 		hitstunTimer.setEndTime(hitstun);
 		hitstunTimer.restart();
+		percentage += DAM;
 		if (state == State.HELPLESS) state = State.FALL;
 		activeMove = null;
 		attackTimer.end();
@@ -388,6 +409,7 @@ public abstract class Fighter extends Entity{
 	public float getStickX() { return stickX; }
 	public float getStickY() { return stickY; }
 	public InputHandler getInputHandler() { return inputHandler; }
+	private float knockbackIntensity(Vector2 knockback) { return Math.abs(knockback.x) + Math.abs(knockback.y); }
 
 	public boolean canAttack() { return canAct() && state != State.WALLSLIDE; }
 	public boolean canAct(){  return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
@@ -400,6 +422,8 @@ public abstract class Fighter extends Entity{
 		else return getInputHandler().isCharging();
 	}
 	public InputPackage getInputPackage() { return new InputPackage(this); }
+	public void setArmor(float armor) { this.armor = armor; }
+	public float getArmor() { return armor; }
 
 	public void setInputHandler(InputHandler inputHandler) {
 		this.inputHandler = inputHandler;

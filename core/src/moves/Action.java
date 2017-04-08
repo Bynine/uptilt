@@ -1,11 +1,9 @@
 package moves;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-
 import entities.Fighter;
 import entities.Projectile;
 import main.MapHandler;
+import main.SFX;
 
 public abstract class Action {
 
@@ -43,15 +41,15 @@ public abstract class Action {
 		}
 	}
 	
-	public static class SFX extends Action{
-		final Sound sfx;
-
-		SFX(String sfxUrl){
-			 sfx = Gdx.audio.newSound(Gdx.files.internal(sfxUrl));
+	public static class PlaySFX extends Action{
+		final SFX sfx;
+		
+		PlaySFX(SFX sfx){
+			this.sfx = sfx;
 		}
 		
 		void performAction() {
-			sfx.play(0.01f);
+			sfx.play();
 		}
 		
 	}

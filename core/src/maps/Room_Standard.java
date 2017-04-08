@@ -20,7 +20,7 @@ public class Room_Standard extends Room {
 	}
 	
 	public int[] getSides() {
-		return new int[]{25 * GlobalRepo.TILE, 65 * GlobalRepo.TILE};
+		return new int[]{35 * GlobalRepo.TILE, 75 * GlobalRepo.TILE};
 	}
 
 	public float getFloor() {

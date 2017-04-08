@@ -3,6 +3,7 @@ package moves;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.SFX;
 import moves.Effect.Charge;
 import entities.Fighter;
 import entities.Projectile;
@@ -36,8 +37,8 @@ public class EventList {
 		actionStartTimes.add(start);
 	}
 	
-	void addSound(String sfxUrl, int start){
-		actionList.add(new Action.SFX(sfxUrl));
+	void addSound(SFX sfx, int start){
+		actionList.add(new Action.PlaySFX(sfx));
 		actionStartTimes.add(start);
 	}
 	

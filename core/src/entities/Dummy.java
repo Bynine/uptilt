@@ -17,6 +17,7 @@ public class Dummy extends Fighter {
 
 	public Dummy(float posX, float posY) {
 		super(posX, posY);
+		team = 1;
 		setInputHandler(new InputHandlerCPU(this, Brain.Recover.class));
 		image = new Sprite(texture);
 		gravity = -0.5f;

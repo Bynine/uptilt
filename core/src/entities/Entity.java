@@ -111,7 +111,7 @@ public abstract class Entity {
 		/* */
 	}
 
-	private void setupRectangles(List<Rectangle> mapRectangleList, List<Entity> entityList){
+	void setupRectangles(List<Rectangle> mapRectangleList, List<Entity> entityList){
 		tempRectangleList.clear();
 		tempRectangleList.addAll(mapRectangleList);
 		for (Entity en: entityList){

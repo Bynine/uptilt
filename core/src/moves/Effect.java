@@ -15,6 +15,7 @@ public abstract class Effect extends Action{
 	
 	public int getStart(){ return start; }
 	public int getEnd() { return end; }
+	abstract void finish();
 	
 	public static class ConstantVelocity extends Effect{
 		float velX, velY;
@@ -31,6 +32,10 @@ public abstract class Effect extends Action{
 		void performAction(){
 			if (velX != noChange) user.getVelocity().x = velX * user.direct();
 			if (velY != noChange) user.getVelocity().y = velY;
+		}
+
+		void finish() {
+
 		}
 	}
 	
@@ -64,6 +69,10 @@ public abstract class Effect extends Action{
 		
 		float getHeldCharge(){
 			return heldCharge;
+		}
+
+		void finish() {
+			
 		}
 	}
 	

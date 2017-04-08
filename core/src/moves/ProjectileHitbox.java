@@ -1,5 +1,8 @@
 package moves;
 
+import main.SFX;
+import main.UptiltEngine;
+
 import com.badlogic.gdx.math.Intersector;
 
 import entities.Fighter;
@@ -10,8 +13,8 @@ public class ProjectileHitbox extends Hitbox {
 	final Projectile proj;
 
 	public ProjectileHitbox(Fighter user, float BKB, float KBG, float DAM,
-			float ANG, float dispX, float dispY, int size, Projectile proj, int dur) {
-		super(user, BKB, KBG, DAM, ANG, dispX, dispY, size);
+			float ANG, float dispX, float dispY, int size, SFX sfx, Projectile proj, int dur) {
+		super(user, BKB, KBG, DAM, ANG, dispX, dispY, size, sfx);
 		this.proj = proj;
 		if (null == user) area.set(getX(), getY(), size);
 		else area.set(getX() + (user.direct() * dispX), getY(), size);
@@ -39,7 +42,8 @@ public class ProjectileHitbox extends Hitbox {
 	}
 	
 	void startHitlag(Fighter target){
-		/* projectiles don't cause hitlag */
+		int hitlag = hitlagFormula(knockbackFormula(target)) - 2;
+		if (hitlag > 1) UptiltEngine.causeHitlag(hitlag);
 	}
 
 }

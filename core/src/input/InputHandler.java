@@ -6,6 +6,7 @@ public abstract class InputHandler {
 
 	public static final int commandNone		=-1, commandSpecial	= 1, commandAttack	= 0;
 	public static final int commandJump	= 2, commandCharge	= 3, commandBlock	= 4, commandGrab = 5;
+	public static final int commandTaunt = 6;
 	public static final int commandStickUp 	=20, commandStickLeft	= 21, commandStickRight	= 22,commandStickDown	= 23;
 
 	Fighter player;

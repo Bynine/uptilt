@@ -27,7 +27,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
@@ -109,7 +109,9 @@ public class GraphicsHandler {
 		Fighter fi = (Fighter) e;
 		float darken = fi.getPercentage()*0.0075f;
 		font.setColor(1, 1 - darken, 1 - (darken*1.1f), 1);
-		font.draw(batch, (int)fi.getPercentage() + "%", fi.getPosition().x, fi.getPosition().y + fi.getHurtBox().getHeight() + font.getLineHeight());
+		float xPos = fi.getPosition().x - 8 + fi.getImage().getWidth()/2;
+		float yPos = fi.getPosition().y + fi.getHurtBox().getHeight() + font.getLineHeight();
+		font.draw(batch, (int)fi.getPercentage() + "%", xPos, yPos);
 	}
 
 	public static void updateRoomGraphics(Fighter player) {
