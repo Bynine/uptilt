@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="110" height="50" tilewidth="16" tileheight="16" nextobjectid="16">
  <tileset firstgid="1" name="tileset_test" tilewidth="16" tileheight="16" spacing="1" tilecount="4" columns="2">
-  <image source="../sprites/tilesets/tileset_test.PNG" width="34" height="34"/>
+  <image source="../sprites/tilesets/tileset_test.png" width="34" height="34"/>
  </tileset>
  <tileset firstgid="5" name="entities" tilewidth="16" tileheight="16" spacing="1" tilecount="4" columns="2">
-  <image source="../sprites/tilesets/entities.PNG" width="33" height="33"/>
+  <image source="../sprites/tilesets/entities.png" width="33" height="33"/>
  </tileset>
  <layer name="BACK" width="110" height="50">
   <data encoding="csv">
@@ -176,8 +176,8 @@
   <object id="15" x="976" y="544" width="64"/>
  </objectgroup>
  <objectgroup name="ENTITIES">
-  <object id="3" name="dummy" gid="5" x="896" y="624" width="16" height="16"/>
-  <object id="9" name="dummy" gid="5" x="784" y="544" width="16" height="16"/>
-  <object id="10" name="dummy" gid="5" x="896" y="480" width="16" height="16"/>
+  <object id="3" name="kicker" gid="5" x="896" y="624" width="16" height="16"/>
+  <object id="9" name="kicker" gid="5" x="784" y="544" width="16" height="16"/>
+  <object id="10" name="kicker" gid="5" x="896" y="480" width="16" height="16"/>
  </objectgroup>
 </map>

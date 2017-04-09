@@ -40,6 +40,7 @@ public abstract class InputHandler {
 			case commandSpecial:		wasCommandAccepted = player.trySpecial(); break;
 			case commandCharge: 		wasCommandAccepted = player.tryCharge(); break;
 			case commandGrab:			wasCommandAccepted = player.tryGrab(); break;
+			case commandTaunt:			wasCommandAccepted = player.tryTaunt(); break;
 			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
 			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
 			case commandStickLeft:		wasCommandAccepted = player.tryStickBack(); break;

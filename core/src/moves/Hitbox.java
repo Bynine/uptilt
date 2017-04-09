@@ -7,6 +7,7 @@ import main.UptiltEngine;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
+import entities.Entity.State;
 import entities.Fighter;
 import entities.Graphic;
 
@@ -85,11 +86,17 @@ public class Hitbox extends ActionCircle{
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
+		if (target.isBlocking()) target.takeKnockback(knockback, heldCharge * DAM /2, hitstun);
+		if (target.isPerfectBlocking()) handlePerfectBlockingKnockback();
+		else target.takeKnockback(knockback, heldCharge * DAM, hitstun);
 		startHitlag(target);
 		MapHandler.addEntity(new Graphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
 		setInitialHit(true);
+	}
+	
+	void handlePerfectBlockingKnockback(){
+		/* NOTHING! */
 	}
 
 	private final float minSamuraiKnockback = 4;
@@ -114,16 +121,23 @@ public class Hitbox extends ActionCircle{
 		return hitlag;
 	}
 
-	private static final float hitstunRatio = 3.5f;
+	private static final float hitstunRatio = 4.2f;
 	public static int hitstunFormula(float knockback){
 		return  2 + (int) (knockback * hitstunRatio);
 	}
 
+	private float crouchCancelMod = .67f;
+	private float blockMod = 0.5f;
+	private float blockDecrement = 3;
 	private final float kbgMod = 0.04f;
 	private final float weightMod = 0.01f;
 	private final float minKnockback = 0.25f;
 	protected float knockbackFormula(Fighter target){
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
+		if (target.getState() == State.CROUCH) knockback *= crouchCancelMod;
+		if (target.isBlocking()) {
+			knockback = (knockback * blockMod) - blockDecrement;
+		}
 		if (knockback < minKnockback) return 0;
 		else return knockback;
 	}
@@ -140,7 +154,6 @@ public class Hitbox extends ActionCircle{
 
 	protected float applyReverseHitbox(Fighter target){
 		if (null == user) {
-			//System.out.println( (area.x - area.radius) + " hits " + target + " at " + target.getPosition().x);
 			if (area.x - area.radius/2 > target.getPosition().x) return -1;
 			else return 1;
 		}

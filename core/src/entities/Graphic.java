@@ -9,8 +9,8 @@ import timers.Timer;
 
 public class Graphic extends Entity{
 	
-	private TextureRegion fullSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hit.PNG")));
-	private TextureRegion halfSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hitsmall.PNG")));
+	private TextureRegion fullSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hit.png")));
+	private TextureRegion halfSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hitsmall.png")));
 
 	private final Timer duration;
 	private int dur;

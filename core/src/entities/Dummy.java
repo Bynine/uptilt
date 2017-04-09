@@ -1,6 +1,6 @@
 package entities;
 
-import input.Brain;
+import input.Brain.*;
 import input.InputHandlerCPU;
 
 import java.util.List;
@@ -13,12 +13,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Dummy extends Fighter {
 	
-	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.PNG")));
+	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 
-	public Dummy(float posX, float posY) {
-		super(posX, posY);
-		team = 1;
-		setInputHandler(new InputHandlerCPU(this, Brain.Recover.class));
+	public Dummy(float posX, float posY, int team) {
+		super(posX, posY, team);
+		setInputHandler(new InputHandlerCPU(this, Basic.class));
 		image = new Sprite(texture);
 		gravity = -0.5f;
 		weight = 100;

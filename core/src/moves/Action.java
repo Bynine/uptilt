@@ -4,6 +4,7 @@ import entities.Fighter;
 import entities.Projectile;
 import main.MapHandler;
 import main.SFX;
+import moves.Effect.Charge;
 
 public abstract class Action {
 
@@ -27,6 +28,7 @@ public abstract class Action {
 	public static class ChangeVelocity extends Action{
 		float velX, velY;
 		Fighter user;
+		Charge charge = null;
 		public static final float noChange = -999f;
 		
 		ChangeVelocity(Fighter user, float velX, float velY){
@@ -35,7 +37,16 @@ public abstract class Action {
 			this.velY = velY;
 		}
 		
+		public ChangeVelocity(Fighter user, float velX, float velY, Charge c) {
+			this(user, velX, velY);
+			charge = c;
+		}
+
 		void performAction(){
+			if (null != charge){
+				velX *= Math.pow(charge.getHeldCharge(), 2);
+				velY *= Math.pow(charge.getHeldCharge(), 2);
+			}
 			if (velX != noChange) user.getVelocity().x = velX * user.direct();
 			if (velY != noChange) user.getVelocity().y = velY;
 		}
@@ -71,6 +82,22 @@ public abstract class Action {
 			}
 		}
 		
+	}
+	
+	public static class Invincible extends Action {
+		final Fighter user;
+		final int start, end;
+		
+		public Invincible(Fighter user, int start, int end){
+			this.user = user;
+			this.start = start;
+			this.end = end;
+		}
+		
+		void performAction() {
+			user.setInvincible(end - start);
+		}
+
 	}
 	
 }

@@ -1,5 +1,8 @@
 package maps;
 
+import input.Brain;
+import input.InputHandlerCPU;
+
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 
@@ -13,8 +16,16 @@ public class EntityLoader {
 		float y = mp.get("y", Float.class);
 
 		switch(m.getName().toLowerCase()){
-		case "dummy": return new Dummy(x, y);
-		default: return new Dummy(0, 0);
+		case "kicker": {
+			Kicker kicker = new Kicker(x, y, 1);
+			kicker.setInputHandler(new InputHandlerCPU(kicker, Brain.Basic.class));
+			return kicker;
+		}
+		default: {
+			Dummy dummy = new Dummy(x, y, 1);
+			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));
+			return dummy;
+		}
 		}
 	}
 }

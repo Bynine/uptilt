@@ -13,7 +13,7 @@ public class Portal extends Entity {
 
 	public Portal(float x, float y, Room room, float desX, float desY){
 		super(x, y);
-		image = new Sprite(new Texture(Gdx.files.internal("sprites/portal.PNG")));
+		image = new Sprite(new Texture(Gdx.files.internal("sprites/portal.png")));
 		this.room = room;
 		destination.x = desX;
 		destination.y = desY;

@@ -16,9 +16,10 @@ public class Kicker extends Fighter {
 	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/crouch.png")));
 	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/helpless.png")));
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/dash.png")));
+	private TextureRegion blockImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/block.png")));
 
-	public Kicker(float posX, float posY) {
-		super(posX, posY);
+	public Kicker(float posX, float posY, int team) {
+		super(posX, posY, team);
 		runAcc = 2.1f;
 		runSpeed = 10f;
 		walkAcc = 0.9f;
@@ -48,13 +49,17 @@ public class Kicker extends Fighter {
 		case CROUCH: setImage(crouchImage); break;
 		case HELPLESS: setImage(helplessImage); break;
 		case DASH: setImage(dashImage); break;
+		case BLOCK: setImage(blockImage); break;
 		default: setImage(standImage); break;
 		}
-
 		if (!attackTimer.timeUp() && null != activeMove && null != activeMove.getAnimation()){
 			setImage(activeMove.getAnimation().getKeyFrame(activeMove.getFrame()));
 		}
-		
+		if (!hitstunTimer.timeUp()) setImage(helplessImage);
+		adjustImage(prevImage);
+	}
+	
+	private void adjustImage(TextureRegion prevImage){
 		if (prevImage != slideImage && state == State.WALLSLIDE && direction == Direction.RIGHT) wallCling();
 		float adjustedPosX = (image.getWidth() - prevImage.getRegionWidth())/2;
 		if (!doesCollide(position.x - adjustedPosX, position.y) && state != State.WALLSLIDE) position.x -= adjustedPosX;

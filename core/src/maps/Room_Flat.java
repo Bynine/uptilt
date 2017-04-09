@@ -10,8 +10,8 @@ public class Room_Flat extends Room {
 	public Room_Flat(Level superLevel){
 		super(superLevel);
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/song of storm crow.mp3"));
-		startPosition.x = 25;
-		startPosition.y = 12;
+		startPosition.x = 35;
+		startPosition.y = 11;
 		setup();
 	}
 

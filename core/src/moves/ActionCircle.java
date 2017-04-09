@@ -34,7 +34,7 @@ public abstract class ActionCircle {
 	public abstract Color getColor();
 
 	public void checkGroup(){ 
-		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.isInitialHit()) remove = true;
+		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.isInitialHit() || ac.remove) remove = true;
 	}
 
 	public void setDuration(int dur){
@@ -42,6 +42,7 @@ public abstract class ActionCircle {
 	}
 
 	public void update(int deltaTime){
+		checkGroup();
 		duration.countUp();
 		if (UptiltEngine.outOfHitlag()){
 			area.x = getX();

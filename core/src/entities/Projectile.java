@@ -29,6 +29,11 @@ public abstract class Projectile extends Entity{
 		timerList.add(life);
 	}
 
+	public void reverse() {
+		velX *= -1;
+		velY *= -1;
+	}
+
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		velocity.x = velX;
 		velocity.y = velY;
@@ -63,7 +68,7 @@ public abstract class Projectile extends Entity{
 		public Spiker(float posX, float posY, Fighter owner) {
 			super(posX, posY + 30, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
-			setup("sprites/entities/projectile.PNG", lifeTime, 12, 0);
+			setup("sprites/entities/projectile.png", lifeTime, 12, 0);
 			ac = new ProjectileHitbox(owner, 1.2f, 0.2f, 4, 90, 0, 0, 11, new SFX.LightHit(), this, lifeTime);
 			ac.setRefresh(8);
 			MapHandler.addActionCircle(ac);
@@ -84,7 +89,7 @@ public abstract class Projectile extends Entity{
 		public Rocket(float posX, float posY, Fighter owner) {
 			super(posX, posY + 24, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
-			setup("sprites/entities/rocket.PNG", lifeTime, 6, 0);
+			setup("sprites/entities/rocket.png", lifeTime, 6, 0);
 			ac = new ProjectileHitbox(owner, 0, 0, 5, Hitbox.SAMURAIANGLE, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 			velX = owner.direct() * 2;
@@ -119,7 +124,7 @@ public abstract class Projectile extends Entity{
 			new SFX.Explode().play();
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
-			setup("sprites/entities/explosion.PNG", lifeTime, 0, 0);
+			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
 			ac = new ProjectileHitbox(null, 8, 2, 20, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
@@ -132,7 +137,7 @@ public abstract class Projectile extends Entity{
 		public ShotgunBlast(float posX, float posY, Fighter owner) {
 			super(posX, posY - 24, owner);
 			new SFX.Explode().play();
-			setup("sprites/entities/blast.PNG", lifeTime, 0, 0);
+			setup("sprites/entities/blast.png", lifeTime, 0, 0);
 			ac = new ProjectileHitbox(owner, 8, 2, 16, 270, 0, 0, 20, new SFX.HeavyHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}

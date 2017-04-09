@@ -6,9 +6,8 @@ import com.badlogic.gdx.audio.Sound;
 public abstract class SFX {
 	
 	Sound sfx = null;
-	float volume = 1f;
 	public void play() {
-		if (null != sfx) sfx.play(volume);
+		if (null != sfx) sfx.play(UptiltEngine.getVolume());
 	}
 	
 	public static class None extends SFX{ }
@@ -27,5 +26,9 @@ public abstract class SFX {
 	
 	public static class Explode extends SFX{
 		public Explode(){ sfx = Gdx.audio.newSound(Gdx.files.internal("sfx/melee/explode.wav")); }
+	}
+	
+	public static class HomeRun extends SFX{
+		public HomeRun(){ sfx = Gdx.audio.newSound(Gdx.files.internal("sfx/melee/KRRIIIIING.wav")); }
 	}
 }

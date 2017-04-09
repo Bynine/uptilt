@@ -32,6 +32,10 @@ public class ProjectileHitbox extends Hitbox {
 		return target != user && hitAnyFighter; 
 	}
 	
+	void handlePerfectBlockingKnockback(){
+		proj.reverse();
+	}
+	
 	float getX(){ 
 		if (null == proj) return 0;
 		return proj.getPosition().x + proj.getImage().getWidth()/2  + dispX;

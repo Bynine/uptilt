@@ -16,14 +16,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class UptiltEngine extends ApplicationAdapter {
 
-	private static float volume = 0f;
+	private static float volume = 1f;
 	private static final Timer hitlagTimer = new Timer(0, false);
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
 	private static int deltaTime = 0;
 	private static Fighter player1;
 
 	@Override public void create () {
-		player1 = new Kicker(0, 0);
+		player1 = new Kicker(0, 0, 0);
 		InputHandlerController ch = new InputHandlerController(player1);
 		if (!ch.setupController(0)) startWithKeyboard();
 		else player1.setInputHandler(ch);
@@ -65,6 +65,7 @@ public class UptiltEngine extends ApplicationAdapter {
 
 	static float getVolume(){ return volume; }
 	static int getDeltaTime(){ return deltaTime; }
+	public static Fighter getPlayer(){ return player1; }
 	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
 
 }

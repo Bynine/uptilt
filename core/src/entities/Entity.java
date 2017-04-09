@@ -251,7 +251,7 @@ public abstract class Entity {
 	public Sprite getImage() { return image; }
 
 	public static enum Direction{ LEFT, RIGHT }
-	public static enum State{ STAND, WALK, DASH, RUN, JUMP, FALL, WALLSLIDE, CROUCH, HELPLESS }
+	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, BLOCK, JUMP, FALL, WALLSLIDE, HELPLESS }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
 
 }

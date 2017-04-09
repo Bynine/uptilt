@@ -11,6 +11,8 @@ public class GlobalRepo {
 	/* GLOBAL VARIABLES */
 	
 	public static final int TILE = 16;
+	public static final int GOOD = 0;
+	public static final int BAD = 1;
 	
 	/* GLOBAL METHODS */
 

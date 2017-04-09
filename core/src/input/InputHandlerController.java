@@ -22,8 +22,6 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	Controller controller;
 	final int lastXSize = 2;
 	final List<Float> lastXPositions = new ArrayList<Float>(lastXSize);
-	private float lastShoulderInput = 0;
-	
 	public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
 	public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
 	public static final int AXIS_SHOULDER = 4;
@@ -40,10 +38,14 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	public void update() {
 		super.update();
 		lastXPositions.add(controller.getAxis(AXIS_LEFT_X));
-		boolean jump = controller.getButton(commandJump);
-		if ( (controller.getAxis(AXIS_SHOULDER) > pushed && lastShoulderInput < pushed) || 
-				controller.getAxis(AXIS_SHOULDER) < -pushed && lastShoulderInput > -pushed) player.tryBoost();
-		
+		boolean jump = controller.getButton(commandJump); // TODO: move these to InputHandler
+		player.handleJumpCommand(jump);
+		if ( Math.abs(controller.getAxis(AXIS_SHOULDER)) > pushed) { 
+			// && lastShoulderInput < pushed) || controller.getAxis(AXIS_SHOULDER) < -pushed && lastShoulderInput > -pushed) 
+			player.handleBlockCommand(true);
+			player.tryBlock();
+		}
+		else player.handleBlockCommand(false);
 		float prevX = lastXPositions.remove(0);
 		float curX = lastXPositions.get(lastXSize - 1);
 		if (Math.abs(curX) < pushed) curX = 0;
@@ -51,8 +53,8 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 			if (Math.signum(curX) == 1) handleCommand(commandStickRight);
 			if (Math.signum(curX) == -1) handleCommand(commandStickLeft);
 		}
-		lastShoulderInput = controller.getAxis(AXIS_SHOULDER);
-		player.handleJumpCommand(jump);
+		if (controller.getPov(0) != PovDirection.center) handleCommand(commandTaunt);
+		controller.getAxis(AXIS_SHOULDER);
 	}
 
 	public boolean isCharging() {

@@ -37,6 +37,11 @@ public class EventList {
 		actionStartTimes.add(start);
 	}
 	
+	void addVelocityChangeCharge(Fighter user, int start, float velX, float velY, Charge c) {
+		actionList.add(new Action.ChangeVelocity(user, velX, velY, c));
+		actionStartTimes.add(start);
+	}
+	
 	void addSound(SFX sfx, int start){
 		actionList.add(new Action.PlaySFX(sfx));
 		actionStartTimes.add(start);
@@ -46,12 +51,16 @@ public class EventList {
 		actionList.add(new Action.MakeProjectile<>(user, proj));
 		actionStartTimes.add(start);
 	}
+
+	public void addInvincible(Fighter user, int start, int end) {
+		actionList.add(new Action.Invincible(user, start, end));
+		actionStartTimes.add(start);
+	}
 	
 	/* effects */
 
 	void addConstantVelocity(Fighter user, int start, int end, float velX, float velY) {
 		effectList.add(new Effect.ConstantVelocity(user, velX, velY, start, end));
-		//actionStartTimes.add(start);
 	}
 
 	void addCharge(Fighter user, Charge c) {

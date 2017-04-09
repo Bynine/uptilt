@@ -79,8 +79,11 @@ public class GraphicsHandler {
 				Fighter fi = (Fighter) e;
 				drawFighterPercentage(fi);
 				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
-				else if (debug && !fi.attackTimer.timeUp()) batch.setColor(1f, 1f, 0f, 1);
-				else if (debug) batch.setColor(0f, 1f, 1f, 1);
+				else if (fi.isInvincible()) batch.setColor(0.25f, 0.75f, 1f, 1);
+				else if (fi.isCharging()) batch.setColor(1, 1, 1, 1);
+				
+				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.8f, batch.getColor().b, 1);
+				if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.6f, 1);
 			}
 			batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 			batch.setColor(1, 1, 1, 1);

@@ -30,11 +30,11 @@ public abstract class Fighter extends Entity{
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
 
-	boolean doubleJumped = false;
+	boolean doubleJumped, blockHeld = false;
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(6, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
 	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(18, false);
-	private final Timer knockIntoTimer = new Timer(20, false);
+	private final Timer knockIntoTimer = new Timer(20, false), invincibleTimer = new Timer(0, false), blockTimer = new Timer(8, false);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
 	int jumpSquatFrames = 4;
@@ -42,7 +42,7 @@ public abstract class Fighter extends Entity{
 	float jumpStrength = 5f, dashStrength = 5f;
 	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
 
-	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.PNG")));
+	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 	private Fighter caughtFighter = null;
 	Move activeMove = null;
 	float percentage = 0;
@@ -51,19 +51,22 @@ public abstract class Fighter extends Entity{
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private float initialHitAngle = 0;
 	final Vector2 spawnPoint;
-	int team = 0;
-	MoveList moveList = new MoveList_Kicker();
+	private int team = 0;
+	MoveList moveList = new MoveList_Kicker(this);
 
-	public Fighter(float posX, float posY) {
+	public Fighter(float posX, float posY, int team) {
 		super(posX, posY);
+		this.team = team;
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
-		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer, grabbingTimer, dashTimer, knockIntoTimer));
+		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer,
+				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, blockTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+		//if (this instanceof Kicker) System.out.println(state);
 		stickX = getInputHandler().getXInput();
 		stickY = getInputHandler().getYInput();
 		getInputHandler().update();
@@ -79,7 +82,7 @@ public abstract class Fighter extends Entity{
 	}
 
 	private void handleThrow(){
-		activeMove = moveList.selectThrow(this);
+		activeMove = moveList.selectThrow();
 		if (null != activeMove) {
 			startAttack(activeMove);
 			grabbingTimer.end();
@@ -107,8 +110,8 @@ public abstract class Fighter extends Entity{
 				pushAway(fi);
 				((Fighter) fi).pushAway(this);
 			}
-			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > 3;
-			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && team == fi.team && !fi.hitstunTimer.timeUp();
+			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > 6;
+			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == fi.getTeam() && !fi.hitstunTimer.timeUp();
 			if (knockInto && isTouching(fi, 0) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) knockBack(fi);
 		}
 
@@ -143,7 +146,8 @@ public abstract class Fighter extends Entity{
 	private float minRunHold = 0.5f;
 	private void updateGroundedState(){
 		if (!inGroundedState()) ground();
-		if (stickY > minCrouchHold) state = State.CROUCH;
+		if (state == State.BLOCK && !blockTimer.timeUp()) state = State.BLOCK;
+		else if (Math.abs(stickX) < minRunHold && stickY > minCrouchHold) state = State.CROUCH;
 		else if (Math.abs(stickX) > minRunHold){
 			if (isRun()) state = State.RUN;
 			else if (state == State.DASH && !dashTimer.timeUp()) state = State.DASH;
@@ -152,8 +156,9 @@ public abstract class Fighter extends Entity{
 					|| (!doesCollide(position.x + 2, position.y) && direction == Direction.RIGHT);
 			if (canAct() && noWalls && Math.signum(velocity.x) != direct()) flip();
 		}
+		else if (blockHeld) activateBlock();
 		else state = State.STAND;
-		if (canAttack() && prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid(this));
+		if (canAttack() && prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid());
 	}
 
 	private boolean isRun(){
@@ -170,11 +175,18 @@ public abstract class Fighter extends Entity{
 	}
 
 	private boolean tryDash(){
-		if (!inGroundedState() || isRun()) return false;
+		if (!isGrounded() || !inGroundedState() || isRun()) return false;
 		dashTimer.restart();
 		velocity.x = Math.signum(stickX) * dashStrength;
 		state = State.DASH;
 		return true;
+	}
+	
+	private void activateBlock(){
+		if (state != State.BLOCK) {
+			state = State.BLOCK;
+			blockTimer.restart();
+		}
 	}
 
 	void updateImage(float deltaTime){
@@ -189,7 +201,7 @@ public abstract class Fighter extends Entity{
 	private final float minTurn = 0.2f;
 	private final int minFrameTurn = 3;
 	void handleDirection(){
-		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH) return;
+		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH || state == State.BLOCK) return;
 		if (null != activeMove){
 			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !activeMove.isNoTurn();
 			if (!canAct() && !startAttackTurn) return;
@@ -200,7 +212,7 @@ public abstract class Fighter extends Entity{
 	}
 
 	void handleMovement(){
-		if (groundedAttacking() || !canMove() || !hitstunTimer.timeUp()) return;
+		if (groundedAttacking() || !canMove() || !hitstunTimer.timeUp() || state == State.BLOCK) return;
 		switch (state){
 		case WALK: addSpeed(walkSpeed, walkAcc); break;
 		case DASH:
@@ -277,19 +289,23 @@ public abstract class Fighter extends Entity{
 	}
 
 	public boolean tryNormal(){
-		startAttack(moveList.selectNormalMove(this));
+		startAttack(moveList.selectNormalMove());
 		return true;
 	}
 
 	public boolean trySpecial(){
-		startAttack(moveList.selectSpecialMove(this));
+		startAttack(moveList.selectSpecialMove());
 		return true;
 	}
 
-	public boolean tryBoost(){
-		if (isGrounded() || !canAct()) return false;
-		startAttack(moveList.boost(this));
-		return true;
+	public boolean tryBlock(){
+		if (!canAct()) return true;
+		Move block = moveList.selectBlock();
+		if (null != block){
+			startAttack(moveList.selectBlock());
+			return true;
+		}
+		else return true;
 	}
 
 	public boolean tryStickForward(){
@@ -301,13 +317,19 @@ public abstract class Fighter extends Entity{
 	}
 
 	public boolean tryGrab(){
-		startAttack(moveList.selectGrab(this)); 
+		startAttack(moveList.selectGrab()); 
 		return true; 
 	}
 
 	public boolean tryCharge(){
-		startAttack(moveList.selectCharge(this)); 
+		startAttack(moveList.selectCharge()); 
 		return true; 
+	}
+
+	public boolean tryTaunt() {
+		if (!isGrounded() || !canAct()) return false;
+		startAttack(moveList.selectTaunt()); 
+		return true;
 	}
 
 	public boolean tryStickUp(){
@@ -342,14 +364,16 @@ public abstract class Fighter extends Entity{
 		attackTimer.end();
 	}
 
+	private final float diStrength = 8;
 	private float directionalInfluenceAngle(Vector2 knockback){
+		if (getInputHandler().getXInput() < unregisteredInputMax && getInputHandler().getXInput() < unregisteredInputMax) return knockback.angle();
 		Vector2 di = new Vector2(getInputHandler().getXInput(), getInputHandler().getYInput());
 		float parallelAngle = Math.round(knockback.angle() - di.angle());
 		double sin = Math.sin(parallelAngle * Math.PI/180);
 		int signMod = 1;
 		if (knockback.angle() > 90 && knockback.angle() <= 270) signMod *= -1;
 		if (di.x < 0) signMod *= -1;
-		double diModifier = signMod * Math.signum(180 - di.angle()) * 18 * Math.pow(sin, 2);
+		double diModifier = signMod * Math.signum(180 - di.angle()) * diStrength * Math.pow(sin, 2);
 		knockback.setAngle((float) (knockback.angle() + diModifier));
 		return knockback.angle();
 	}
@@ -360,7 +384,7 @@ public abstract class Fighter extends Entity{
 		float newPosX = user.position.x + (heldDistance * user.direct());
 		float newPosY = user.position.y + image.getHeight()/4;
 		if (!doesCollide(newPosX, newPosY)) position.set(newPosX, newPosY);
-		else position.y = newPosY; // won't move target's X coordinate if that would put target in a wall
+		else if (!doesCollide(position.x, newPosY)) position.set(position.x, newPosY);
 		caughtTimer.setEndTime(caughtTime);
 		caughtTimer.restart();
 	}
@@ -381,12 +405,16 @@ public abstract class Fighter extends Entity{
 			activeMove = null;
 			attackTimer.end();
 		}
-		if (activeMove == null) startAttack(moveList.land(this));
+		if (activeMove == null) startAttack(moveList.land());
 		doubleJumped = false;
 	}
 
 	public void handleJumpCommand(boolean button) {
 		if (state == State.JUMP && !button) jumpTimer.end();
+	}
+
+	public void handleBlockCommand(boolean block) {
+		blockHeld = block;
 	}
 
 	public void respawn() {
@@ -396,6 +424,11 @@ public abstract class Fighter extends Entity{
 		velocity.y = 0;
 		state = State.FALL;
 		doubleJumped = false;
+		for (Timer t: timerList){
+			t.end();
+		}
+		invincibleTimer.setEndTime(30);
+		invincibleTimer.restart();
 	}
 
 	public void setRespawnPoint(Vector2 startPosition) {
@@ -410,25 +443,31 @@ public abstract class Fighter extends Entity{
 	public float getStickY() { return stickY; }
 	public InputHandler getInputHandler() { return inputHandler; }
 	private float knockbackIntensity(Vector2 knockback) { return Math.abs(knockback.x) + Math.abs(knockback.y); }
-
 	public boolean canAttack() { return canAct() && state != State.WALLSLIDE; }
 	public boolean canAct(){  return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
 	private boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
 	public boolean isDashing() { return state == State.RUN || state == State.DASH; }
-	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0; }
+	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0 || !invincibleTimer.timeUp(); }
+	public boolean isBlocking() { return state == State.BLOCK; }
+	public boolean isPerfectBlocking() { return state == State.BLOCK && !blockTimer.timeUp(); }
 	private boolean inGroundedState() { return groundedStates.contains(state);}
 	public boolean isCharging() {
 		if (null == getInputHandler()) return false;
-		else return getInputHandler().isCharging();
+		else return !attackTimer.timeUp() && getInputHandler().isCharging();
 	}
 	public InputPackage getInputPackage() { return new InputPackage(this); }
 	public void setArmor(float armor) { this.armor = armor; }
 	public float getArmor() { return armor; }
+	public void setToFall() { state = State.FALL; }
+	public void setInputHandler(InputHandler inputHandler) { this.inputHandler = inputHandler; }
+	public int getTeam() { return team; }
+	public State getState() { return state; } 
 
-	public void setInputHandler(InputHandler inputHandler) {
-		this.inputHandler = inputHandler;
+	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.BLOCK));
+
+	public void setInvincible(int i) { 
+		invincibleTimer.restart();
+		invincibleTimer.setEndTime(i);
 	}
-
-	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH));
 
 }
