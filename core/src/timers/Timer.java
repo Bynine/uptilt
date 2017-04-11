@@ -2,13 +2,12 @@ package timers;
 
 public class Timer {
 	
-	private int endTime;
-	private int counter;
+	protected int endTime;
+	protected int counter;
 	
-	public Timer(int endTime, boolean isDuration){
+	public Timer(int endTime){
 		this.endTime = endTime;
-		if (isDuration) counter = 0;
-		else counter = endTime + 1;
+		counter = endTime + 1;
 	}
 	
 	public void restart(){ counter = 0; }

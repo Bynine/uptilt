@@ -1,7 +1,13 @@
 package moves;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import main.UptiltEngine;
 import moves.Hitbox.Property;
+import timers.DurationTimer;
 import timers.Timer;
 
 import com.badlogic.gdx.graphics.Color;
@@ -15,11 +21,13 @@ public abstract class ActionCircle {
 	final Fighter user;
 	final float dispX, dispY;
 	final Circle area;
-	final Timer duration = new Timer(5, true);
-	final Timer refreshTimer = new Timer(6, true);
+	final Timer duration = new DurationTimer(5);
+	final Timer refreshTimer = new DurationTimer(6);
 	private boolean initialHit;
 	boolean remove = false;
 	boolean doesRefresh = false;
+	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
+	private Set<Fighter> s;
 	Property property = Property.NORMAL;
 	ActionCircleGroup group = null;
 
@@ -34,7 +42,13 @@ public abstract class ActionCircle {
 	public abstract Color getColor();
 
 	public void checkGroup(){ 
-		if (null != group) for (ActionCircle ac: group.connectedCircles) if (ac.isInitialHit() || ac.remove) remove = true;
+		if (null != group) for (ActionCircle ac: group.connectedCircles) {
+			hitFighterList.addAll(ac.hitFighterList);
+			s = new HashSet<Fighter>(hitFighterList);
+			hitFighterList.clear();
+			hitFighterList.addAll(s);
+			if (ac.isInitialHit() || ac.remove) remove = true;
+		}
 	}
 
 	public void setDuration(int dur){
@@ -57,6 +71,7 @@ public abstract class ActionCircle {
 	}
 
 	public void reset(){
+		hitFighterList.clear();
 		remove = false;
 		setInitialHit(false);
 	}
@@ -66,7 +81,8 @@ public abstract class ActionCircle {
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 
-		return !remove && !user.attackTimer.timeUp() && target != user && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()); 
+		return user.getTeam() != target.getTeam() && !remove && !user.attackTimer.timeUp() 
+				&& !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()) && !hitFighterList.contains(target); 
 	}
 	public void setRefresh(int time) { 
 		refreshTimer.setEndTime(time);
@@ -79,6 +95,10 @@ public abstract class ActionCircle {
 
 	public void setInitialHit(boolean initialHit) {
 		this.initialHit = initialHit;
+	}
+
+	public boolean hitAnybody() {
+		return hitFighterList.size() >= 1;
 	}
 
 }

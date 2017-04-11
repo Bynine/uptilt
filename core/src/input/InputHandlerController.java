@@ -34,14 +34,13 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	}
 	
 	private final float flick = 0.80f;
-	private final float pushed = 0.95f;
+	private final float pushed = 0.85f;
 	public void update() {
 		super.update();
 		lastXPositions.add(controller.getAxis(AXIS_LEFT_X));
 		boolean jump = controller.getButton(commandJump); // TODO: move these to InputHandler
 		player.handleJumpCommand(jump);
 		if ( Math.abs(controller.getAxis(AXIS_SHOULDER)) > pushed) { 
-			// && lastShoulderInput < pushed) || controller.getAxis(AXIS_SHOULDER) < -pushed && lastShoulderInput > -pushed) 
 			player.handleBlockCommand(true);
 			player.tryBlock();
 		}

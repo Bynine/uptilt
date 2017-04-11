@@ -2,6 +2,7 @@ package entities;
 
 import java.util.List;
 
+import timers.DurationTimer;
 import timers.Timer;
 
 import com.badlogic.gdx.Gdx;
@@ -20,7 +21,7 @@ public abstract class Projectile extends Entity{
 	ActionCircle ac;
 	Fighter owner;
 	float velX, velY = 0;
-	public final Timer life = new Timer(1, true);
+	public final Timer life = new DurationTimer(1);
 	private TextureRegion texture;
 
 	public Projectile(float posX, float posY, Fighter owner) {
@@ -56,27 +57,27 @@ public abstract class Projectile extends Entity{
 		this.velY = velY;
 	}
 	
-	protected boolean doesCollide(float x, float y){
+	public boolean doesCollide(float x, float y){
 		boolean hitWall = super.doesCollide(x, y);
 		if (hitWall) life.end();
 		return hitWall;
 	}
 
 	public static class Spiker extends Projectile{
-		private final int lifeTime = 40;
+		private final int lifeTime = 60;
 
 		public Spiker(float posX, float posY, Fighter owner) {
 			super(posX, posY + 30, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
 			setup("sprites/entities/projectile.png", lifeTime, 12, 0);
-			ac = new ProjectileHitbox(owner, 1.2f, 0.2f, 4, 90, 0, 0, 11, new SFX.LightHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 1.2f, 0.02f, 4, 90, 0, 0, 11, new SFX.LightHit(), this, lifeTime);
 			ac.setRefresh(8);
 			MapHandler.addActionCircle(ac);
 		}
 		
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
-			if (ac.isInitialHit()) velX *= 0.4f;
+			if (ac.hitAnybody()) velX *= 0.3f;
 		}
 
 	}
@@ -98,11 +99,11 @@ public abstract class Projectile extends Entity{
 		
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
-			if ( (ac.isInitialHit() || life.timeUp()) && !exploded) explode();
+			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
 			if (Math.abs(velX) < 10) velX *= 1.05f;
 		}
 		
-		protected boolean doesCollide(float x, float y){
+		public  boolean doesCollide(float x, float y){
 			if (super.doesCollide(x, y)) explode();
 			return super.doesCollide(x, y);
 		}
@@ -125,7 +126,7 @@ public abstract class Projectile extends Entity{
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
 			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
-			ac = new ProjectileHitbox(null, 8, 2, 20, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			ac = new ProjectileHitbox(null, 8, 2, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
 	}

@@ -27,7 +27,7 @@ public class ProjectileHitbox extends Hitbox {
 	}
 	
 	boolean didHitTarget(Fighter target){ 
-		boolean hitAnyFighter = !remove && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox());
+		boolean hitAnyFighter = !remove && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()) && !hitFighterList.contains(target);
 		if (null == user) return hitAnyFighter; 
 		return target != user && hitAnyFighter; 
 	}

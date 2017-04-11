@@ -19,7 +19,7 @@ public class Dummy extends Fighter {
 		super(posX, posY, team);
 		setInputHandler(new InputHandlerCPU(this, Basic.class));
 		image = new Sprite(texture);
-		gravity = -0.5f;
+		gravity = -0.42f;
 		weight = 100;
 	}
 	

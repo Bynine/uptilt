@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
+import main.MapHandler;
 import main.SFX;
 import moves.Hitbox;
 import moves.Move;
@@ -17,6 +18,7 @@ import timers.Timer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -25,31 +27,29 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class Fighter extends Entity{
 
 	private final float unregisteredInputMax = 0.2f;
-	float wallJumpStrengthX = 7.2f;
-	float wallJumpStrengthY = 6.6f;
+	float wallJumpStrengthX = 8f;
+	float wallJumpStrengthY = 7.2f;
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
 
 	boolean doubleJumped, blockHeld = false;
 	public int queuedCommand = InputHandler.commandNone;
-	public final Timer inputQueueTimer = new Timer(6, false), wallJumpTimer = new Timer(8, false), attackTimer = new Timer(0, false);
-	private final Timer caughtTimer = new Timer(0, false), grabbingTimer = new Timer(0, false), dashTimer = new Timer(18, false);
-	private final Timer knockIntoTimer = new Timer(20, false), invincibleTimer = new Timer(0, false), blockTimer = new Timer(8, false);
+	public final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0);
+	final Timer caughtTimer = new Timer(0), grabbingTimer = new Timer(0), dashTimer = new Timer(20);
+	private final Timer knockIntoTimer = new Timer(20), invincibleTimer = new Timer(0), blockTimer = new Timer(8);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
-	int jumpSquatFrames = 4;
 	float fallSpeed = -7f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
 	float jumpStrength = 5f, dashStrength = 5f;
 	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
 
 	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 	private Fighter caughtFighter = null;
-	Move activeMove = null;
-	float percentage = 0;
-	float weight = 100;
-	float armor = 0;
+	Move activeMove = null; 
+	float percentage = 0, armor = 0, weight = 100;
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private float initialHitAngle = 0;
+	private final int randomAnimationDisplacement;
 	final Vector2 spawnPoint;
 	private int team = 0;
 	MoveList moveList = new MoveList_Kicker(this);
@@ -63,10 +63,10 @@ public abstract class Fighter extends Entity{
 				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, blockTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
+		randomAnimationDisplacement = (int) (8*Math.random());
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-		//if (this instanceof Kicker) System.out.println(state);
 		stickX = getInputHandler().getXInput();
 		stickY = getInputHandler().getYInput();
 		getInputHandler().update();
@@ -145,11 +145,23 @@ public abstract class Fighter extends Entity{
 	private float minCrouchHold = 0.9f;
 	private float minRunHold = 0.5f;
 	private void updateGroundedState(){
-		if (!inGroundedState()) ground();
-		if (state == State.BLOCK && !blockTimer.timeUp()) state = State.BLOCK;
-		else if (Math.abs(stickX) < minRunHold && stickY > minCrouchHold) state = State.CROUCH;
+		if (jumpSquatTimer.timeUp() && state == State.JUMPSQUAT) {
+			state = State.JUMP;
+			jump();
+		}
+		else if (!inGroundedState()) ground();
+
+		if (!jumpSquatTimer.timeUp()) {
+			if (state != State.JUMPSQUAT) preJumpSquatState = state;
+			state = State.JUMPSQUAT;
+		}
+		else if (state == State.BLOCK && !blockTimer.timeUp()) state = State.BLOCK;
+		else if (Math.abs(stickX) < minRunHold && stickY > minCrouchHold) {
+			if (blockHeld) activateBlock();
+			else state = State.CROUCH;
+		}
 		else if (Math.abs(stickX) > minRunHold){
-			if (isRun()) state = State.RUN;
+			if (isRun() || (!inGroundedState(prevState) && Math.abs(velocity.x) > airSpeed) ) state = State.RUN;
 			else if (state == State.DASH && !dashTimer.timeUp()) state = State.DASH;
 			else state = State.WALK;
 			boolean noWalls = (!doesCollide(position.x - 2, position.y) && direction == Direction.LEFT)
@@ -158,7 +170,7 @@ public abstract class Fighter extends Entity{
 		}
 		else if (blockHeld) activateBlock();
 		else state = State.STAND;
-		if (canAttack() && prevState == State.RUN && (Math.abs(stickX) < minRunHold)) startAttack(moveList.skid());
+		if (canAttack() && prevState == State.RUN && state != State.RUN) startAttack(moveList.skid());
 	}
 
 	private boolean isRun(){
@@ -179,9 +191,10 @@ public abstract class Fighter extends Entity{
 		dashTimer.restart();
 		velocity.x = Math.signum(stickX) * dashStrength;
 		state = State.DASH;
+		MapHandler.addEntity(new Graphic.DustCloud(this, position.x, position.y));
 		return true;
 	}
-	
+
 	private void activateBlock(){
 		if (state != State.BLOCK) {
 			state = State.BLOCK;
@@ -201,7 +214,7 @@ public abstract class Fighter extends Entity{
 	private final float minTurn = 0.2f;
 	private final int minFrameTurn = 3;
 	void handleDirection(){
-		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH || state == State.BLOCK) return;
+		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH || state == State.BLOCK || state == State.JUMPSQUAT) return;
 		if (null != activeMove){
 			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !activeMove.isNoTurn();
 			if (!canAct() && !startAttackTurn) return;
@@ -220,7 +233,10 @@ public abstract class Fighter extends Entity{
 		case JUMP: velocity.y += jumpAcc; break;
 		default: break;
 		}
-		if (!isGrounded() && wallJumpTimer.timeUp() && Math.abs(stickX) > unregisteredInputMax) addSpeed(airSpeed, airAcc);
+		if (!isGrounded() && wallJumpTimer.timeUp() && Math.abs(stickX) > unregisteredInputMax) {
+			if (Math.abs(velocity.x) > airSpeed) addSpeed(runSpeed, airAcc);
+			else addSpeed(airSpeed, airAcc);
+		}
 	}
 
 	void updatePosition(){
@@ -240,7 +256,7 @@ public abstract class Fighter extends Entity{
 
 	public boolean tryJump(){
 		if (isGrounded()) {
-			jump(); return true;
+			return true;
 		}
 		else if (isWallSliding()) {
 			wallJump(); return true;
@@ -253,6 +269,8 @@ public abstract class Fighter extends Entity{
 
 	private void jump(){
 		jumpTimer.restart();
+		if (stickX < 0) MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
+		else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		if (velocity.y < 0) velocity.y = 0;
 		velocity.x += 2 * stickX;
 		getVelocity().y += jumpStrength;
@@ -284,7 +302,7 @@ public abstract class Fighter extends Entity{
 		getVelocity().y = doubleJumpStrength;
 		if (prevStickX < -unregisteredInputMax && velocity.x > 0) velocity.x = 0; 
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
-		velocity.x += 4 * stickX;
+		velocity.x += 1 * stickX;
 		doubleJumped = true;
 	}
 
@@ -309,11 +327,13 @@ public abstract class Fighter extends Entity{
 	}
 
 	public boolean tryStickForward(){
-		return tryDash();
+		tryDash();
+		return true;
 	}
 
 	public boolean tryStickBack(){ 
-		return tryDash();
+		tryDash();
+		return true;
 	}
 
 	public boolean tryGrab(){
@@ -360,8 +380,10 @@ public abstract class Fighter extends Entity{
 		hitstunTimer.restart();
 		percentage += DAM;
 		if (state == State.HELPLESS) state = State.FALL;
-		activeMove = null;
-		attackTimer.end();
+		if (getArmor() <= 0 && knockbackIntensity(knockback) <= 0){
+			activeMove = null;
+			attackTimer.end();
+		}
 	}
 
 	private final float diStrength = 8;
@@ -410,6 +432,7 @@ public abstract class Fighter extends Entity{
 	}
 
 	public void handleJumpCommand(boolean button) {
+		if (isGrounded() && button && state != State.JUMPSQUAT && jumpSquatTimer.timeUp()) jumpSquatTimer.restart();
 		if (state == State.JUMP && !button) jumpTimer.end();
 	}
 
@@ -424,10 +447,8 @@ public abstract class Fighter extends Entity{
 		velocity.y = 0;
 		state = State.FALL;
 		doubleJumped = false;
-		for (Timer t: timerList){
-			t.end();
-		}
-		invincibleTimer.setEndTime(30);
+		for (Timer t: timerList) t.end();
+		invincibleTimer.setEndTime(60);
 		invincibleTimer.restart();
 	}
 
@@ -443,25 +464,32 @@ public abstract class Fighter extends Entity{
 	public float getStickY() { return stickY; }
 	public InputHandler getInputHandler() { return inputHandler; }
 	private float knockbackIntensity(Vector2 knockback) { return Math.abs(knockback.x) + Math.abs(knockback.y); }
-	public boolean canAttack() { return canAct() && state != State.WALLSLIDE; }
-	public boolean canAct(){  return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
-	private boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
+	public boolean canAttack() { return canAttackBlock() && state != State.BLOCK; }
+	public boolean canAttackBlock() { return canAct() && state != State.WALLSLIDE; }
+	public boolean canAct(){ return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.HELPLESS && canMove(); }
+	public boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
 	public boolean isDashing() { return state == State.RUN || state == State.DASH; }
 	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0 || !invincibleTimer.timeUp(); }
 	public boolean isBlocking() { return state == State.BLOCK; }
 	public boolean isPerfectBlocking() { return state == State.BLOCK && !blockTimer.timeUp(); }
 	private boolean inGroundedState() { return groundedStates.contains(state);}
+	private boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
 	public boolean isCharging() {
 		if (null == getInputHandler()) return false;
 		else return !attackTimer.timeUp() && getInputHandler().isCharging();
 	}
 	public InputPackage getInputPackage() { return new InputPackage(this); }
 	public void setArmor(float armor) { this.armor = armor; }
-	public float getArmor() { return armor; }
+	public float getArmor() { 
+		float addedMoveArmor = 0;
+		if (null != activeMove) addedMoveArmor = activeMove.getArmor();
+		return armor + addedMoveArmor; 
+	}
 	public void setToFall() { state = State.FALL; }
 	public void setInputHandler(InputHandler inputHandler) { this.inputHandler = inputHandler; }
 	public int getTeam() { return team; }
 	public State getState() { return state; } 
+	protected TextureRegion getFrame(Animation anim, float deltaTime) { return anim.getKeyFrame(deltaTime + randomAnimationDisplacement); }
 
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.BLOCK));
 

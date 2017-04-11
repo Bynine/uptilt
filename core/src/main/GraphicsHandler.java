@@ -1,6 +1,7 @@
 package main;
 
 import moves.ActionCircle;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 
 import entities.Entity;
 import entities.Fighter;
@@ -79,7 +81,7 @@ public class GraphicsHandler {
 				Fighter fi = (Fighter) e;
 				drawFighterPercentage(fi);
 				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
-				else if (fi.isInvincible()) batch.setColor(0.25f, 0.75f, 1f, 1);
+				else if (fi.isInvincible()) batch.setColor(0.25f, 0.75f, 1f, 0.5f);
 				else if (fi.isCharging()) batch.setColor(1, 1, 1, 1);
 				
 				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.8f, batch.getColor().b, 1);
@@ -105,6 +107,11 @@ public class GraphicsHandler {
 			if (ac.toRemove()) debugRenderer.setColor(0.9f, 1, 1, 0.5f);
 			debugRenderer.circle(c.x, c.y, c.radius);
 		}
+		debugRenderer.setColor(0, 1, 0, 0.25f);
+		for (Entity e: MapHandler.activeRoom.getEntityList()){
+			Rectangle r = e.getHurtBox();
+			debugRenderer.rect(r.x, r.y, r.width, r.height);
+		}
 		debugRenderer.end();
 	}
 
@@ -113,7 +120,7 @@ public class GraphicsHandler {
 		float darken = fi.getPercentage()*0.0075f;
 		font.setColor(1, 1 - darken, 1 - (darken*1.1f), 1);
 		float xPos = fi.getPosition().x - 8 + fi.getImage().getWidth()/2;
-		float yPos = fi.getPosition().y + fi.getHurtBox().getHeight() + font.getLineHeight();
+		float yPos = fi.getPosition().y + fi.getImage().getHeight() + font.getLineHeight();
 		font.draw(batch, (int)fi.getPercentage() + "%", xPos, yPos);
 	}
 

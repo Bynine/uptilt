@@ -15,18 +15,23 @@ public class InputHandlerKeyboard extends InputHandler implements InputProcessor
 	@Override
 	public void update() {
 		super.update();
-		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandJump);
-		if (Gdx.input.isKeyJustPressed(Keys.J)) handleCommand(commandAttack);
-		if (Gdx.input.isKeyJustPressed(Keys.K)) handleCommand(commandSpecial);
-		if (Gdx.input.isKeyJustPressed(Keys.L)) handleCommand(commandGrab);
-		if (Gdx.input.isKeyJustPressed(Keys.T)) handleCommand(commandSpecial);
-		boolean jump = (Gdx.input.isKeyPressed(Keys.I));
+		if (Gdx.input.isKeyJustPressed(Keys.J)) handleCommand(commandJump);
+		if (Gdx.input.isKeyJustPressed(Keys.M)) handleCommand(commandAttack);
+		if (Gdx.input.isKeyJustPressed(Keys.A)) handleCommand(commandStickLeft);
+		if (Gdx.input.isKeyJustPressed(Keys.D)) handleCommand(commandStickRight);
+		if (Gdx.input.isKeyJustPressed(Keys.K)) handleCommand(commandCharge);
+		if (Gdx.input.isKeyJustPressed(Keys.N)) handleCommand(commandSpecial);
+		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandGrab);
+		if (Gdx.input.isKeyJustPressed(Keys.O)) handleCommand(commandBlock);
+		boolean jump = (Gdx.input.isKeyPressed(Keys.J));
 		player.handleJumpCommand(jump);
+		boolean block = (Gdx.input.isKeyPressed(Keys.O));
+		player.handleBlockCommand(block);
 	}
 
 	@Override
 	public boolean isCharging() {
-		return Gdx.input.isKeyPressed(Keys.T) || Gdx.input.isKeyPressed(Keys.F) || Gdx.input.isKeyPressed(Keys.G) || Gdx.input.isKeyPressed(Keys.H);
+		return Gdx.input.isKeyPressed(Keys.K);
 	}
 	
 	@Override

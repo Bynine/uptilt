@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
+import main.MapHandler;
 import main.UptiltEngine;
 import timers.Timer;
 
@@ -18,9 +19,9 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class Entity {
 	final Vector2 position = new Vector2();
 	final Vector2 velocity = new Vector2();
-	State state, prevState;
+	State state, prevState, preJumpSquatState;
 	Direction direction = Direction.RIGHT;
-	Sprite image;
+	protected Sprite image;
 	Collision collision;
 
 	float gravity = -0.35f;
@@ -28,10 +29,11 @@ public abstract class Entity {
 
 	boolean toRemove = false;
 	private final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
-	public final Timer hitstunTimer = new Timer(10, false);
-	final Timer jumpTimer = new Timer(8, false);
-	final Timer inActionTimer = new Timer(0, false);
-	final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitstunTimer, jumpTimer, inActionTimer));
+	public final Timer hitstunTimer = new Timer(10);
+	final Timer jumpTimer = new Timer(8);
+	final Timer inActionTimer = new Timer(0);
+	final Timer jumpSquatTimer = new Timer(4);
+	final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitstunTimer, jumpTimer, inActionTimer, jumpSquatTimer));
 
 	public Entity(float posX, float posY){
 		position.x = posX;
@@ -40,6 +42,7 @@ public abstract class Entity {
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+		//if (this instanceof Kicker) System.out.println(state);
 		updateState();
 		handleDirection();
 		handleMovement();
@@ -48,6 +51,14 @@ public abstract class Entity {
 		updateTimers();
 		updatePosition();
 		updateImagePosition(deltaTime);
+		
+		if (state == State.RUN && deltaTime % 8 == 0) {
+			if (direction == Direction.LEFT) MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
+			else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
+		}
+		int knockbackPower = (int) (Math.abs(velocity.x) + Math.abs(velocity.y));
+		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > 8) 
+			MapHandler.addEntity(new Graphic.SmokeTrail(position.x - velocity.x + image.getWidth()/2, position.y - velocity.y + image.getHeight()/2, knockbackPower));
 	}
 
 	void updateState() {
@@ -102,7 +113,7 @@ public abstract class Entity {
 	}
 
 	void handleFriction(){
-		if (!isGrounded() && !hitstunTimer.timeUp()) {}
+		if (!isGrounded() && !hitstunTimer.timeUp() || state == State.JUMPSQUAT) {}
 		else if (!isGrounded()) velocity.x *= airFriction;
 		else velocity.x *= friction;
 	}
@@ -147,17 +158,17 @@ public abstract class Entity {
 		if (doesCollide(position.x + velocity.x, position.y + velocity.y)) velocity.y = 0; // checks for diagonal floor
 	}
 
-	boolean doesCollide(float x, float y){
+	public boolean doesCollide(float x, float y){
 		if (collision == Collision.GHOST) return false;
 		for (Rectangle r : tempRectangleList){
-			Rectangle thisR = getHurtBox(x, y);
+			Rectangle thisR = getCollisionBox(x, y);
 			boolean upThroughThinPlatform = r.getHeight() <= 1 && r.getY() - this.getPosition().y > 0;
 			if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
 		}
 		return false;
 	}
 
-	Rectangle getHurtBox(float x, float y){
+	Rectangle getCollisionBox(float x, float y){
 		Rectangle r = image.getBoundingRectangle();
 		r.setX(x); r.setY(y);
 		return r;
@@ -226,7 +237,7 @@ public abstract class Entity {
 		image.setY(y);
 	}
 
-	private final float aboveGround = 1f;
+	private final float aboveGround = 2;
 	public boolean isGrounded(){ 
 		return doesCollide(position.x, position.y - aboveGround); 
 	}
@@ -251,7 +262,7 @@ public abstract class Entity {
 	public Sprite getImage() { return image; }
 
 	public static enum Direction{ LEFT, RIGHT }
-	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, BLOCK, JUMP, FALL, WALLSLIDE, HELPLESS }
+	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, BLOCK, JUMPSQUAT, JUMP, FALL, WALLSLIDE, HELPLESS }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
 
 }

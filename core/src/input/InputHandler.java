@@ -1,5 +1,9 @@
 package input;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import entities.Fighter;
 
 public abstract class InputHandler {
@@ -30,16 +34,16 @@ public abstract class InputHandler {
 		boolean wasCommandAccepted = false;
 
 		if (player.canAct()){
-			switch (command){
-			case commandJump: wasCommandAccepted = player.tryJump(); break;
-			}
+			if (command == commandJump) wasCommandAccepted = player.tryJump();
 		}
-		if (!wasCommandAccepted && player.canAttack()){
+		if (player.canAttackBlock()){
+			if (command == commandGrab) wasCommandAccepted = player.tryGrab();
+		}
+		if (player.canAttack()){
 			switch (command){
 			case commandAttack:			wasCommandAccepted = player.tryNormal(); break;
 			case commandSpecial:		wasCommandAccepted = player.trySpecial(); break;
 			case commandCharge: 		wasCommandAccepted = player.tryCharge(); break;
-			case commandGrab:			wasCommandAccepted = player.tryGrab(); break;
 			case commandTaunt:			wasCommandAccepted = player.tryTaunt(); break;
 			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
 			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
@@ -49,11 +53,15 @@ public abstract class InputHandler {
 			}
 		}
 
-		if (!wasCommandAccepted && player.inputQueueTimer.timeUp()) {
-			player.queuedCommand = command;
-			player.inputQueueTimer.restart();
+		if (!wasCommandAccepted && player.inputQueueTimer.timeUp() && !stickCommands.contains(command)) {
+			if (!(command == commandJump && player.isGrounded()) ){
+				player.queuedCommand = command;
+				player.inputQueueTimer.restart();
+			}
 		}
 		else if (wasCommandAccepted) player.queuedCommand = commandNone;
 	}
+
+	private final List<Integer> stickCommands = new ArrayList<Integer>(Arrays.asList(commandStickUp, commandStickRight, commandStickLeft, commandStickDown));
 
 }

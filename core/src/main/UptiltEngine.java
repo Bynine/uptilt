@@ -12,15 +12,17 @@ import timers.Timer;
 import entities.*;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.math.Vector2;
 
 public class UptiltEngine extends ApplicationAdapter {
 
 	private static float volume = 1f;
-	private static final Timer hitlagTimer = new Timer(0, false);
+	private static final Timer hitlagTimer = new Timer(0);
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
 	private static int deltaTime = 0;
 	private static Fighter player1;
+	FPSLogger fpsLogger = new FPSLogger();
 
 	@Override public void create () {
 		player1 = new Kicker(0, 0, 0);
@@ -39,6 +41,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	@Override public void render () {
 		deltaTime++;
 		updateTimers();
+		//fpsLogger.log();
 
 		MapHandler.activeRoom.update(deltaTime);
 		MapHandler.updateActionCircleInteractions();

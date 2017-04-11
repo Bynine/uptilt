@@ -31,6 +31,11 @@ public abstract class Effect extends Action{
 		
 		void performAction(){
 			if (velX != noChange) user.getVelocity().x = velX * user.direct();
+			if (user.doesCollide(user.getPosition().x, user.getPosition().y + velY)) {
+				System.out.println("basement");
+				velY = noChange; 
+				return;
+			}
 			if (velY != noChange) user.getVelocity().y = velY;
 		}
 
@@ -74,6 +79,26 @@ public abstract class Effect extends Action{
 		void finish() {
 			
 		}
+	}
+	
+	public static class Armor extends Effect {
+		private final Move move;
+		private final float armor;
+
+		Armor(Move move, int start, int end, float armor) {
+			super(start, end);
+			this.move = move;
+			this.armor = armor;
+		}
+		
+		void performAction() {
+			move.setArmor(armor);
+		}
+
+		void finish() {
+			move.setArmor(0);
+		}
+
 	}
 	
 }

@@ -90,9 +90,9 @@ public class Hitbox extends ActionCircle{
 		if (target.isPerfectBlocking()) handlePerfectBlockingKnockback();
 		else target.takeKnockback(knockback, heldCharge * DAM, hitstun);
 		startHitlag(target);
-		MapHandler.addEntity(new Graphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
+		MapHandler.addEntity(new Graphic.HitGraphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
-		setInitialHit(true);
+		hitFighterList.add(target);
 	}
 	
 	void handlePerfectBlockingKnockback(){
@@ -126,7 +126,7 @@ public class Hitbox extends ActionCircle{
 		return  2 + (int) (knockback * hitstunRatio);
 	}
 
-	private float crouchCancelMod = .67f;
+	private float crouchCancelMod = .75f;
 	private float blockMod = 0.5f;
 	private float blockDecrement = 3;
 	private final float kbgMod = 0.04f;
@@ -134,6 +134,7 @@ public class Hitbox extends ActionCircle{
 	private final float minKnockback = 0.25f;
 	protected float knockbackFormula(Fighter target){
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
+		knockback -= target.getArmor();
 		if (target.getState() == State.CROUCH) knockback *= crouchCancelMod;
 		if (target.isBlocking()) {
 			knockback = (knockback * blockMod) - blockDecrement;
@@ -164,6 +165,5 @@ public class Hitbox extends ActionCircle{
 	public enum Property { 
 		NORMAL, ELECTRIC 
 	}
-	
 	
 }

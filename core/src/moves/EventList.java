@@ -18,6 +18,7 @@ public class EventList {
 		time = time - 1;
 		for (Effect e: effectList){
 			if (e.getStart() <= time && e.getEnd() >= time) e.performAction();
+			if (e.getEnd() == time) e.finish();
 		}
 		while (!actionList.isEmpty() && actionStartTimes.contains(time)) {
 			Action a = actionList.remove(0);
@@ -52,7 +53,7 @@ public class EventList {
 		actionStartTimes.add(start);
 	}
 
-	public void addInvincible(Fighter user, int start, int end) {
+	void addInvincible(Fighter user, int start, int end) {
 		actionList.add(new Action.Invincible(user, start, end));
 		actionStartTimes.add(start);
 	}
@@ -65,6 +66,10 @@ public class EventList {
 
 	void addCharge(Fighter user, Charge c) {
 		effectList.add(c);
+	}
+
+	void addArmor(Move move, int start, int end, float armor) {
+		effectList.add(new Effect.Armor(move, start, end, armor));
 	}
 
 }

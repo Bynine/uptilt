@@ -176,8 +176,6 @@
   <object id="15" x="976" y="544" width="64"/>
  </objectgroup>
  <objectgroup name="ENTITIES">
-  <object id="3" name="kicker" gid="5" x="896" y="624" width="16" height="16"/>
-  <object id="9" name="kicker" gid="5" x="784" y="544" width="16" height="16"/>
-  <object id="10" name="kicker" gid="5" x="896" y="480" width="16" height="16"/>
+  <object id="3" name="kicker" gid="5" x="1024" y="624" width="16" height="16"/>
  </objectgroup>
 </map>

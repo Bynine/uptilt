@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
 
+import timers.DurationTimer;
 import timers.Timer;
 import entities.Entity.State;
 import entities.InputPackage;
@@ -58,8 +59,8 @@ public abstract class Brain{
 
 	public static class Recover extends Brain{ // Recovers if thrown offstage, mixes up vertical DI
 
-		Timer changeDI = new Timer(60, true);
-		Timer waitToUseUpSpecial = new Timer(30, false);
+		Timer changeDI = new DurationTimer(60);
+		Timer waitToUseUpSpecial = new Timer(30);
 		
 		public Recover(InputHandlerCPU body) {
 			super(body);
@@ -87,32 +88,46 @@ public abstract class Brain{
 	
 	public static class Basic extends Brain{ // Walks at player and attacks with normals
 		
-		Timer changeDI = new Timer(60, true);
-		Timer waitToUseUpSpecial = new Timer(30, false);
-		Timer tryJump = new Timer(30, false);
-		Timer changeDirection = new Timer(30, false);
+		Timer changeDI = new DurationTimer(60);
+		Timer waitToUseUpSpecial = new Timer(30);
+		Timer tryJump = new Timer(30);
+		Timer performJump = new Timer(20);
+		Timer changeDirection = new Timer(30);
+		float aggressiveness = 0.04f;
 
 		public Basic(InputHandlerCPU body) {
 			super(body);
-			timerList.addAll(Arrays.asList(changeDI, waitToUseUpSpecial, tryJump, changeDirection));
+			timerList.addAll(Arrays.asList(changeDI, waitToUseUpSpecial, tryJump, changeDirection, performJump));
 		}
 
 		void update(InputPackage pack){
 			super.update(pack);
 			if (changeDirection.timeUp()){
-				if (Math.random() < 0.2) body.xInput = 0;
 				if (Math.random() < 0.5) body.xInput = setInput(-pack.distanceXFromPlayer);
+				else if (Math.random() < 0.2) {
+					if (pack.distanceXFromPlayer > 0) body.handleCommand(InputHandler.commandStickRight);
+					else body.handleCommand(InputHandler.commandStickLeft);
+				}
+				else if (Math.random() < 0.2) body.xInput = 0;
 				changeDirection.restart();
 			}
-			if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJump);
-			else if (pack.distanceYFromPlayer < 0 && tryJump.timeUp()) {
+			if (!performJump.timeUp()) {
+				body.handleCommand(InputHandler.commandJump);
+				if (Math.random() < 0.5) performJump.countUp(); // modulates jump height
+			}
+			else if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJump);
+			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) {
 				tryJump.restart();
-				if (Math.random() < 0.5) body.handleCommand(InputHandler.commandJump);
+				if (performJump.timeUp() && Math.random() < (-pack.distanceYFromPlayer/50f)) {
+					body.handleJumpCommand();
+					performJump.restart();
+				}
 			}
 			else if (Math.abs(pack.distanceYFromPlayer) < 80 && Math.abs(pack.distanceXFromPlayer) < 80) {
-				if (Math.random() < 0.05) {
+				if (Math.random() < aggressiveness) {
 					if (pack.direct == Math.signum(pack.distanceXFromPlayer)) body.xInput *= -1; // turn around if behind
-					body.handleCommand(InputHandler.commandAttack);
+					if (Math.random() < 0.2) body.handleCommand(InputHandler.commandCharge);
+					else body.handleCommand(InputHandler.commandAttack);
 				}
 			}
 			else attemptRecovery(pack, waitToUseUpSpecial);
