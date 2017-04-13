@@ -29,7 +29,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = false;
+	private static boolean debug = true;
 	
 	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
@@ -80,8 +80,9 @@ public class GraphicsHandler {
 			if (e instanceof Fighter) {
 				Fighter fi = (Fighter) e;
 				drawFighterPercentage(fi);
+				if (debug) drawState(fi);
 				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
-				else if (fi.isInvincible()) batch.setColor(0.25f, 0.75f, 1f, 0.5f);
+				else if (fi.isInvincible()) batch.setColor(0.5f, 1.75f, 2f, 0.5f);
 				else if (fi.isCharging()) batch.setColor(1, 1, 1, 1);
 				
 				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.8f, batch.getColor().b, 1);
@@ -110,7 +111,7 @@ public class GraphicsHandler {
 		debugRenderer.setColor(0, 1, 0, 0.25f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
-			debugRenderer.rect(r.x, r.y, r.width, r.height);
+			if (e instanceof Fighter) debugRenderer.rect(r.x, r.y, r.width, r.height);
 		}
 		debugRenderer.end();
 	}
@@ -122,6 +123,13 @@ public class GraphicsHandler {
 		float xPos = fi.getPosition().x - 8 + fi.getImage().getWidth()/2;
 		float yPos = fi.getPosition().y + fi.getImage().getHeight() + font.getLineHeight();
 		font.draw(batch, (int)fi.getPercentage() + "%", xPos, yPos);
+	}
+	
+	private static void drawState(Entity e) {
+		Fighter fi = (Fighter) e;
+		float xPos = fi.getPosition().x - 16 + fi.getImage().getWidth()/2;
+		float yPos = fi.getPosition().y + fi.getImage().getHeight() + font.getLineHeight() * 2;
+		font.draw(batch, fi.getState().toString(), xPos, yPos);
 	}
 
 	public static void updateRoomGraphics(Fighter player) {

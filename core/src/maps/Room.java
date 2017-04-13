@@ -25,7 +25,6 @@ public abstract class Room {
 	protected final List<Entity> entityList = new ArrayList<>();
 	protected final List<Entity> newEntityList = new ArrayList<>();
 	protected final List<ActionCircle> actionCircleList = new ArrayList<>();
-	protected final Vector2 startPosition = new Vector2();
 	protected Music roomMusic;
 	protected float r, g, b = 1;
 	protected float a = 0;
@@ -49,8 +48,8 @@ public abstract class Room {
 
 	public void initEntities(Fighter player){
 		clearOut();
-		player.setPosition(startPosition);
-		player.setRespawnPoint(startPosition);
+		player.setPosition(getStartPosition());
+		player.setRespawnPoint(getStartPosition());
 		entityList.add(player);
 
 		for (MapObject m: mapEntities) entityList.add(new EntityLoader().loadEntity(m));
@@ -76,8 +75,8 @@ public abstract class Room {
 	}
 
 	void setStartPosition(float x, float y){
-		startPosition.x = x;
-		startPosition.y = y;
+		getStartPosition().x = x;
+		getStartPosition().y = y;
 	}
 
 	public void removeEntity(Entity en){
@@ -88,11 +87,12 @@ public abstract class Room {
 	public abstract TiledMap getMap();
 	public abstract int[] getSides();
 	public abstract float getFloor();
+	public abstract Vector2 getSpawnPoint();
+	public abstract Vector2 getStartPosition();
 
 	public List<Rectangle> getRectangleList(){ return rectangleList; }
 	public List<Entity> getEntityList(){ return entityList; }
 	public List<ActionCircle> getActionCircleList() { return actionCircleList; }
-	public Vector2 getStartPosition(){ return startPosition; }
 	public void stopMusic(){ roomMusic.stop(); }
 	public Music getMusic(){ return roomMusic; }
 	public float getR(){ return r; }

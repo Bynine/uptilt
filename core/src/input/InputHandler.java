@@ -37,18 +37,20 @@ public abstract class InputHandler {
 			if (command == commandJump) wasCommandAccepted = player.tryJump();
 		}
 		if (player.canAttackBlock()){
-			if (command == commandGrab) wasCommandAccepted = player.tryGrab();
+			switch (command){
+			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
+			case commandStickLeft:		wasCommandAccepted = player.tryStickBack(); break;
+			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
+			case commandStickDown:		wasCommandAccepted = player.tryStickDown(); break;
+			}
 		}
 		if (player.canAttack()){
 			switch (command){
 			case commandAttack:			wasCommandAccepted = player.tryNormal(); break;
 			case commandSpecial:		wasCommandAccepted = player.trySpecial(); break;
+			case commandGrab:	 		wasCommandAccepted = player.tryGrab(); break;
 			case commandCharge: 		wasCommandAccepted = player.tryCharge(); break;
 			case commandTaunt:			wasCommandAccepted = player.tryTaunt(); break;
-			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
-			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
-			case commandStickLeft:		wasCommandAccepted = player.tryStickBack(); break;
-			case commandStickDown:		wasCommandAccepted = player.tryStickDown(); break;
 			default:					wasCommandAccepted = true; break;
 			}
 		}

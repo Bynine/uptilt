@@ -24,9 +24,7 @@ public class InputHandlerKeyboard extends InputHandler implements InputProcessor
 		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandGrab);
 		if (Gdx.input.isKeyJustPressed(Keys.O)) handleCommand(commandBlock);
 		boolean jump = (Gdx.input.isKeyPressed(Keys.J));
-		player.handleJumpCommand(jump);
-		boolean block = (Gdx.input.isKeyPressed(Keys.O));
-		player.handleBlockCommand(block);
+		player.handleJumpHeld(jump);
 	}
 
 	@Override

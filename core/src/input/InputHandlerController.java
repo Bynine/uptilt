@@ -16,12 +16,15 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 	public InputHandlerController(Fighter player) {
 		super(player);
 		this.player = player;
-		for (int i = 0; i < lastXSize; ++i) lastXPositions.add((float) 0);
+		for (int i = 0; i < lastSize; ++i) {
+			lastXPositions.add((float) 0);
+			lastYPositions.add((float) 0);
+		}
 	}
 
 	Controller controller;
-	final int lastXSize = 2;
-	final List<Float> lastXPositions = new ArrayList<Float>(lastXSize);
+	final int lastSize = 2;
+	final List<Float> lastXPositions = new ArrayList<Float>(lastSize), lastYPositions = new ArrayList<Float>(lastSize);
 	public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
 	public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
 	public static final int AXIS_SHOULDER = 4;
@@ -33,27 +36,31 @@ public class InputHandlerController extends InputHandler implements ControllerLi
 		return true;
 	}
 	
-	private final float flick = 0.80f;
-	private final float pushed = 0.85f;
+	private final float depressed = 0.1f;
+	private float prevShoulder = 0;
 	public void update() {
 		super.update();
-		lastXPositions.add(controller.getAxis(AXIS_LEFT_X));
-		boolean jump = controller.getButton(commandJump); // TODO: move these to InputHandler
-		player.handleJumpCommand(jump);
-		if ( Math.abs(controller.getAxis(AXIS_SHOULDER)) > pushed) { 
-			player.handleBlockCommand(true);
-			player.tryBlock();
-		}
-		else player.handleBlockCommand(false);
-		float prevX = lastXPositions.remove(0);
-		float curX = lastXPositions.get(lastXSize - 1);
-		if (Math.abs(curX) < pushed) curX = 0;
-		if (Math.abs(curX - prevX) > flick) {
-			if (Math.signum(curX) == 1) handleCommand(commandStickRight);
-			if (Math.signum(curX) == -1) handleCommand(commandStickLeft);
-		}
+		player.handleJumpHeld(controller.getButton(commandJump));
+		float currShoulder = controller.getAxis(AXIS_SHOULDER);
+		player.handleBlockHeld( (Math.abs(currShoulder) > depressed) );
+		if ( Math.abs(currShoulder) > depressed && (Math.abs(currShoulder) - Math.abs(prevShoulder)) > depressed) player.tryDodge();
+		prevShoulder = Math.abs(controller.getAxis(AXIS_SHOULDER));
+		stickFlick(lastXPositions, AXIS_LEFT_X, commandStickRight, commandStickLeft);
+		stickFlick(lastYPositions, AXIS_LEFT_Y, commandStickDown, commandStickUp);
 		if (controller.getPov(0) != PovDirection.center) handleCommand(commandTaunt);
-		controller.getAxis(AXIS_SHOULDER);
+	}
+	
+	private final float flick = 0.80f;
+	private final float pushed = 0.85f;
+	private void stickFlick(List<Float> lastPositions, int axis, int command1, int command2){
+		lastPositions.add(controller.getAxis(axis));
+		float prevY = lastPositions.remove(0);
+		float curY = lastPositions.get(lastSize - 1);
+		if (Math.abs(curY) < pushed) curY = 0;
+		if (Math.abs(curY - prevY) > flick) {
+			if (Math.signum(curY) == 1) handleCommand(command1);
+			if (Math.signum(curY) == -1) handleCommand(command2);
+		}
 	}
 
 	public boolean isCharging() {

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import maps.Room;
+import maps.Round;
 import timers.Timer;
 import entities.*;
 
@@ -23,6 +24,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static int deltaTime = 0;
 	private static Fighter player1;
 	FPSLogger fpsLogger = new FPSLogger();
+	Round r;
 
 	@Override public void create () {
 		player1 = new Kicker(0, 0, 0);
@@ -31,6 +33,8 @@ public class UptiltEngine extends ApplicationAdapter {
 		else player1.setInputHandler(ch);
 		GraphicsHandler.begin();
 		MapHandler.begin(player1);
+		
+		r = new Round(player1);
 	}
 
 	private void startWithKeyboard(){
@@ -41,6 +45,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	@Override public void render () {
 		deltaTime++;
 		updateTimers();
+		r.update(deltaTime);
 		//fpsLogger.log();
 
 		MapHandler.activeRoom.update(deltaTime);

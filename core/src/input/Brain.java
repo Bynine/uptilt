@@ -86,14 +86,14 @@ public abstract class Brain{
 
 	}
 	
-	public static class Basic extends Brain{ // Walks at player and attacks with normals
+	public static class Basic extends Brain{ // Recovers, walks/runs at player, and attacks with normals
 		
 		Timer changeDI = new DurationTimer(60);
 		Timer waitToUseUpSpecial = new Timer(30);
 		Timer tryJump = new Timer(30);
 		Timer performJump = new Timer(20);
 		Timer changeDirection = new Timer(30);
-		float aggressiveness = 0.04f;
+		float aggressiveness = 0.1f;
 
 		public Basic(InputHandlerCPU body) {
 			super(body);
@@ -118,7 +118,7 @@ public abstract class Brain{
 			else if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) {
 				tryJump.restart();
-				if (performJump.timeUp() && Math.random() < (-pack.distanceYFromPlayer/50f)) {
+				if (performJump.timeUp() && Math.random() < (-pack.distanceYFromPlayer/300f)) {
 					body.handleJumpCommand();
 					performJump.restart();
 				}
@@ -126,8 +126,7 @@ public abstract class Brain{
 			else if (Math.abs(pack.distanceYFromPlayer) < 80 && Math.abs(pack.distanceXFromPlayer) < 80) {
 				if (Math.random() < aggressiveness) {
 					if (pack.direct == Math.signum(pack.distanceXFromPlayer)) body.xInput *= -1; // turn around if behind
-					if (Math.random() < 0.2) body.handleCommand(InputHandler.commandCharge);
-					else body.handleCommand(InputHandler.commandAttack);
+					body.handleCommand(InputHandler.commandAttack);
 				}
 			}
 			else attemptRecovery(pack, waitToUseUpSpecial);

@@ -175,7 +175,5 @@
   <object id="14" x="864" y="480" width="80"/>
   <object id="15" x="976" y="544" width="64"/>
  </objectgroup>
- <objectgroup name="ENTITIES">
-  <object id="3" name="kicker" gid="5" x="1024" y="624" width="16" height="16"/>
- </objectgroup>
+ <objectgroup name="ENTITIES"/>
 </map>

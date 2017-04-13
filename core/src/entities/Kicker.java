@@ -11,20 +11,21 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Kicker extends Fighter {
 
-	private Animation standImage = GlobalRepo.makeAnimation("sprites/player/stand.png", 7, 1, 6, PlayMode.LOOP);
-	private Animation walkImage = GlobalRepo.makeAnimation("sprites/player/walk.png", 2, 1, 12, PlayMode.LOOP);
-	private Animation runImage = GlobalRepo.makeAnimation("sprites/player/run.png", 11, 1, 4, PlayMode.LOOP);
-	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/fjump.png")));
-	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/bjump.png")));
-	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/fall.png")));
-	private TextureRegion ascendImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/ascend.png")));
-	private TextureRegion slideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/slide.png")));
-	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/crouch.png")));
-	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/helpless.png")));
-	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/dash.png")));
-	private TextureRegion blockImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/block.png")));
-	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/grab.png")));
-	private TextureRegion jumpSquatImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/player/crouch.png")));
+	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 6, PlayMode.LOOP);
+	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 2, 1, 12, PlayMode.LOOP);
+	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/run.png", 11, 1, 4, PlayMode.LOOP);
+	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fjump.png")));
+	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/njump.png")));
+	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/bjump.png")));
+	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fall.png")));
+	private TextureRegion ascendImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/ascend.png")));
+	private TextureRegion wallSlideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/slide.png")));
+	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/crouch.png")));
+	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/helpless.png")));
+	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/dash.png")));
+	private TextureRegion dodgeImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/dodgebegin.png")));
+	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
+	private TextureRegion jumpSquatImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/crouch.png")));
 
 	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
@@ -50,6 +51,12 @@ public class Kicker extends Fighter {
 		if (direction == Direction.LEFT) r.x -= widthDiff;
 		return r;
 	}
+	
+	private void setJumpImage(){
+		if (Math.abs(velocity.x) > 1 && Math.signum(velocity.x) != direct()) setImage(bJumpImage); 
+		else if (Math.abs(velocity.x) > airSpeed) setImage(fJumpImage);
+		else setImage(nJumpImage);
+	}
 
 	void updateImage(float deltaTime){
 		TextureRegion prevImage = image;
@@ -58,24 +65,20 @@ public class Kicker extends Fighter {
 		case WALK: setImage(walkImage.getKeyFrame(deltaTime)); break;
 		case RUN: setImage(runImage.getKeyFrame(deltaTime)); break;
 		case JUMP: {
-			if (Math.signum(velocity.x) != direct()) setImage(bJumpImage); 
-			else setImage(fJumpImage);
+			setJumpImage();
 			break;
 		}
 		case FALL: {
-			if (velocity.y > 1){
-				if (Math.signum(velocity.x) != direct()) setImage(bJumpImage); 
-				else setImage(fJumpImage);
-			}
+			if (velocity.y > 1) setJumpImage();
 			else if (velocity.y > 0) setImage(ascendImage);
 			else setImage(fallImage); 
 			break;
 		}
-		case WALLSLIDE: setImage(slideImage); break;
+		case WALLSLIDE: setImage(wallSlideImage); break;
 		case CROUCH: setImage(crouchImage); break;
 		case HELPLESS: setImage(helplessImage); break;
 		case DASH: setImage(dashImage); break;
-		case BLOCK: setImage(blockImage); break;
+		case DODGE: setImage(dodgeImage); break;
 		case JUMPSQUAT: setImage(jumpSquatImage); break;
 		default: break;
 		}
@@ -89,7 +92,7 @@ public class Kicker extends Fighter {
 	}
 	
 	private void adjustImage(TextureRegion prevImage){
-		if (prevImage != slideImage && state == State.WALLSLIDE && direction == Direction.RIGHT) wallCling();
+		if (prevImage != wallSlideImage && state == State.WALLSLIDE && direction == Direction.RIGHT) wallCling();
 		float adjustedPosX = (image.getWidth() - prevImage.getRegionWidth())/2;
 		if (!doesCollide(position.x - adjustedPosX, position.y) && state != State.WALLSLIDE) position.x -= adjustedPosX;
 		if (doesCollide(position.x, position.y)) resetStance();

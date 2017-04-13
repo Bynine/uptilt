@@ -42,7 +42,7 @@ public class InputHandlerCPU extends InputHandler {
 	}
 
 	public void handleJumpCommand() {
-		cpu.handleJumpCommand(true);
+		cpu.handleJumpHeld(true);
 	}
 
 }

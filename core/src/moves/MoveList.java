@@ -69,6 +69,7 @@ public abstract class MoveList {
 	public abstract Move rollForward();
 	public abstract Move rollBack();
 	public abstract Move airDodge();
+	public abstract Move dodge();
 
 	/* misc */
 	public abstract Move land();
@@ -138,11 +139,7 @@ public abstract class MoveList {
 	}
 	
 	public Move selectBlock() {
-		if (user.isGrounded() && !user.isDashing()){
-			if (user.holdForward()) return rollForward();
-			else if (user.holdBack()) return rollBack();
-		}
-		else if (!user.isGrounded()) return airDodge();
+		if (!user.isGrounded()) return airDodge();
 		return null;
 	}
 	

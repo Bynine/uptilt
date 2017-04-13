@@ -21,6 +21,14 @@ public abstract class Graphic extends Entity{
 		collision = Collision.GHOST;
 	}
 	
+	void setSmall(TextureRegion smaller){
+		position.x += image.getWidth()/2;
+		position.y += image.getHeight()/2;
+		setImage(smaller);
+		position.x -= image.getWidth()/2;
+		position.y -= image.getHeight()/2;
+	}
+	
 	public static class HitGraphic extends Graphic{
 		private TextureRegion fullSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hit.png")));
 		private TextureRegion halfSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hitsmall.png")));
@@ -33,7 +41,7 @@ public abstract class Graphic extends Entity{
 		}
 		
 		void updatePosition(){
-			if (duration.getCounter() > dur/2) setImage(halfSize);
+			if (duration.getCounter() > dur/2) setSmall(halfSize);
 			if (duration.timeUp()) setRemove();
 		}
 		
@@ -50,13 +58,15 @@ public abstract class Graphic extends Entity{
 			position.y -= image.getHeight()/2;
 		}
 		
-		public SmokeTrail(float posX, float posY, int dur){
-			this(posX, posY);
+		/** lag-behind smoke trail **/
+		public SmokeTrail(Entity e, int dur){
+			this(e.position.x - e.velocity.x + e.image.getWidth()/2, e.position.y - e.velocity.y + e.image.getHeight()/2);
+			if (dur > 12) dur = 12;
 			duration.setEndTime(dur);
 		}
 		
 		void updatePosition(){
-			if (duration.getCounter() > dur/2) setImage(halfSize);
+			if (duration.getCounter() > dur/2) setSmall(halfSize);
 			if (duration.timeUp()) setRemove();
 		}
 		

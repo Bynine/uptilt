@@ -101,6 +101,7 @@ public abstract class Projectile extends Entity{
 			super.update(rectangleList, entityList, deltaTime);
 			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
 			if (Math.abs(velX) < 10) velX *= 1.05f;
+			if (deltaTime % 10 == 0) MapHandler.addEntity(new Graphic.SmokeTrail(this, 8));
 		}
 		
 		public  boolean doesCollide(float x, float y){
@@ -140,6 +141,7 @@ public abstract class Projectile extends Entity{
 			new SFX.Explode().play();
 			setup("sprites/entities/blast.png", lifeTime, 0, 0);
 			ac = new ProjectileHitbox(owner, 8, 2, 16, 270, 0, 0, 20, new SFX.HeavyHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 5, 2, 16, 270, 5, -20, 10, new SFX.HeavyHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
 	}

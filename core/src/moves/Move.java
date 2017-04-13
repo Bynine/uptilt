@@ -25,7 +25,7 @@ public class Move {
 
 	public void update(){
 		duration.countUp();
-		eventList.update(duration.getCounter());
+		eventList.update(duration.getCounter(), user.isInHitstun());
 	}
 
 	public boolean done(){ return duration.timeUp(); }

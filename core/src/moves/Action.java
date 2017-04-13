@@ -1,5 +1,7 @@
 package moves;
 
+import com.badlogic.gdx.math.Vector2;
+
 import entities.Fighter;
 import entities.Projectile;
 import main.MapHandler;
@@ -96,6 +98,26 @@ public abstract class Action {
 		
 		void performAction() {
 			user.setInvincible(end - start);
+		}
+
+	}
+	
+	public static class ChangeVelocityAngled extends Action {
+		final Fighter user;
+		final float velocity;
+		
+		ChangeVelocityAngled(Fighter user, float velocity){
+			this.user = user;
+			this.velocity = velocity;
+		}
+
+		void performAction() {
+			Vector2 newVelocity = new Vector2(velocity, velocity);
+			Vector2 angle = new Vector2(user.getStickX(), -user.getStickY());
+			if (angle.angle() > 120 && angle.angle() < 270) newVelocity.setAngle(140);
+			else if (angle.angle() < 60 || angle.angle() > 270) newVelocity.setAngle(40);
+			else newVelocity.setAngle(90);
+			user.getVelocity().set(newVelocity);
 		}
 
 	}

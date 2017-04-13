@@ -13,6 +13,7 @@ import moves.Grabbox;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 import entities.Entity;
 import entities.Fighter;
@@ -47,7 +48,11 @@ public class MapHandler {
 			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
 				if (en instanceof Fighter){
 					Fighter fi = (Fighter) en;
-					fi.respawn();
+					if (fi.getStocks() > 1 || fi == UptiltEngine.getPlayer()) fi.respawn();
+					else {
+						fi.setStocks(0);
+						entityIter.remove();
+					}
 				}
 				else entityIter.remove();
 			}
@@ -97,12 +102,13 @@ public class MapHandler {
 		mapHeight = activeMap.getProperties().get("height", Integer.class)*GlobalRepo.TILE;
 	}
 
-	static void resetRoom() {
+	public static void resetRoom() {
 		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition()); 
 	}
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }
 	public static void addActionCircle(ActionCircle ac){ activeRoom.addActionCircle(ac); }
+	
 	public static int[] getStageSides() { 
 		if (activeRoom == null) return new int[]{0, 0};
 		else return activeRoom.getSides();
@@ -110,6 +116,11 @@ public class MapHandler {
 	public static float getStageFloor() {
 		if (activeRoom == null) return 0;
 		else return activeRoom.getFloor();
+	}
+
+	public static Vector2 getSpawnPoint() {
+		if (activeRoom == null) return new Vector2(0, 0);
+		else return activeRoom.getSpawnPoint();
 	}
 
 }

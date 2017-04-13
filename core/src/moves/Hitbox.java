@@ -86,9 +86,10 @@ public class Hitbox extends ActionCircle{
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		if (target.isBlocking()) target.takeKnockback(knockback, heldCharge * DAM /2, hitstun);
-		if (target.isPerfectBlocking()) handlePerfectBlockingKnockback();
-		else target.takeKnockback(knockback, heldCharge * DAM, hitstun);
+		//if (target.isInDodge()) target.takeKnockback(knockback, heldCharge * DAM /2, hitstun);
+		//if (target.isPerfectBlocking()) handlePerfectBlockingKnockback();
+		//else
+		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
 		startHitlag(target);
 		MapHandler.addEntity(new Graphic.HitGraphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
@@ -127,18 +128,13 @@ public class Hitbox extends ActionCircle{
 	}
 
 	private float crouchCancelMod = .75f;
-	private float blockMod = 0.5f;
-	private float blockDecrement = 3;
 	private final float kbgMod = 0.04f;
 	private final float weightMod = 0.01f;
 	private final float minKnockback = 0.25f;
-	protected float knockbackFormula(Fighter target){
+	public float knockbackFormula(Fighter target){
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
 		knockback -= target.getArmor();
 		if (target.getState() == State.CROUCH) knockback *= crouchCancelMod;
-		if (target.isBlocking()) {
-			knockback = (knockback * blockMod) - blockDecrement;
-		}
 		if (knockback < minKnockback) return 0;
 		else return knockback;
 	}
@@ -162,8 +158,8 @@ public class Hitbox extends ActionCircle{
 		else return 1;
 	}
 
-	public enum Property { 
-		NORMAL, ELECTRIC 
-	}
+	public enum Property { NORMAL, ELECTRIC  }
+	public float getDamage() { return DAM; }
+	public float getAngle() { return ANG; }
 	
 }

@@ -14,8 +14,9 @@ public class EventList {
 	List<Effect> effectList = new ArrayList<Effect>();
 	List<Integer> actionStartTimes = new ArrayList<Integer>();
 
-	void update(int time) {
+	void update(int time, boolean hitstun) {
 		time = time - 1;
+		if (hitstun) return;
 		for (Effect e: effectList){
 			if (e.getStart() <= time && e.getEnd() >= time) e.performAction();
 			if (e.getEnd() == time) e.finish();
@@ -40,6 +41,11 @@ public class EventList {
 	
 	void addVelocityChangeCharge(Fighter user, int start, float velX, float velY, Charge c) {
 		actionList.add(new Action.ChangeVelocity(user, velX, velY, c));
+		actionStartTimes.add(start);
+	}
+	
+	void addAngledVelocityChange(Fighter user, int start, float vel) {
+		actionList.add(new Action.ChangeVelocityAngled(user, vel));
 		actionStartTimes.add(start);
 	}
 	

@@ -32,7 +32,6 @@ public abstract class Effect extends Action{
 		void performAction(){
 			if (velX != noChange) user.getVelocity().x = velX * user.direct();
 			if (user.doesCollide(user.getPosition().x, user.getPosition().y + velY)) {
-				System.out.println("basement");
 				velY = noChange; 
 				return;
 			}

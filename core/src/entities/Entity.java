@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import main.GlobalRepo;
 import main.MapHandler;
 import main.UptiltEngine;
 import timers.Timer;
@@ -51,14 +50,16 @@ public abstract class Entity {
 		updateTimers();
 		updatePosition();
 		updateImagePosition(deltaTime);
-		
+
 		if (state == State.RUN && deltaTime % 8 == 0) {
 			if (direction == Direction.LEFT) MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
 			else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		}
 		int knockbackPower = (int) (Math.abs(velocity.x) + Math.abs(velocity.y));
-		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > 8) 
-			MapHandler.addEntity(new Graphic.SmokeTrail(position.x - velocity.x + image.getWidth()/2, position.y - velocity.y + image.getHeight()/2, knockbackPower));
+		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > 8) {
+			MapHandler.addEntity(new Graphic.SmokeTrail(this, knockbackPower));
+			image.setRotation(55);
+		}
 	}
 
 	void updateState() {
@@ -211,8 +212,8 @@ public abstract class Entity {
 	}
 
 	public void setPosition(Vector2 startPosition) {
-		position.x = GlobalRepo.TILE * startPosition.x;
-		position.y = GlobalRepo.TILE * startPosition.y;
+		position.x = startPosition.x;
+		position.y = startPosition.y;
 		velocity.x = 0;
 		velocity.y = 0;
 	}
@@ -243,7 +244,10 @@ public abstract class Entity {
 	}
 
 	public void ground(){ 
-		/* */
+		if (velocity.y < -0.1 && !inGroundedState()){
+			MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
+			MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
+		}
 	}
 
 	public void fallOffScreen() {
@@ -260,9 +264,12 @@ public abstract class Entity {
 	public void setDirection (Direction d) { direction = d; }
 	public Collision getCollision() { return collision; }
 	public Sprite getImage() { return image; }
+	protected boolean inGroundedState() { return groundedStates.contains(state);}
+	protected boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
+	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }
-	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, BLOCK, JUMPSQUAT, JUMP, FALL, WALLSLIDE, HELPLESS }
+	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, DODGE, JUMPSQUAT, JUMP, FALL, WALLSLIDE, HELPLESS }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
 
 }
