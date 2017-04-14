@@ -5,7 +5,9 @@ import java.util.List;
 
 import main.SFX;
 import moves.Effect.Charge;
+import moves.Effect.GraphicEffect;
 import entities.Fighter;
+import entities.Graphic;
 import entities.Projectile;
 
 public class EventList {
@@ -76,6 +78,10 @@ public class EventList {
 
 	void addArmor(Move move, int start, int end, float armor) {
 		effectList.add(new Effect.Armor(move, start, end, armor));
+	}
+
+	public void addGraphic(Fighter user, int start, int end, Graphic g) {
+		effectList.add(new GraphicEffect(user, start, end, g));
 	}
 
 }

@@ -14,15 +14,24 @@ public class Dummy extends Fighter {
 
 	public Dummy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		setInputHandler(new InputHandlerCPU(this, Basic.class));
+		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(texture);
 		gravity = -0.42f;
 		weight = 100;
 	}
 	
-	@Override
-	void updateImage(float deltaTime){
-		setImage(texture);
-	}
+	TextureRegion getJumpFrame(float deltaTime) { return texture; }
+	TextureRegion getStandFrame(float deltaTime) { return texture; }
+	TextureRegion getWalkFrame(float deltaTime) { return texture; }
+	TextureRegion getRunFrame(float deltaTime) { return texture; }
+	TextureRegion getWallSlideFrame(float deltaTime) { return texture; }
+	TextureRegion getHelplessFrame(float deltaTime) { return texture; }
+	TextureRegion getGrabFrame(float deltaTime) { return texture; }
+	TextureRegion getFallFrame(float deltaTime) { return texture; }
+	TextureRegion getAscendFrame(float deltaTime) { return texture; }
+	TextureRegion getCrouchFrame(float deltaTime) { return texture; }
+	TextureRegion getDashFrame(float deltaTime) { return texture; }
+	TextureRegion getDodgeFrame(float deltaTime) { return texture; }
+	TextureRegion getJumpSquatFrame(float deltaTime) { return texture; }
 
 }

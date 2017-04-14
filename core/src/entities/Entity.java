@@ -25,6 +25,7 @@ public abstract class Entity {
 
 	float gravity = -0.35f;
 	float friction = 0.85f, airFriction = 0.95f;
+	final int superHitstunBase = 10;
 
 	boolean toRemove = false;
 	private final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
@@ -56,9 +57,8 @@ public abstract class Entity {
 			else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		}
 		int knockbackPower = (int) (Math.abs(velocity.x) + Math.abs(velocity.y));
-		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > 8) {
+		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > superHitstunBase) {
 			MapHandler.addEntity(new Graphic.SmokeTrail(this, knockbackPower));
-			image.setRotation(55);
 		}
 	}
 

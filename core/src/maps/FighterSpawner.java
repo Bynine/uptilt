@@ -6,13 +6,14 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-import input.Brain.Basic;
+import input.Brain.MookBrain;
 import input.InputHandlerCPU;
 import main.MapHandler;
 import entities.Fighter;
 
 public class FighterSpawner<T extends Fighter> {
 	Class<T> type;
+	final int initAmount;
 	int amount, capacity;
 	float frequency;
 	final List<Fighter> spawnedEntities = new ArrayList<Fighter>();
@@ -20,6 +21,7 @@ public class FighterSpawner<T extends Fighter> {
 	FighterSpawner (Class<T> type, int amount, int capacity, float frequency){
 		this.type = type;
 		this.amount = amount;
+		initAmount = amount;
 		this.capacity = capacity;
 		this.frequency = frequency;
 	}
@@ -43,9 +45,14 @@ public class FighterSpawner<T extends Fighter> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		fi.setInputHandler(new InputHandlerCPU(fi, Basic.class));
+		fi.setInputHandler(new InputHandlerCPU(fi, MookBrain.class));
 		MapHandler.addEntity(fi);
 		spawnedEntities.add(fi);
 		amount--;
+	}
+
+	public void restart() {
+		amount = initAmount;
+		spawnedEntities.clear();
 	}
 }

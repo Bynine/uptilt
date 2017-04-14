@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import timers.DurationTimer;
 
 public abstract class Graphic extends Entity{
-	
+
 	final DurationTimer duration;
 	int dur;
 
@@ -19,6 +19,10 @@ public abstract class Graphic extends Entity{
 		duration.restart();
 		timerList.add(duration);
 		collision = Collision.GHOST;
+	}
+	
+	public void setDuration(int endTime){
+		duration.setEndTime(endTime);
 	}
 	
 	void setSmall(TextureRegion smaller){
@@ -74,7 +78,6 @@ public abstract class Graphic extends Entity{
 	
 	public static class DustCloud extends Graphic{
 		private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/dustcloud.png")));
-		
 		public DustCloud(Entity e, float posX, float posY){
 			super(posX, posY, 4);
 			image = new Sprite(texture);
@@ -84,10 +87,25 @@ public abstract class Graphic extends Entity{
 				position.x += e.getImage().getWidth();
 			}
 		}
-		
 		void updatePosition(){
 			if (duration.timeUp()) setRemove();
 		}
-		
 	}
+	
+	public static class UFO extends Graphic {
+		private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/ufo.png")));
+		private final Fighter user;
+		public UFO(Fighter user, float posX, float posY){
+			super(posX, posY, 4);
+			this.user = user;
+			image = new Sprite(texture);
+			updatePosition();
+		}
+		void updatePosition(){
+			position.x = user.getPosition().x;
+			position.y = user.getPosition().y - 12;
+			if (duration.timeUp() || user.isGrounded()) setRemove();
+		}
+	}
+	
 }

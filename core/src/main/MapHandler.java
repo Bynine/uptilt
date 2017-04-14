@@ -48,6 +48,7 @@ public class MapHandler {
 			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
 				if (en instanceof Fighter){
 					Fighter fi = (Fighter) en;
+					new SFX.Explode().play();
 					if (fi.getStocks() > 1 || fi == UptiltEngine.getPlayer()) fi.respawn();
 					else {
 						fi.setStocks(0);

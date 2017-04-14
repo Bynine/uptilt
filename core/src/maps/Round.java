@@ -1,12 +1,18 @@
 package maps;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import main.MapHandler;
 import main.UptiltEngine;
 import entities.*;
 
 public class Round {
 	
-	FighterSpawner<Mook> es;
+	FighterSpawner<? extends Fighter> es1 = new FighterSpawner<Mook>(Mook.class, 24, 4, 120);
+	FighterSpawner<? extends Fighter> es2 = new FighterSpawner<Kicker>(Kicker.class, 3, 1, 270);
+	List<FighterSpawner<? extends Fighter>> fSList = new ArrayList<FighterSpawner<? extends Fighter>>(Arrays.asList(es1));
 	Fighter player;
 	boolean restarted = false;
 
@@ -16,7 +22,7 @@ public class Round {
 	}
 	
 	public void update(float deltaTime){
-		es.update(deltaTime);
+		for (FighterSpawner<? extends Fighter> fs: fSList) fs.update(deltaTime);
 		if (UptiltEngine.getPlayer().getStocks() == 0) restart();
 	}
 	
@@ -27,7 +33,7 @@ public class Round {
 	
 	private void setup(){
 		player.setStocks(3);
-		es = new FighterSpawner<Mook>(Mook.class, 24, 6, 90);
+		for (FighterSpawner<? extends Fighter> fs: fSList) fs.restart();
 	}
 	
 }

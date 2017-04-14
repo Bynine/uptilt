@@ -18,7 +18,7 @@ public class EntityLoader {
 		switch(m.getName().toLowerCase()){
 		case "kicker": {
 			Kicker kicker = new Kicker(x, y, 1);
-			kicker.setInputHandler(new InputHandlerCPU(kicker, Brain.Basic.class));
+			kicker.setInputHandler(new InputHandlerCPU(kicker, Brain.MookBrain.class));
 			return kicker;
 		}
 		default: {

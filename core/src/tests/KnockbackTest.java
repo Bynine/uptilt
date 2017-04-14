@@ -1,25 +1,28 @@
 package tests;
 
-import moves.Hitbox;
-
 import org.junit.Test;
 
 import com.badlogic.gdx.math.Vector2;
 
-import entities.*;
-
 public class KnockbackTest {
 	
-	float missileX = 1, missileY = 1;
+	float heldCharge = 1;
+	float BKB = 2;
+	float KBG = 6;
+	float percent = 200;
+	float weight = 700;
+	float kbgMod = 0.04f;
+	float weightMod = 0.01f;
+	float angle = 0;
 
 	@Test
 	public void test() {
-		Vector2 knockIntoVector = new Vector2(missileX, missileY);
-		Hitbox h = new Hitbox(null, 1 * 3, 1.5f, Fighter.knockbackIntensity(knockIntoVector), 
-				knockIntoVector.angle(), 0, 0, 0, null);
-		//knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
-		knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
-		System.out.println(knockIntoVector);
+		float knockback = heldCharge * (BKB + ( (KBG * percent * kbgMod) / (weight * weightMod) ));
+		Vector2 vec = new Vector2(knockback, knockback);
+		vec.setAngle(angle);
+		if (Math.abs(vec.x) < 0.01) vec.x = 0;
+		if (Math.abs(vec.y) < 0.01) vec.y = 0;
+		System.out.println(vec);
 	}
 
 }

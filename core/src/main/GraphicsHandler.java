@@ -29,7 +29,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
@@ -93,6 +93,10 @@ public class GraphicsHandler {
 		}
 		batch.end();
 		font.setColor(1, 1, 1, 1);
+		
+		batch.begin();
+		font.draw(batch, "stocks: " + UptiltEngine.getPlayer().getStocks(), cam.position.x - SCREENWIDTH/5, cam.position.y - SCREENHEIGHT/5);
+		batch.end();
 
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
@@ -108,7 +112,7 @@ public class GraphicsHandler {
 			if (ac.toRemove()) debugRenderer.setColor(0.9f, 1, 1, 0.5f);
 			debugRenderer.circle(c.x, c.y, c.radius);
 		}
-		debugRenderer.setColor(0, 1, 0, 0.25f);
+		debugRenderer.setColor(0, 1, 0, 0.1f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
 			if (e instanceof Fighter) debugRenderer.rect(r.x, r.y, r.width, r.height);

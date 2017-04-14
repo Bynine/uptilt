@@ -41,7 +41,7 @@ public class InputHandlerCPU extends InputHandler {
 		return -yInput;
 	}
 
-	public void handleJumpCommand() {
+	public void handleJumpHeld() {
 		cpu.handleJumpHeld(true);
 	}
 
