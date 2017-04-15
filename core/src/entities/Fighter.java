@@ -103,8 +103,9 @@ public abstract class Fighter extends Entity{
 		if (e instanceof Fighter){
 			Fighter fi = (Fighter) e;
 			int pushDistance = 16 + 2 * ((int) image.getWidth() - defaultTexture.getRegionWidth());
-			if (isTouching(fi, pushDistance) && Math.abs(fi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1
-					&& e.isGrounded() && isGrounded()){
+			boolean toPush = isTouching(fi, pushDistance) && Math.abs(fi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1 && e.isGrounded() && isGrounded();
+			if (team == fi.team) toPush = isTouching(fi, 0);
+			if (toPush){
 				pushAway(fi);
 				((Fighter) fi).pushAway(this);
 			}
@@ -127,7 +128,7 @@ public abstract class Fighter extends Entity{
 				knockIntoVector.angle(), 0, 0, 0, null);
 		knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
 		knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
-		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, Hitbox.hitstunFormula(h.getDamage()) );
+		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() );
 		fi.knockIntoTimer.restart();
 		knockIntoTimer.restart();
 		new SFX.LightHit().play();
@@ -460,8 +461,8 @@ public abstract class Fighter extends Entity{
 		hitstunTimer.setEndTime(hitstun);
 		hitstunTimer.restart();
 		percentage += DAM;
-		if (state == State.HELPLESS) state = State.FALL;
-		if (getArmor() <= 0 && knockbackIntensity(knockback) <= 0){
+		if (knockbackIntensity(knockback) > 0){
+			if (state == State.HELPLESS) state = State.FALL;
 			setActiveMove(null);
 			attackTimer.end();
 		}

@@ -20,11 +20,11 @@ public abstract class Graphic extends Entity{
 		timerList.add(duration);
 		collision = Collision.GHOST;
 	}
-	
+
 	public void setDuration(int endTime){
 		duration.setEndTime(endTime);
 	}
-	
+
 	void setSmall(TextureRegion smaller){
 		position.x += image.getWidth()/2;
 		position.y += image.getHeight()/2;
@@ -32,50 +32,50 @@ public abstract class Graphic extends Entity{
 		position.x -= image.getWidth()/2;
 		position.y -= image.getHeight()/2;
 	}
-	
+
 	public static class HitGraphic extends Graphic{
 		private TextureRegion fullSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hit.png")));
 		private TextureRegion halfSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/hitsmall.png")));
-		
+
 		public HitGraphic(float posX, float posY, int dur){
 			super(posX, posY, dur);
 			image = new Sprite(fullSize);
 			position.x -= image.getWidth()/2;
 			position.y -= image.getHeight()/2;
 		}
-		
+
 		void updatePosition(){
 			if (duration.getCounter() > dur/2) setSmall(halfSize);
 			if (duration.timeUp()) setRemove();
 		}
-		
+
 	}
-	
+
 	public static class SmokeTrail extends Graphic{
 		private TextureRegion fullSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/poff.png")));
 		private TextureRegion halfSize = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/poffsmall.png")));
-		
+
 		public SmokeTrail(float posX, float posY){
 			super(posX, posY, 6);
 			image = new Sprite(fullSize);
 			position.x -= image.getWidth()/2;
 			position.y -= image.getHeight()/2;
 		}
-		
+
 		/** lag-behind smoke trail **/
 		public SmokeTrail(Entity e, int dur){
 			this(e.position.x - e.velocity.x + e.image.getWidth()/2, e.position.y - e.velocity.y + e.image.getHeight()/2);
 			if (dur > 12) dur = 12;
 			duration.setEndTime(dur);
 		}
-		
+
 		void updatePosition(){
 			if (duration.getCounter() > dur/2) setSmall(halfSize);
 			if (duration.timeUp()) setRemove();
 		}
-		
+
 	}
-	
+
 	public static class DustCloud extends Graphic{
 		private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/dustcloud.png")));
 		public DustCloud(Entity e, float posX, float posY){
@@ -91,7 +91,7 @@ public abstract class Graphic extends Entity{
 			if (duration.timeUp()) setRemove();
 		}
 	}
-	
+
 	public static class UFO extends Graphic {
 		private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/ufo.png")));
 		private final Fighter user;
@@ -107,5 +107,32 @@ public abstract class Graphic extends Entity{
 			if (duration.timeUp() || user.isGrounded()) setRemove();
 		}
 	}
-	
+
+	public static class LaserCharge extends Graphic {
+		private TextureRegion small = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/laserchargesmall.png")));
+		private TextureRegion mid = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/laserchargemid.png")));
+		private TextureRegion big = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/laserchargebig.png")));
+		private final Fighter user;
+		private int posModifier = 0;
+		public LaserCharge(Fighter user, float posX, float posY){
+			super(posX, posY, 40);
+			this.user = user;
+			image = new Sprite(small);
+			updatePosition();
+		}
+		void updatePosition(){
+			position.x = user.getPosition().x + user.direct() * (18 + posModifier);
+			position.y = user.getPosition().y + 16 + posModifier;
+			if (duration.getCounter() > dur/3) {
+				posModifier = -6;
+				setSmall(mid);
+			}
+			if (duration.getCounter() > 2*dur/3) {
+				posModifier = -12;
+				setSmall(big);
+			}
+			if (duration.timeUp()) setRemove();
+		}
+	}
+
 }

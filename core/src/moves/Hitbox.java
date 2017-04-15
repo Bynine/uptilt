@@ -123,7 +123,8 @@ public class Hitbox extends ActionCircle{
 	}
 
 	private static final float hitstunRatio = 4.2f;
-	public static int hitstunFormula(float knockback){
+	public int hitstunFormula(float knockback){
+		if (BKB + KBG == 0) return 0;
 		return  2 + (int) (knockback * hitstunRatio);
 	}
 

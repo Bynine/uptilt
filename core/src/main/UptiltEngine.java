@@ -27,7 +27,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	Round round;
 
 	@Override public void create () {
-		player1 = new Kicker(0, 0, 0);
+		player1 = new Gunmin(0, 0, 0);
 		InputHandlerController ch = new InputHandlerController(player1);
 		if (!ch.setupController(0)) startWithKeyboard();
 		else player1.setInputHandler(ch);
@@ -45,7 +45,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	@Override public void render () {
 		deltaTime++;
 		updateTimers();
-		round.update(deltaTime);
+		//round.update(deltaTime);
 		//fpsLogger.log();
 
 		MapHandler.activeRoom.update(deltaTime);

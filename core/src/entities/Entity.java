@@ -52,7 +52,7 @@ public abstract class Entity {
 		updatePosition();
 		updateImagePosition(deltaTime);
 
-		if (state == State.RUN && deltaTime % 8 == 0) {
+		if (state == State.RUN && deltaTime % 8 == 0 && Math.abs(velocity.x) > 3) {
 			if (direction == Direction.LEFT) MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
 			else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		}

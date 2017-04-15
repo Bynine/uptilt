@@ -59,18 +59,23 @@ public abstract class Brain{
 		if (Math.random() < 0.5) performJump.countUp(); // modulates jump height
 	}
 
-	void attackPlayerClose(float aggressiveness, InputPackage pack){
+	void attackPlayer(float aggressiveness, InputPackage pack){
 		if (Math.random() < aggressiveness) {
-			if (pack.direct == Math.signum(pack.distanceXFromPlayer)) body.xInput *= -1; // turn around if behind
+			facePlayer(pack);
 			if (Math.random() < 0.2) body.handleCommand(InputHandler.commandCharge);
 			else body.handleCommand(InputHandler.commandAttack);
 		}
 	}
 	
+	void facePlayer(InputPackage pack){
+		if (pack.direct == Math.signum(pack.distanceXFromPlayer)) body.xInput *= -1; // turn around if behind
+		if (pack.distanceYFromPlayer < -20 && Math.random() < 0.5) body.yInput = 1;
+	}
+	
 	void headTowardPlayer(Timer changeDirection, InputPackage pack){
 		if (Math.random() < 0.5) body.xInput = setInput(-pack.distanceXFromPlayer);
 		// setInput(setInput(-pack.distanceXFromPlayer)/2 + body.xInput);
-		else if (Math.random() < 0.15) {
+		else if (Math.random() < 0.15) { // run toward
 			if (pack.distanceXFromPlayer > 0) body.handleCommand(InputHandler.commandStickRight);
 			else body.handleCommand(InputHandler.commandStickLeft);
 		}
@@ -80,9 +85,8 @@ public abstract class Brain{
 
 	void changeUpDown(){
 		double ud = (1 - (2 * Math.random()) );
-		ud = Math.signum(ud) * Math.pow(Math.abs(ud), 0.1);
+		ud = Math.signum(ud) * Math.pow(Math.abs(ud), 0.7);
 		body.yInput = (float) MathUtils.clamp(ud, -1, 1);
-		System.out.println();
 		changeUpDown.restart();
 	}
 
@@ -126,7 +130,7 @@ public abstract class Brain{
 		Timer tryJump = new Timer(30);
 		Timer performJump = new Timer(20);
 		Timer changeDirection = new Timer(30);
-		float aggressiveness = 1f;
+		float aggressiveness = 0.8f;
 
 		public MookBrain(InputHandlerCPU body) {
 			super(body);
@@ -139,7 +143,7 @@ public abstract class Brain{
 			if (!performJump.timeUp()) performJump(performJump);
 			if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
-			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60 && Math.abs(pack.distanceXFromPlayer) < 30) attackPlayerClose(aggressiveness, pack);
+			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60 && Math.abs(pack.distanceXFromPlayer) < 30) attackPlayer(aggressiveness, pack);
 			else if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
 			if (changeUpDown.timeUp()) changeUpDown(); 
 		}
@@ -150,6 +154,52 @@ public abstract class Brain{
 		}
 
 	}
+	
+	public static class GunminBrain extends Brain{
+
+		Timer waitToUseUpSpecial = new Timer(30);
+		Timer tryJump = new Timer(30);
+		Timer performJump = new Timer(20);
+		Timer changeDirection = new Timer(30);
+		float aggressiveness = 0.5f;
+
+		public GunminBrain(InputHandlerCPU body) {
+			super(body);
+			timerList.addAll(Arrays.asList(changeUpDown, waitToUseUpSpecial, tryJump, changeDirection, performJump));
+		}
+
+		void update(InputPackage pack){
+			super.update(pack);
+			if (changeDirection.timeUp()) headTowardPlayer(changeDirection, pack);
+			if (!performJump.timeUp()) performJump(performJump);
+			if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
+			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
+			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60){
+				if (Math.abs(pack.distanceXFromPlayer) < 30) attackPlayerClose(pack);
+				else if (Math.abs(pack.distanceXFromPlayer) < 600) attackPlayerDistant(pack);
+			}
+			else if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
+			if (changeUpDown.timeUp()) changeUpDown(); 
+		}
+		
+		private void attackPlayerDistant(InputPackage pack){ // ranged moves are fweak, uweak, dweak, fair, uair, dair
+			facePlayer(pack);
+			if (Math.abs(body.xInput) < 0.8 && Math.abs(body.yInput) < 0.8) body.xInput = pack.direct;
+			body.handleCommand(InputHandler.commandAttack);
+		}
+		
+		private void attackPlayerClose(InputPackage pack){ // close moves are nweak, nair, bair
+			facePlayer(pack);
+			if (!(!pack.isGrounded && body.xInput < 0)) body.xInput = 0;
+			body.handleCommand(InputHandler.commandAttack);
+		}
+		
+		boolean isCharging(InputPackage pack){
+			return false;
+		}
+
+	}
+
 
 	public static class Advanced extends Brain{
 

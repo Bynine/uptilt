@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import main.SFX;
 import entities.Fighter;
+import entities.Graphic;
 import entities.Projectile;
 
 public class MoveList_Gunmin extends MoveList {
@@ -21,37 +22,46 @@ public class MoveList_Gunmin extends MoveList {
 	
 	public Move uWeak() {
 		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
 		m.eventList.addProjectile(user, Projectile.LaserUp.class, 12);
 		return m;
 	}
 	
 	public Move sWeak() {
 		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
 		m.eventList.addProjectile(user, Projectile.Laser.class, 12);
 		return m;
 	}
 	
 	public Move dWeak() {
-		Move m = new Move(user, 48);
-		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 30);
+		Move m = new Move(user, 60);
+		m.setAnimation("sprites/fighters/laser/crouchfire.png", 1, 1);
+		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 42, -4, 0);
+		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
 		return m;
 	}
 	
 	public Move slide() {
-		Move m = new Move(user, 32);
+		Move m = new Move(user, 45);
 		m.causesHelpless();
-		m.eventList.addVelocityChange(user, 30, -10, 10);
-		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 30);
+		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
+		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 42, -11, 6);
+		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
 		return m;
 	}
 	
 	public Move nAir() {
 		Move m = new Move(user, 32);
-		Hitbox h1 = new Hitbox(user, 1, 1, 4, 145, -14, 0, 10, new SFX.LightHit());
-		Hitbox h2 = new Hitbox(user, 1, 1, 4, Hitbox.SAMURAIANGLE, 14, 0, 10, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 1, 1, 2, 20, -14, 0, 10, new SFX.LightHit());
+		Hitbox h2 = new Hitbox(user, 1, 1, 2, 160, 14, 0, 10, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(h1, h2));
-		m.eventList.addActionCircle(h1, 10, 12);
-		m.eventList.addActionCircle(h2, 10, 12);
+		h1.setRefresh(2);
+		h2.setRefresh(2);
+		m.eventList.addActionCircle(h1, 10, 20);
+		m.eventList.addActionCircle(h2, 10, 20);
 		return m;
 	}
 	
@@ -60,9 +70,9 @@ public class MoveList_Gunmin extends MoveList {
 	}
 	
 	public Move bAir() {
-		Move m = new Move(user, 24);
-		Hitbox h1 = new Hitbox(user, 0.5f, 1.5f, 4, Hitbox.SAMURAIANGLE, -24, 0, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 10, 12);
+		Move m = new Move(user, 28);
+		Hitbox h1 = new Hitbox(user, 0.5f, 2f, 4, Hitbox.SAMURAIANGLE, -30, 0, 12, new SFX.MidHit());
+		m.eventList.addActionCircle(h1, 10, 14);
 		return m;
 	}
 	
