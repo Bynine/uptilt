@@ -14,9 +14,10 @@ public class MoveList_Gunmin extends MoveList {
 	}
 
 	public Move nWeak() {
-		Move m = new Move(user, 16);
-		Hitbox h1 = new Hitbox(user, 0, 1, 2, Hitbox.SAMURAIANGLE, 24, 6, 10, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 9, 10);
+		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/laser/nweak.png", 4, 6);
+		Hitbox h1 = new Hitbox(user, 2, 1, 2, Hitbox.SAMURAIANGLE, 24, 6, 10, new SFX.LightHit());
+		m.eventList.addActionCircle(h1, 12, 18);
 		return m;
 	}
 	
@@ -48,45 +49,61 @@ public class MoveList_Gunmin extends MoveList {
 		m.causesHelpless();
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
 		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -11, 6);
+		m.eventList.addVelocityChange(user, 42, -5, 3);
 		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
 		return m;
 	}
 	
 	public Move nAir() {
 		Move m = new Move(user, 32);
-		Hitbox h1 = new Hitbox(user, 1, 1, 2, 20, -14, 0, 10, new SFX.LightHit());
-		Hitbox h2 = new Hitbox(user, 1, 1, 2, 160, 14, 0, 10, new SFX.LightHit());
+		m.setAnimation("sprites/fighters/laser/nair.png", 8, 4);
+		Hitbox h1 = new Hitbox(user, 1, 1, 1, 20, -16, -4, 10, new SFX.LightHit());
+		Hitbox h2 = new Hitbox(user, 1, 1, 1, 160, 16, -4, 10, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(h1, h2));
-		h1.setRefresh(2);
-		h2.setRefresh(2);
-		m.eventList.addActionCircle(h1, 10, 20);
-		m.eventList.addActionCircle(h2, 10, 20);
+		h1.setRefresh(4);
+		h2.setRefresh(4);
+		m.eventList.addActionCircle(h1, 12, 24);
+		m.eventList.addActionCircle(h2, 12, 24);
 		return m;
 	}
 	
 	public Move fAir() {
-		return sWeak();
+		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
+		m.eventList.addProjectile(user, Projectile.Laser.class, 12);
+		return m;
 	}
 	
 	public Move bAir() {
 		Move m = new Move(user, 28);
-		Hitbox h1 = new Hitbox(user, 0.5f, 2f, 4, Hitbox.SAMURAIANGLE, -30, 0, 12, new SFX.MidHit());
-		m.eventList.addActionCircle(h1, 10, 14);
+		m.setAnimation("sprites/fighters/laser/bair.png", 4, 7);
+		Hitbox h1 = new Hitbox(user, 0.5f, 2f, 4, Hitbox.SAMURAIANGLE, -30, 0, 16, new SFX.MidHit());
+		m.eventList.addActionCircle(h1, 14, 20);
 		return m;
 	}
 	
 	public Move uAir() {
-		return uWeak();
+		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
+		m.eventList.addProjectile(user, Projectile.LaserUp.class, 12);
+		return m;
 	}
 	
 	public Move dAir() {
-		return slide();
+		Move m = new Move(user, 45);
+		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
+		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 42, -4, 0);
+		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
+		return m;
 	}
 	
 	public Move uSpecial() {
-		user.flip();
-		return slide();
+		Move m = new Move(user, 80);
+		m.setHelpless();
+		m.eventList.addGraphic(user, 6, 70, new Graphic.UFO(user, user.getPosition().x, user.getPosition().y));
+		m.eventList.addConstantVelocity(user, 6, 70, Action.ChangeVelocity.noChange, 4);
+		return m;
 	}
 
 	public Move land() {

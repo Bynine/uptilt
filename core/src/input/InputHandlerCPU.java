@@ -44,5 +44,9 @@ public class InputHandlerCPU extends InputHandler {
 	public void handleJumpHeld() {
 		cpu.handleJumpHeld(true);
 	}
+	
+	public void handleBlockHeld() {
+		cpu.handleBlockHeld(true);
+	}
 
 }

@@ -100,5 +100,7 @@ public abstract class ActionCircle {
 	public boolean hitAnybody() {
 		return hitFighterList.size() >= 1;
 	}
+	
+	protected Object clone() throws CloneNotSupportedException { return super.clone(); }
 
 }

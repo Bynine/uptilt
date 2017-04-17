@@ -29,7 +29,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
@@ -81,12 +81,16 @@ public class GraphicsHandler {
 				Fighter fi = (Fighter) e;
 				drawFighterPercentage(fi);
 				if (debug) drawState(fi);
-				if (!fi.hitstunTimer.timeUp()) batch.setColor(1, 0.25f, 0.25f, 1);
-				else if (fi.isInvincible()) batch.setColor(0.5f, 1.75f, 2f, 0.5f);
-				else if (fi.isCharging()) batch.setColor(1, 1, 1, 1);
+				batch.setColor(fi.getColor());
+				if (!fi.hitstunTimer.timeUp()) 
+					batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);
+				else if (fi.isInvincible()) 
+					batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
+				else if (fi.isCharging()) 
+					batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
 				
-				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.8f, batch.getColor().b, 1);
-				if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.6f, 1);
+				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.4f, batch.getColor().b, 1);
+				if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.4f, 1);
 			}
 			batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 			batch.setColor(1, 1, 1, 1);

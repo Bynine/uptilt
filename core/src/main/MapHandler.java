@@ -108,7 +108,9 @@ public class MapHandler {
 	}
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }
-	public static void addActionCircle(ActionCircle ac){ activeRoom.addActionCircle(ac); }
+	public static ActionCircle addActionCircle(ActionCircle ac){ 
+			return activeRoom.addActionCircle(ac); 
+		}
 	
 	public static int[] getStageSides() { 
 		if (activeRoom == null) return new int[]{0, 0};

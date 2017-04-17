@@ -12,10 +12,10 @@ public abstract class Action {
 
 	abstract void performAction();
 
-	public static class MakeHitbox extends Action{
+	public static class MakeActionCircle extends Action{
 		ActionCircle ac;
 		
-		MakeHitbox(ActionCircle ac){
+		MakeActionCircle(ActionCircle ac){
 			this.ac = ac;
 		}
 

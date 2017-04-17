@@ -28,6 +28,7 @@ public class InputPackage {
 		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - UptiltEngine.getPlayer().position.x;
 		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - UptiltEngine.getPlayer().position.y;
 		direct = fighter.direct();
-		activeMove = fighter.getActiveMove();
+		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;
+		else activeMove = null;
 	}
 }

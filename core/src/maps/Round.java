@@ -11,11 +11,13 @@ import input.Brain;
 
 public class Round {
 
-	FighterSpawner<? extends Fighter, ? extends Brain> esMook = new FighterSpawner<Mook, Brain.MookBrain>(Mook.class, Brain.MookBrain.class, 12, 2, 120f);
-	FighterSpawner<? extends Fighter, ? extends Brain> esGunmin = new FighterSpawner<Gunmin, Brain.GunminBrain>(Gunmin.class, Brain.GunminBrain.class, 12, 2, 120f);
-	FighterSpawner<? extends Fighter, ? extends Brain> esKicker = new FighterSpawner<Kicker, Brain.MookBrain>(Kicker.class, Brain.MookBrain.class, 12, 2, 120f);
-	List<FighterSpawner<? extends Fighter, ? extends Brain>> fSList = new ArrayList<FighterSpawner<? extends Fighter, ? extends Brain>>
-	(Arrays.asList(esMook, esGunmin));
+	Enemy mooks = new Enemy(Mook.class, Brain.MookBrain.class);
+	Enemy guns = new Enemy(Gunmin.class, Brain.GunminBrain.class);
+	Enemy metalMooks = new Enemy(MetalMook.class, Brain.MookBrain.class);
+	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
+	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, metalMooks), 24, 3, 180, true);
+	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 400, true);
+	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliens));
 	Fighter player;
 	boolean restarted = false;
 
@@ -25,7 +27,7 @@ public class Round {
 	}
 
 	public void update(float deltaTime){
-		for (FighterSpawner<? extends Fighter, ? extends Brain> fs: fSList) fs.update(deltaTime);
+		for (EnemySpawner fs: fSList) fs.update(deltaTime);
 		if (UptiltEngine.getPlayer().getStocks() == 0) restart();
 	}
 
@@ -36,7 +38,7 @@ public class Round {
 
 	private void setup(){
 		player.setStocks(3);
-		for (FighterSpawner<? extends Fighter, ? extends Brain> fs: fSList) fs.restart();
+		for (EnemySpawner fs: fSList) fs.restart();
 	}
 
 }

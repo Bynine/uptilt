@@ -13,7 +13,7 @@ public class Move {
 	final Fighter user;
 	final Timer duration;
 	final EventList eventList = new EventList();
-	private boolean helpless = false, continueOnLanding = false, noTurn = false;
+	private boolean helpless = false, continueOnLanding = false, noTurn = false, connected = false;
 	float armor = 0;
 	Animation animation = null;
 	int addedFrames = 0;
@@ -26,6 +26,9 @@ public class Move {
 	public void update(){
 		duration.countUp();
 		eventList.update(duration.getCounter(), user.isInHitstun());
+		for (ActionCircle ac: eventList.acList){
+			if (ac.hitFighterList.size() > 0) connected = true;
+		}
 	}
 
 	public boolean done(){ return duration.timeUp(); }
@@ -40,6 +43,7 @@ public class Move {
 	public int getFrame() { return duration.getCounter() + addedFrames; }
 	public float getArmor() { return armor; }
 	public void setArmor(float armor) { this.armor = armor; }
+	public boolean connected() { return connected; }
 
 	public void setAnimation(String string, int cols, int speed) {
 		animation = GlobalRepo.makeAnimation(string, cols, 1, speed, PlayMode.LOOP);

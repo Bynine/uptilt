@@ -3,18 +3,21 @@ package entities;
 import input.InputHandler;
 import input.InputHandlerKeyboard;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import main.MapHandler;
 import main.SFX;
 import moves.Hitbox;
+import moves.IDMove;
 import moves.Move;
 import moves.MoveList;
 import moves.MoveList_Kicker;
 import timers.Timer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -30,11 +33,11 @@ public abstract class Fighter extends Entity{
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
 
-	boolean doubleJumped, blockHeld = false;
+	boolean doubleJumped, blockHeld, tumbling = false;
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0);
 	final Timer caughtTimer = new Timer(0), grabbingTimer = new Timer(0), dashTimer = new Timer(20);
-	private final Timer knockIntoTimer = new Timer(20), invincibleTimer = new Timer(0), blockTimer = new Timer(8);
+	private final Timer knockIntoTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(4);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0;
 
 	float fallSpeed = -7f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
@@ -43,7 +46,7 @@ public abstract class Fighter extends Entity{
 
 	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 	private Fighter caughtFighter = null;
-	private Move activeMove = null; 
+	private IDMove activeMove = null; 
 	float percentage = 0, armor = 0, weight = 100;
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private float initialHitAngle = 0;
@@ -51,6 +54,7 @@ public abstract class Fighter extends Entity{
 	final Vector2 spawnPoint;
 	private int team = 0, stocks = 1;
 	MoveList moveList = new MoveList_Kicker(this);
+	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
 
 	public Fighter(float posX, float posY, int team) {
 		super(posX, posY);
@@ -58,7 +62,7 @@ public abstract class Fighter extends Entity{
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
 		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer,
-				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, blockTimer));
+				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, dodgeTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 		randomAnimationDisplacement = (int) (8 * Math.random());
@@ -70,7 +74,13 @@ public abstract class Fighter extends Entity{
 		getInputHandler().update();
 
 		if (!grabbingTimer.timeUp()) handleThrow();
-		if (null != getActiveMove()) handleMove();
+		if (null != getActiveMove()) {
+			if (getActiveMove().id != MoveList.noStaleMove && getActiveMove().move.connected() && !staleMoveQueue.contains(getActiveMove())){
+				staleMoveQueue.add(getActiveMove());
+				if (staleMoveQueue.size() > staleMoveQueueSize) staleMoveQueue.remove(0);
+			}
+			handleMove();
+		}
 
 		super.update(rectangleList, entityList, deltaTime);
 		updateImage(deltaTime);
@@ -92,9 +102,9 @@ public abstract class Fighter extends Entity{
 	}
 
 	private void handleMove(){
-		getActiveMove().update();
-		if (getActiveMove().done()) {
-			if (getActiveMove().causesHelpless()) state = State.HELPLESS;
+		getActiveMove().move.update();
+		if (getActiveMove().move.done()) {
+			if (getActiveMove().move.causesHelpless()) state = State.HELPLESS;
 			setActiveMove(null);
 		}
 	}
@@ -153,7 +163,7 @@ public abstract class Fighter extends Entity{
 			if (state != State.JUMPSQUAT) preJumpSquatState = state;
 			state = State.JUMPSQUAT;
 		}
-		else if (state == State.DODGE && !blockTimer.timeUp() || blockHeld) state = State.DODGE;
+		else if (state == State.DODGE && !dodgeTimer.timeUp() || blockHeld) state = State.DODGE;
 		else if (Math.abs(stickX) < minRunHold && stickY > minCrouchHold) {
 			if (blockHeld) activateBlock();
 			else state = State.CROUCH;
@@ -168,7 +178,7 @@ public abstract class Fighter extends Entity{
 		}
 		else if (blockHeld) activateBlock();
 		else state = State.STAND;
-		if (canAttack() && prevState == State.RUN && state != State.RUN) startAttack(moveList.skid());
+		if (canAttack() && prevState == State.RUN && state != State.RUN) startAttack(new IDMove(moveList.skid(), MoveList.noStaleMove));
 	}
 
 	private boolean isRun(){
@@ -196,10 +206,10 @@ public abstract class Fighter extends Entity{
 	private void activateBlock(){
 		if (state != State.DODGE) {
 			state = State.DODGE;
-			blockTimer.restart();
+			dodgeTimer.restart();
 		}
 	}
-	
+
 	private void selectImage(float deltaTime){
 		switch(state){
 		case STAND: setImage(getStandFrame(deltaTime)); break;
@@ -207,7 +217,8 @@ public abstract class Fighter extends Entity{
 		case RUN: setImage(getRunFrame(deltaTime)); break;
 		case JUMP: setImage(getJumpFrame(deltaTime)); break;
 		case FALL: {
-			if (velocity.y > 1) setImage(getJumpFrame(deltaTime));
+			if (tumbling) setImage(getTumbleFrame(deltaTime));
+			else if (velocity.y > 1) setImage(getJumpFrame(deltaTime));
 			else if (velocity.y > 0) setImage(getAscendFrame(deltaTime));
 			else setImage(getFallFrame(deltaTime)); 
 			break;
@@ -225,14 +236,15 @@ public abstract class Fighter extends Entity{
 	void updateImage(float deltaTime){
 		TextureRegion prevImage = image;
 		selectImage(deltaTime);
-		if (!attackTimer.timeUp() && null != getActiveMove() && null != getActiveMove().getAnimation()){
-			setImage(getActiveMove().getAnimation().getKeyFrame(getActiveMove().getFrame()));
+		if (!attackTimer.timeUp() && null != getActiveMove() && null != getActiveMove().move.getAnimation()){
+			setImage(getActiveMove().move.getAnimation().getKeyFrame(getActiveMove().move.getFrame()));
 		}
-		if (!hitstunTimer.timeUp() || !caughtTimer.timeUp()) setImage(getHelplessFrame(deltaTime));
+		if (!caughtTimer.timeUp()) setImage(getHelplessFrame(deltaTime));
+		if (!hitstunTimer.timeUp()) setImage(getHitstunFrame(deltaTime));
 		if (!grabbingTimer.timeUp()) setImage(getGrabFrame(deltaTime));
 		adjustImage(deltaTime, prevImage);
 	}
-	
+
 	private void adjustImage(float deltaTime, TextureRegion prevImage){
 		if (prevImage != getWallSlideFrame(deltaTime) && state == State.WALLSLIDE && direction == Direction.RIGHT) wallCling();
 		float adjustedPosX = (image.getWidth() - prevImage.getRegionWidth())/2;
@@ -243,7 +255,7 @@ public abstract class Fighter extends Entity{
 			setImage(prevImage);
 		}
 	}
-	
+
 	private int maxAdjust = 50;
 	void wallCling(){
 		int adjust = 0;
@@ -253,7 +265,7 @@ public abstract class Fighter extends Entity{
 			if (adjust > maxAdjust) break;
 		}
 	}
-	
+
 	void resetStance(){
 		int adjust = 0;
 		while (doesCollide(position.x, position.y)){
@@ -273,7 +285,7 @@ public abstract class Fighter extends Entity{
 	void handleDirection(){
 		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || state == State.CROUCH || state == State.DODGE || state == State.JUMPSQUAT) return;
 		if (null != getActiveMove()){
-			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !getActiveMove().isNoTurn();
+			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !getActiveMove().move.isNoTurn();
 			if (!canAct() && !startAttackTurn) return;
 		}
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
@@ -335,7 +347,7 @@ public abstract class Fighter extends Entity{
 
 	private final int wallSlideDistance = 1;
 	private boolean isWallSliding() {
-		if (isGrounded() || velocity.y > 0 || !canAct()) return false;
+		if (isGrounded() || velocity.y > 4 || !canAct()) return false;
 		boolean canWS = false;
 		if (prevStickX < -unregisteredInputMax) {
 			canWS = doesCollide(position.x - wallSlideDistance, position.y) && doesCollide(position.x - wallSlideDistance, position.y + image.getHeight()/2);
@@ -353,6 +365,7 @@ public abstract class Fighter extends Entity{
 		flip();
 		velocity.x = wallJumpStrengthX * direct();
 		velocity.y = wallJumpStrengthY;
+		tumbling = false;
 	}
 
 	private void doubleJump(){
@@ -361,6 +374,7 @@ public abstract class Fighter extends Entity{
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
 		velocity.x += 1 * stickX;
 		doubleJumped = true;
+		tumbling = false;
 	}
 
 	public boolean tryNormal(){
@@ -375,7 +389,7 @@ public abstract class Fighter extends Entity{
 
 	public boolean tryDodge(){
 		if (!canAct()) return true;
-		Move block = moveList.selectBlock();
+		Move block = moveList.selectBlock().move;
 		if (null != block){
 			startAttack(moveList.selectBlock());
 			return true;
@@ -385,8 +399,8 @@ public abstract class Fighter extends Entity{
 
 	public boolean tryStickForward(){
 		if (state == State.DODGE) {
-			if (direction == Direction.LEFT) startAttack(moveList.rollBack());
-			else startAttack(moveList.rollForward());
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
+			else startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
 		}
 		else tryDash();
 		return true;
@@ -394,13 +408,12 @@ public abstract class Fighter extends Entity{
 
 	public boolean tryStickBack(){ 
 		if (state == State.DODGE) {
-			if (direction == Direction.LEFT) startAttack(moveList.rollForward());
-			else startAttack(moveList.rollBack());
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
+			else startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
 		}
 		else tryDash();
 		return true;
 	}
-	
 
 	public boolean tryStickUp(){
 		if (state == State.DODGE) spotDodge();
@@ -415,7 +428,7 @@ public abstract class Fighter extends Entity{
 	private void spotDodge(){
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
-		startAttack(moveList.dodge());
+		startAttack(new IDMove(moveList.dodge(), MoveList.noStaleMove));
 	}
 
 	public boolean tryGrab(){
@@ -433,39 +446,48 @@ public abstract class Fighter extends Entity{
 		startAttack(moveList.selectTaunt()); 
 		return true;
 	}
-	
+
 	private final float minDirect = 0.85f;
 	public boolean holdUp() 		{ return -stickY > minDirect; }
 	public boolean holdDown()		{ return stickY > minDirect; }
 	public boolean holdForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
 	public boolean holdBack() 		{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 
-	private void startAttack(Move m){
-		setActiveMove(m);
+	private final int staleMoveQueueSize = 5;
+	private void startAttack(IDMove im){
+		Move m = im.move;
+		setActiveMove(im);
 		attackTimer.setEndTime(m.getDuration() + 1);
 		attackTimer.restart();
+		tumbling = false;
 	}
-	
+
 	private void takeKnockIntoKnockback(Vector2 knockback, float DAM, int hitstun){
 		knockbackHelper(knockback, DAM, hitstun, knockbackIntensity(velocity) < knockbackIntensity(knockback));
 	}
 
-	public void takeKnockback(Vector2 knockback, float DAM, int hitstun) {
+	public void takeDamagingKnockback(Vector2 knockback, float DAM, int hitstun) {
 		knockbackHelper(knockback, DAM, hitstun, true);
 	}
-	
+
+	public void takeRecoil(Vector2 knockback){
+		knockback.setAngle(directionalInfluenceAngle(knockback));
+		velocity.add(knockback);
+	}
+
 	private void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy){
 		knockback.setAngle(directionalInfluenceAngle(knockback));
 		if (tryy) velocity.set(knockback);
 		initialHitAngle = knockback.angle();
-		hitstunTimer.setEndTime(hitstun);
-		hitstunTimer.restart();
 		percentage += DAM;
 		if (knockbackIntensity(knockback) > 0){
 			if (state == State.HELPLESS) state = State.FALL;
+			hitstunTimer.setEndTime(hitstun);
+			hitstunTimer.restart();
 			setActiveMove(null);
 			attackTimer.end();
 		}
+		if (knockbackIntensity(knockback) > 8) tumbling = true;
 	}
 
 	private final float diStrength = 8;
@@ -505,12 +527,13 @@ public abstract class Fighter extends Entity{
 			// ????
 			return;
 		}
+		tumbling = false;
 		super.ground();
-		if (null != getActiveMove() && !getActiveMove().continuesOnLanding()) endAttack();
-		if (getActiveMove() == null) startAttack(moveList.land());
+		if (null != getActiveMove() && !getActiveMove().move.continuesOnLanding()) endAttack();
+		if (getActiveMove() == null) startAttack(new IDMove(moveList.land(), MoveList.noStaleMove));
 		doubleJumped = false;
 	}
-	
+
 	private void endAttack(){
 		setActiveMove(null);
 		attackTimer.end();
@@ -536,6 +559,7 @@ public abstract class Fighter extends Entity{
 		for (Timer t: timerList) t.end();
 		invincibleTimer.setEndTime(60);
 		invincibleTimer.restart();
+		staleMoveQueue.clear();
 	}
 
 	public void setRespawnPoint(Vector2 startPosition) {
@@ -563,11 +587,11 @@ public abstract class Fighter extends Entity{
 	public void setArmor(float armor) { this.armor = armor; }
 	public float getArmor() { 
 		float addedMoveArmor = 0;
-		if (null != getActiveMove()) addedMoveArmor = getActiveMove().getArmor();
+		if (null != getActiveMove()) addedMoveArmor = getActiveMove().move.getArmor();
 		return armor + addedMoveArmor; 
 	}
-	public Move getActiveMove() { return activeMove; }
-	public void setActiveMove(Move activeMove) { this.activeMove = activeMove; }
+	public IDMove getActiveMove() { return activeMove; }
+	public void setActiveMove(IDMove activeMove) { this.activeMove = activeMove; }
 	public void setToFall() { state = State.FALL; }
 	public void setInputHandler(InputHandler inputHandler) { this.inputHandler = inputHandler; }
 	public int getTeam() { return team; }
@@ -575,12 +599,14 @@ public abstract class Fighter extends Entity{
 	protected TextureRegion getFrame(Animation anim, float deltaTime) { return anim.getKeyFrame(deltaTime + randomAnimationDisplacement); }
 	public int getStocks() { return stocks; }
 	public void setStocks(int i) { stocks = i; }
+	public Color getColor() { return new Color(1, 1, 1, 1); }
+	public List<IDMove> getMoveQueue() { return staleMoveQueue; }
 
 	public void setInvincible(int i) { 
 		invincibleTimer.restart();
 		invincibleTimer.setEndTime(i);
 	}
-	
+
 	abstract TextureRegion getStandFrame(float deltaTime);
 	abstract TextureRegion getWalkFrame(float deltaTime);
 	abstract TextureRegion getRunFrame(float deltaTime);
@@ -594,5 +620,7 @@ public abstract class Fighter extends Entity{
 	abstract TextureRegion getDashFrame(float deltaTime);
 	abstract TextureRegion getDodgeFrame(float deltaTime);
 	abstract TextureRegion getJumpSquatFrame(float deltaTime);
+	abstract TextureRegion getTumbleFrame(float deltaTime);
+	abstract TextureRegion getHitstunFrame(float deltaTime);
 
 }

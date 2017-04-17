@@ -59,8 +59,9 @@ public abstract class Room {
 		newEntityList.add(e);
 	}
 
-	public void addActionCircle(ActionCircle ac) {
+	public ActionCircle addActionCircle(ActionCircle ac) {
 		actionCircleList.add(ac);
+		return actionCircleList.get(actionCircleList.size() - 1);
 	}
 
 	public void update(int deltaTime){

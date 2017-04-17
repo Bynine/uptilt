@@ -269,7 +269,7 @@ public abstract class Entity {
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }
-	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, DODGE, JUMPSQUAT, JUMP, FALL, WALLSLIDE, HELPLESS }
+	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, DODGE, JUMPSQUAT, FALLEN, JUMP, FALL, WALLSLIDE, HELPLESS, TUMBLE }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
 
 }

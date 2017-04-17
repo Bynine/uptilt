@@ -33,5 +33,7 @@ public class Dummy extends Fighter {
 	TextureRegion getDashFrame(float deltaTime) { return texture; }
 	TextureRegion getDodgeFrame(float deltaTime) { return texture; }
 	TextureRegion getJumpSquatFrame(float deltaTime) { return texture; }
+	TextureRegion getTumbleFrame(float deltaTime) { return texture; }
+	TextureRegion getHitstunFrame(float deltaTime) { return texture; }
 
 }

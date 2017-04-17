@@ -15,6 +15,7 @@ public class EventList {
 	List<Action> actionList = new ArrayList<Action>();
 	List<Effect> effectList = new ArrayList<Effect>();
 	List<Integer> actionStartTimes = new ArrayList<Integer>();
+	List<ActionCircle> acList = new ArrayList<ActionCircle>();
 
 	void update(int time, boolean hitstun) {
 		time = time - 1;
@@ -32,7 +33,8 @@ public class EventList {
 
 	void addActionCircle(ActionCircle ac, int start, int finish){
 		ac.setDuration(finish - start);
-		actionList.add(new Action.MakeHitbox(ac));
+		acList.add(ac);
+		actionList.add(new Action.MakeActionCircle(ac));
 		actionStartTimes.add(start);
 	}
 

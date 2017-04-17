@@ -155,6 +155,7 @@ public abstract class Projectile extends Entity{
 
 		public Laser(float posX, float posY, Fighter owner) {
 			super(posX, posY + 32, owner);
+			new SFX.LaserFire().play();
 			setup("sprites/entities/laser.png", lifeTime, laserSpeed, 0);
 			ac = new ProjectileHitbox(owner, 0, 0, 4, 270, 0, 0, 6, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
@@ -170,7 +171,8 @@ public abstract class Projectile extends Entity{
 	public static class LaserUp extends Laser{
 		
 		public LaserUp(float posX, float posY, Fighter owner) {
-			super(posX, posY + 32, owner);
+			super(posX, posY, owner);
+			position.x += owner.getImage().getWidth()/2;
 			setup("sprites/entities/laserup.png", lifeTime, 0, laserSpeed);
 		}
 		
@@ -182,6 +184,7 @@ public abstract class Projectile extends Entity{
 
 		public ChargeLaser(float posX, float posY, Fighter owner) {
 			super(posX, posY + 32, owner);
+			new SFX.ChargeLaserFire().play();
 			setup("sprites/entities/chargelaser.png", lifeTime, 4, 0);
 			ac = new ProjectileHitbox(owner, 1, 2, 8, Hitbox.SAMURAIANGLE, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);

@@ -74,11 +74,14 @@ public class Hitbox extends ActionCircle{
 		if (!didHitTarget(target)) return;
 
 		refreshTimer.restart();
+		float staleness = 1;
+		if (null != user) staleness = getStaleness(user);
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
-		knockback.set(knockbackFormula(target), knockbackFormula(target));
+		knockback.set(knockbackFormula(target) * staleness, knockbackFormula(target) * staleness);
 		if (ANG == SAMURAIANGLE) setSamuraiAngle(target, knockback);
 		else knockback.setAngle(ANG);
+		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
 		knockback.x *= applyReverseHitbox(target);
 		int hitstun = hitstunFormula( knockbackFormula(target) );
 		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
@@ -86,16 +89,31 @@ public class Hitbox extends ActionCircle{
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		//if (target.isInDodge()) target.takeKnockback(knockback, heldCharge * DAM /2, hitstun);
-		//if (target.isPerfectBlocking()) handlePerfectBlockingKnockback();
-		//else
-		target.takeKnockback(knockback, heldCharge * DAM, hitstun);
+		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun);
 		startHitlag(target);
 		MapHandler.addEntity(new Graphic.HitGraphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
 		hitFighterList.add(target);
 	}
 	
+	float staleMod = 0.9f;
+	private float getStaleness(Fighter user) {
+		IDMove currMove = user.getActiveMove();
+		if (null == currMove) return 1;
+		float staleness = 1/staleMod;
+		for (IDMove im: user.getMoveQueue()){
+			if (im.id == currMove.id) staleness *= staleMod;
+		}
+		return staleness;
+	}
+
+	private Vector2 recoilFormula(Vector2 knockback, Fighter target) {
+		float recoil = -knockback.x/4;
+		recoil *= (target.getWeight()/100);
+		Vector2 recoilVector = new Vector2(recoil, 0);
+		return recoilVector;
+	}
+
 	void handlePerfectBlockingKnockback(){
 		/* NOTHING! */
 	}

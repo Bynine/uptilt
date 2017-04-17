@@ -14,6 +14,7 @@ public class Kicker extends Fighter {
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 6, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 2, 1, 12, PlayMode.LOOP);
 	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/run.png", 11, 1, 4, PlayMode.LOOP);
+	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/tumble.png", 4, 1, 8, PlayMode.LOOP);
 	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fjump.png")));
 	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/njump.png")));
 	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/bjump.png")));
@@ -69,5 +70,7 @@ public class Kicker extends Fighter {
 	TextureRegion getDashFrame(float deltaTime) { return dashImage; }
 	TextureRegion getDodgeFrame(float deltaTime) { return dodgeImage; }
 	TextureRegion getJumpSquatFrame(float deltaTime) { return jumpSquatImage; }
+	TextureRegion getTumbleFrame(float deltaTime) { return tumbleImage.getKeyFrame(deltaTime); }
+	TextureRegion getHitstunFrame(float deltaTime) { return helplessImage; }
 
 }

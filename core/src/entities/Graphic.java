@@ -113,24 +113,18 @@ public abstract class Graphic extends Entity{
 		private TextureRegion mid = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/laserchargemid.png")));
 		private TextureRegion big = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/laserchargebig.png")));
 		private final Fighter user;
-		private int posModifier = 0;
 		public LaserCharge(Fighter user, float posX, float posY){
 			super(posX, posY, 40);
 			this.user = user;
-			image = new Sprite(small);
+			image = new Sprite(big);
 			updatePosition();
 		}
 		void updatePosition(){
-			position.x = user.getPosition().x + user.direct() * (18 + posModifier);
-			position.y = user.getPosition().y + 16 + posModifier;
-			if (duration.getCounter() > dur/3) {
-				posModifier = -6;
-				setSmall(mid);
-			}
-			if (duration.getCounter() > 2*dur/3) {
-				posModifier = -12;
-				setSmall(big);
-			}
+			position.x = user.getPosition().x - image.getWidth()/2;
+			if (user.getDirection() == Direction.RIGHT) position.x += user.getImage().getWidth();
+			position.y = user.getPosition().y + 24 - image.getHeight()/2;
+			if (duration.getCounter() > dur/3) setSmall(mid);
+			if (duration.getCounter() > 2*dur/3) setSmall(small);
 			if (duration.timeUp()) setRemove();
 		}
 	}

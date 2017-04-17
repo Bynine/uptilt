@@ -20,6 +20,7 @@ public class Mook extends Fighter {
 	private Animation jumpImage = GlobalRepo.makeAnimation("sprites/fighters/mook/jump.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation crouchImage = GlobalRepo.makeAnimation("sprites/fighters/mook/crouch.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation helplessImage = GlobalRepo.makeAnimation("sprites/fighters/mook/nair.png", 4, 1, 8, PlayMode.LOOP_REVERSED);
+	private TextureRegion hitstunImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/hitstun.png")));
 	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/fall.png")));
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/dash.png")));
 	private TextureRegion wallSlideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/wallslide.png")));
@@ -28,16 +29,18 @@ public class Mook extends Fighter {
 		super(posX, posY, team);
 		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(standImage.getKeyFrame(0));
-		gravity = -0.4f;
+		gravity = -0.45f;
 		weight = 70;
 		jumpAcc = 0.52f;
 		airSpeed = 2f;
+		walkSpeed = 2.5f;
+		runSpeed = 5f;
 		friction = 0.86f;
 		wallJumpStrengthX = 7f;
 		wallJumpStrengthY = 6.2f;
 		doubleJumpStrength = 7.5f;
 		moveList = new MoveList_Mook(this);
-		jumpSquatTimer.setEndTime(6);
+		jumpSquatTimer.setEndTime(5);
 	}
 
 	TextureRegion getJumpFrame(float deltaTime) { return jumpImage.getKeyFrame(deltaTime); }
@@ -53,5 +56,7 @@ public class Mook extends Fighter {
 	TextureRegion getDashFrame(float deltaTime) { return dashImage; }
 	TextureRegion getDodgeFrame(float deltaTime) { return standImage.getKeyFrame(deltaTime); }
 	TextureRegion getJumpSquatFrame(float deltaTime) { return standImage.getKeyFrame(deltaTime); }
+	TextureRegion getTumbleFrame(float deltaTime) { return helplessImage.getKeyFrame(deltaTime); }
+	TextureRegion getHitstunFrame(float deltaTime) { return hitstunImage; }
 
 }
