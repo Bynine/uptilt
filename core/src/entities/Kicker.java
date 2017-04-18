@@ -27,6 +27,7 @@ public class Kicker extends Fighter {
 	private TextureRegion slideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/slide.png")));
 	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/helpless.png")));
 	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
+	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fallen.png")));
 
 	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
@@ -72,5 +73,6 @@ public class Kicker extends Fighter {
 	TextureRegion getJumpSquatFrame(float deltaTime) { return jumpSquatImage; }
 	TextureRegion getTumbleFrame(float deltaTime) { return tumbleImage.getKeyFrame(deltaTime); }
 	TextureRegion getHitstunFrame(float deltaTime) { return helplessImage; }
+	TextureRegion getFallenFrame(float deltaTime) { return fallenImage; }
 
 }

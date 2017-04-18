@@ -22,6 +22,7 @@ public class Mook extends Fighter {
 	private Animation helplessImage = GlobalRepo.makeAnimation("sprites/fighters/mook/nair.png", 4, 1, 8, PlayMode.LOOP_REVERSED);
 	private TextureRegion hitstunImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/hitstun.png")));
 	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/fall.png")));
+	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/fallen.png")));
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/dash.png")));
 	private TextureRegion wallSlideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/wallslide.png")));
 
@@ -30,7 +31,7 @@ public class Mook extends Fighter {
 		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(standImage.getKeyFrame(0));
 		gravity = -0.45f;
-		weight = 70;
+		weight = 76;
 		jumpAcc = 0.52f;
 		airSpeed = 2f;
 		walkSpeed = 2.5f;
@@ -58,5 +59,6 @@ public class Mook extends Fighter {
 	TextureRegion getJumpSquatFrame(float deltaTime) { return standImage.getKeyFrame(deltaTime); }
 	TextureRegion getTumbleFrame(float deltaTime) { return helplessImage.getKeyFrame(deltaTime); }
 	TextureRegion getHitstunFrame(float deltaTime) { return hitstunImage; }
+	TextureRegion getFallenFrame(float deltaTime) { return fallenImage; }
 
 }

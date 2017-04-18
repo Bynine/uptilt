@@ -22,6 +22,7 @@ public abstract class Projectile extends Entity{
 	Fighter owner;
 	float velX, velY = 0;
 	public final Timer life = new DurationTimer(1);
+	boolean trans = false;
 	private TextureRegion texture;
 
 	public Projectile(float posX, float posY, Fighter owner) {
@@ -63,6 +64,19 @@ public abstract class Projectile extends Entity{
 		if (hitWall) life.end();
 		return hitWall;
 	}
+	
+	void handleTouchHelper(Entity e){
+		if (isTouching(e, 0) && e instanceof Projectile){
+			Projectile p = (Projectile) e;
+			boolean collides = true;
+			if (null != p.owner){
+				if (p.owner.getTeam() == owner.getTeam()) collides = false;
+			}
+			if (collides) touchOtherProjectile(p);
+		}
+	}
+	
+	abstract void touchOtherProjectile(Projectile p);
 
 	public static class Spiker extends Projectile{
 		private final int lifeTime = 60;
@@ -79,6 +93,10 @@ public abstract class Projectile extends Entity{
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 			if (ac.hitAnybody()) velX *= 0.3f;
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) life.moveCounterForward(20);
 		}
 
 	}
@@ -101,11 +119,11 @@ public abstract class Projectile extends Entity{
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
-			if (Math.abs(velX) < 10) velX *= 1.05f;
+			if (Math.abs(velX) < 8) velX *= 1.04f;
 			if (deltaTime % 10 == 0) MapHandler.addEntity(new Graphic.SmokeTrail(this, 8));
 		}
 
-		public  boolean doesCollide(float x, float y){
+		public boolean doesCollide(float x, float y){
 			if (super.doesCollide(x, y)) explode();
 			return super.doesCollide(x, y);
 		}
@@ -114,6 +132,10 @@ public abstract class Projectile extends Entity{
 			MapHandler.addEntity(new Explosion(position.x, position.y, owner, this));
 			exploded = true;
 			life.end();
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) explode();
 		}
 	}
 
@@ -131,6 +153,10 @@ public abstract class Projectile extends Entity{
 			ac = new ProjectileHitbox(null, 8, 2, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
+		
+		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
 	}
 
 	public static class ShotgunBlast extends Projectile{
@@ -146,6 +172,10 @@ public abstract class Projectile extends Entity{
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
 		}
+		
+		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
 	}
 
 	public static class Laser extends Projectile{
@@ -155,6 +185,7 @@ public abstract class Projectile extends Entity{
 
 		public Laser(float posX, float posY, Fighter owner) {
 			super(posX, posY + 32, owner);
+			trans = true;
 			new SFX.LaserFire().play();
 			setup("sprites/entities/laser.png", lifeTime, laserSpeed, 0);
 			ac = new ProjectileHitbox(owner, 0, 0, 4, 270, 0, 0, 6, new SFX.LightHit(), this, lifeTime);
@@ -165,7 +196,10 @@ public abstract class Projectile extends Entity{
 			super.update(rectangleList, entityList, deltaTime);
 			if (ac.hitAnybody()) life.end();
 		}
-
+		
+		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
 	}
 	
 	public static class LaserUp extends Laser{
@@ -176,6 +210,31 @@ public abstract class Projectile extends Entity{
 			setup("sprites/entities/laserup.png", lifeTime, 0, laserSpeed);
 		}
 		
+	}
+	
+	public static class LaserDiagonalF extends Laser{
+
+		public LaserDiagonalF(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+			fixLaser(owner.getDirection() == Direction.RIGHT);
+			setup("sprites/entities/laserdiagonal.png", lifeTime, laserSpeed/3, laserSpeed);
+		}
+
+	}
+	
+	public static class LaserDiagonalB extends Laser{
+
+		public LaserDiagonalB(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+			fixLaser(owner.getDirection() == Direction.LEFT);
+			setup("sprites/entities/laserdiagonal.png", lifeTime, -laserSpeed/3, laserSpeed);
+		}
+
+	}
+	
+	void fixLaser(boolean dir){
+		if (dir) flip();
+		else position.x += owner.getImage().getWidth()/2;
 	}
 
 	public static class ChargeLaser extends Projectile{
@@ -193,6 +252,10 @@ public abstract class Projectile extends Entity{
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 			if (ac.hitAnybody()) life.end();
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) life.end();
 		}
 
 	}

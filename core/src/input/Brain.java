@@ -39,6 +39,14 @@ public abstract class Brain{
 		return MathUtils.clamp(value, -1, 1);
 	}
 
+	void getUp(){
+		if (Math.random() < 0.4)  body.handleCommand(InputHandler.commandStickDown);
+		else {
+			if (Math.random() < 0.5) body.handleCommand(InputHandler.commandStickLeft);
+			else body.handleCommand(InputHandler.commandStickRight);
+		}
+	}
+
 	void attemptRecovery(InputPackage pack, Timer waitToUseUpSpecial){
 		body.yInput = 1;
 		if (pack.distanceFromCenter < 0) body.xInput = 1;
@@ -54,7 +62,7 @@ public abstract class Brain{
 
 	void jumpTowardPlayer(Timer tryJump, Timer performJump, InputPackage pack){
 		tryJump.restart();
-		if (performJump.timeUp() && (Math.random() < (-pack.distanceYFromPlayer/300f)) ) {
+		if (performJump.timeUp() && (Math.random() < (-pack.distanceYFromPlayer/100f)) ) {
 			body.handleCommand(InputHandler.commandJump);
 			performJump.restart();
 		}
@@ -65,32 +73,9 @@ public abstract class Brain{
 		if (Math.random() < 0.5) performJump.countUp(); // modulates jump height
 	}
 
-	void attackPlayerNormals(float aggressiveness, InputPackage pack){
-		if (Math.random() < aggressiveness) {
-			facePlayer(pack);
-			if (Math.random() < 0.2) body.handleCommand(InputHandler.commandCharge);
-			else body.handleCommand(InputHandler.commandAttack);
-		}
-	}
-
-	void attackPlayerCharge(float aggressiveness, InputPackage pack){
-		if (Math.random() < aggressiveness) {
-			facePlayer(pack);
-			body.handleCommand(InputHandler.commandCharge);
-		}
-	}
-
-	void grabPlayer(float aggressiveness, InputPackage pack){
-		if (Math.random() < aggressiveness) {
-			facePlayer(pack);
-			body.handleCommand(InputHandler.commandGrab);
-		}
-	}
-	
-	void dodgePlayer(float aggressiveness, InputPackage pack){
-		if (Math.random() < aggressiveness) {
-			dodgeTimer.restart();
-		}
+	void attackPlayer(InputPackage pack, int command){
+		facePlayer(pack);
+		body.handleCommand(command);
 	}
 
 	void facePlayer(InputPackage pack){
@@ -100,11 +85,11 @@ public abstract class Brain{
 
 	void headTowardPlayer(Timer changeDirection, InputPackage pack){
 		body.xInput = setInput(-pack.distanceXFromPlayer);
-		if (Math.random() < 0.15) { // run toward
+		if (Math.random() < 0.3 && Math.abs(pack.distanceXFromPlayer) > 300) { // run toward
 			if (pack.distanceXFromPlayer > 0) body.handleCommand(InputHandler.commandStickRight);
 			else body.handleCommand(InputHandler.commandStickLeft);
 		}
-		else if (Math.random() < 0.3) body.xInput = 0;
+		else if (Math.random() < 0.1) body.xInput = 0;
 		changeDirection.restart();
 	}
 
@@ -113,6 +98,11 @@ public abstract class Brain{
 		ud = Math.signum(ud) * Math.pow(Math.abs(ud), 0.7);
 		body.yInput = (float) MathUtils.clamp(ud, -1, 1);
 		changeUpDown.restart();
+	}
+
+	void crouchBeforeAttacking(){
+		body.yInput = -1;
+		body.xInput = 0;
 	}
 
 	/* brains */
@@ -160,11 +150,14 @@ public abstract class Brain{
 			super.update(pack);
 			if (changeDirection.timeUp()) headTowardPlayer(changeDirection, pack);
 			if (!performJump.timeUp()) performJump(performJump);
-			if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
+			if (pack.state == State.FALLEN && Math.random() < 0.02) getUp();
+			else if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
 			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60) {
-				if (Math.random() < 0.8 && Math.abs(pack.distanceXFromPlayer) < 30) attackPlayerNormals(aggressiveness, pack);
-				else if (Math.abs(pack.distanceXFromPlayer) < 60 && Math.random() < 0.1) attackPlayerCharge(aggressiveness, pack);
+				if (Math.abs(pack.distanceXFromPlayer) < 30 && Math.random() < 0.02) crouchBeforeAttacking();
+				if (Math.abs(pack.distanceXFromPlayer) < 70 && Math.random() < 0.02 && pack.isGrounded) performJump(performJump);
+				if (Math.random() < 0.8 && Math.abs(pack.distanceXFromPlayer) < 30) attackPlayer(pack, InputHandler.commandAttack);
+				else if (Math.abs(pack.distanceXFromPlayer) < 60 && Math.random() < 0.05) attackPlayer(pack, InputHandler.commandCharge);
 			}
 			else if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
 			if (changeUpDown.timeUp()) changeUpDown(); 
@@ -185,25 +178,28 @@ public abstract class Brain{
 
 		void update(InputPackage pack){
 			super.update(pack);
-			if (!performJump.timeUp()) performJump(performJump);
-			if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
+			if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
+			else if (changeDirection.timeUp() && Math.abs(pack.distanceXFromPlayer) > 100) headTowardPlayer(changeDirection, pack);
+			else if (!performJump.timeUp()) performJump(performJump);
+			else if (pack.state == State.FALLEN && Math.random() < 0.02) getUp();
+			else if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
-			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60){
+			if (Math.abs(pack.distanceYFromPlayer) < 100){
 				if (Math.abs(pack.distanceXFromPlayer) < 30) attackPlayerClose(pack);
-				else if (Math.abs(pack.distanceXFromPlayer) < 600) attackPlayerDistant(pack);
+				else if (Math.abs(pack.distanceXFromPlayer) < 600 && Math.random() < 0.05) attackPlayerDistant(pack);
 			}
-			else if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
+			if (pack.state == State.WALLSLIDE) body.handleCommand(InputHandler.commandJump);
 			if (changeUpDown.timeUp()) changeUpDown(); 
 		}
 
 		private void attackPlayerDistant(InputPackage pack){ // ranged moves are fweak, uweak, dweak, fair, uair, dair
-			facePlayer(pack);
 			if (Math.abs(body.xInput) < 0.8 && Math.abs(body.yInput) < 0.8) body.xInput = pack.direct;
+			if (pack.distanceYFromPlayer < 20) body.yInput = 1;
+			else if (body.yInput > 0) body.yInput *= -1;
 			body.handleCommand(InputHandler.commandAttack);
 		}
 
 		private void attackPlayerClose(InputPackage pack){ // close moves are nweak, nair, bair
-			facePlayer(pack);
 			if (!(!pack.isGrounded && body.xInput < 0)) body.xInput = 0;
 			body.handleCommand(InputHandler.commandAttack);
 		}
@@ -219,18 +215,22 @@ public abstract class Brain{
 		public KickerBrain(InputHandlerCPU body) {
 			super(body);
 			aggressiveness = 0.5f;
+			changeDirection.setEndTime(20);
 		}
 
 		void update(InputPackage pack){
 			super.update(pack);
 			if (changeDirection.timeUp()) headTowardPlayer(changeDirection, pack);
 			if (!performJump.timeUp()) performJump(performJump);
+			if (pack.state == State.FALLEN && Math.random() < 0.05) getUp();
 			else if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
 			else if (pack.isOffStage) attemptRecovery(pack, waitToUseUpSpecial);
 			else if (Math.abs(pack.distanceYFromPlayer - 30) < 60){
+				if (Math.abs(pack.distanceXFromPlayer) < 30 && Math.random() < 0.02) crouchBeforeAttacking();
+				if (Math.abs(pack.distanceXFromPlayer) < 80 && Math.random() < 0.02 && pack.isGrounded) performJump(performJump);
 				if (Math.abs(pack.distanceXFromPlayer) < 30){
-					if (Math.random() < 0.5) grabPlayer(aggressiveness, pack);
+					if (Math.random() < 0.5) attackPlayer(pack, InputHandler.commandGrab);
 					else pickLongerMove(pack);
 				}
 				else if (Math.abs(pack.distanceXFromPlayer) < 70) pickLongerMove(pack);
@@ -242,10 +242,10 @@ public abstract class Brain{
 			if (Math.random() < 0.9) return true;
 			else return false;
 		}
-		
+
 		void pickLongerMove(InputPackage pack){
-			if (Math.random() < 0.2) attackPlayerCharge(aggressiveness, pack);
-			else attackPlayerNormals(aggressiveness, pack);
+			if (Math.random() < 0.2) attackPlayer(pack, InputHandler.commandCharge);
+			else attackPlayer(pack, InputHandler.commandAttack);
 		}
 
 	}

@@ -19,20 +19,20 @@ public class Room_Standard extends Room {
 	}
 	
 	public int[] getSides() {
-		return new int[]{35 * GlobalRepo.TILE, 75 * GlobalRepo.TILE};
+		return new int[]{17 * GlobalRepo.TILE, 40 * GlobalRepo.TILE};
 	}
 
 	public float getFloor() {
-		return 10 * GlobalRepo.TILE;
+		return 5 * GlobalRepo.TILE;
 	}
 
 	public Vector2 getSpawnPoint() {
-		if (Math.random() < 0.5) return new Vector2(40 * GlobalRepo.TILE, 30 * GlobalRepo.TILE);
-		else return new Vector2(70 * GlobalRepo.TILE, 30 * GlobalRepo.TILE);
+		if (Math.random() < 0.5) return new Vector2(20 * GlobalRepo.TILE, 25 * GlobalRepo.TILE);
+		else return new Vector2(37 * GlobalRepo.TILE, 25 * GlobalRepo.TILE);
 	}
 
 	@Override
 	public Vector2 getStartPosition() {
-		return new Vector2(40 * GlobalRepo.TILE, 11 * GlobalRepo.TILE);
+		return new Vector2(29 * GlobalRepo.TILE, 6 * GlobalRepo.TILE);
 	}
 }

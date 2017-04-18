@@ -12,6 +12,10 @@ public class MoveList_Gunmin extends MoveList {
 	public MoveList_Gunmin(Fighter user) {
 		super(user);
 	}
+	
+	protected Class<? extends Projectile> getChargeLaserClass(){
+		return Projectile.ChargeLaser.class;
+	}
 
 	public Move nWeak() {
 		Move m = new Move(user, 24);
@@ -22,9 +26,11 @@ public class MoveList_Gunmin extends MoveList {
 	}
 	
 	public Move uWeak() {
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 32);
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
-		m.eventList.addProjectile(user, Projectile.LaserUp.class, 12);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalF.class, 10);
+		m.eventList.addProjectile(user, Projectile.LaserUp.class, 20);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalB.class, 30);
 		return m;
 	}
 	
@@ -39,18 +45,17 @@ public class MoveList_Gunmin extends MoveList {
 		Move m = new Move(user, 60);
 		m.setAnimation("sprites/fighters/laser/crouchfire.png", 1, 1);
 		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -4, 0);
-		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
+		m.eventList.addVelocityChange(user, 42, -3, 0);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
 		return m;
 	}
 	
 	public Move slide() {
 		Move m = new Move(user, 45);
-		m.causesHelpless();
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
 		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -5, 3);
-		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
+		m.eventList.addVelocityChange(user, 42, -3, 1);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
 		return m;
 	}
 	
@@ -83,9 +88,11 @@ public class MoveList_Gunmin extends MoveList {
 	}
 	
 	public Move uAir() {
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 36);
 		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
-		m.eventList.addProjectile(user, Projectile.LaserUp.class, 12);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalF.class, 8);
+		m.eventList.addProjectile(user, Projectile.LaserUp.class, 16);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalB.class, 24);
 		return m;
 	}
 	
@@ -93,16 +100,37 @@ public class MoveList_Gunmin extends MoveList {
 		Move m = new Move(user, 45);
 		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
 		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -4, 0);
-		m.eventList.addProjectile(user, Projectile.ChargeLaser.class, 42);
+		m.eventList.addVelocityChange(user, 42, -2, 0);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
 		return m;
 	}
 	
 	public Move uSpecial() {
 		Move m = new Move(user, 80);
 		m.setHelpless();
-		m.eventList.addGraphic(user, 6, 70, new Graphic.UFO(user, user.getPosition().x, user.getPosition().y));
-		m.eventList.addConstantVelocity(user, 6, 70, Action.ChangeVelocity.noChange, 4);
+		m.eventList.addGraphic(user, 6, 77, new Graphic.UFO(user, user.getPosition().x, user.getPosition().y));
+		m.eventList.addConstantVelocity(user, 6, 77, Action.ChangeVelocity.noChange, 5);
+		return m;
+	}
+	
+	public Move rollForward() {
+		Move m = new Move(user, 48);
+		user.flip();
+		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
+		m.eventList.addConstantVelocity(user, 2, 34, 2, Action.ChangeVelocity.noChange);
+		return m;
+	}
+	
+	public Move rollBack() {
+		Move m = new Move(user, 48);
+		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
+		m.eventList.addConstantVelocity(user, 2, 34, 2, Action.ChangeVelocity.noChange);
+		return m;
+	}
+	
+	public Move dodge() {
+		Move m = new Move(user, 30);
+		m.setAnimation("sprites/fighters/laser/ngetup.png", 1, 1);
 		return m;
 	}
 
@@ -187,20 +215,8 @@ public class MoveList_Gunmin extends MoveList {
 	public Move airGrab() {
 		return new Move(user, 0);
 	}
-	
-	public Move rollForward() {
-		return new Move(user, 0);
-	}
-	
-	public Move rollBack() {
-		return new Move(user, 0);
-	}
 
 	public Move airDodge() {
-		return new Move(user, 0);
-	}
-	
-	public Move dodge() {
 		return new Move(user, 0);
 	}
 	

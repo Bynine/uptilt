@@ -19,15 +19,19 @@ public class Gunmin extends Fighter {
 	private TextureRegion ascend = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/ascend.png")));
 	private TextureRegion fall = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/fall.png")));
 	private TextureRegion hitstun = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/hitstun.png")));
-	private Animation tumble = GlobalRepo.makeAnimation("sprites/fighters/laser/tumble.png", 4, 1, 8, PlayMode.LOOP);
+	private TextureRegion fallen = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/fallen.png")));
+	private Animation tumble = GlobalRepo.makeAnimation("sprites/fighters/laser/tumble.png", 4, 1, 6, PlayMode.LOOP);
 
 	public Gunmin(float posX, float posY, int team) {
 		super(posX, posY, team);
-		walkAcc = 0.1f;
-		runAcc = 0.15f;
-		airAcc = 0.1f;
+		walkAcc = 0.08f;
+		runAcc = 0.12f;
+		airAcc = 0.13f;
 		gravity = -0.38f;
-		weight = 55;
+		weight = 64;
+		doubleJumpStrength = 8;
+		friction = 0.94f;
+		jumpAcc = 0.6f;
 		moveList = new MoveList_Gunmin(this);
 		jumpSquatTimer.setEndTime(6);
 	}
@@ -47,5 +51,6 @@ public class Gunmin extends Fighter {
 	TextureRegion getJumpSquatFrame(float deltaTime) { return crouch; }
 	TextureRegion getTumbleFrame(float deltaTime) { return tumble.getKeyFrame(deltaTime); }
 	TextureRegion getHitstunFrame(float deltaTime) { return hitstun; }
+	TextureRegion getFallenFrame(float deltaTime) { return fallen; }
 
 }

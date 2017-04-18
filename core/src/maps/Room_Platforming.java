@@ -15,7 +15,7 @@ public class Room_Platforming extends Room {
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/platforming.tmx");
+		return tmxMapLoader.load("maps/standard.tmx");
 	}
 
 	public int[] getSides() {

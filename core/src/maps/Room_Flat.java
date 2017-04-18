@@ -15,7 +15,7 @@ public class Room_Flat extends Room {
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/long.tmx");
+		return tmxMapLoader.load("maps/standard.tmx");
 	}
 
 	public int[] getSides() {

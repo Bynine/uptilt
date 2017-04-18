@@ -23,6 +23,7 @@ public class GraphicsHandler {
 	
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
+	private static final OrthographicCamera parallaxCam = new OrthographicCamera();
 	private static final int camAdjustmentSpeed = 8;
 	private static final float ZOOM = 1/2f;
 	private static OrthogonalTiledMapRenderer renderer;
@@ -31,13 +32,15 @@ public class GraphicsHandler {
 	private static BitmapFont font = new BitmapFont();
 	private static boolean debug = false;
 	
-	public static final int SCREENWIDTH  = (int) ((45 * GlobalRepo.TILE)/ZOOM);
-	public static final int SCREENHEIGHT = (int) ((26 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENWIDTH  = (int) ((24 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENHEIGHT = (int) ((12 * GlobalRepo.TILE)/ZOOM);
 	
 	public static void begin() {
 		batch = new SpriteBatch();
 		cam.setToOrtho(false, SCREENWIDTH, SCREENHEIGHT);
 		cam.zoom = ZOOM;
+		parallaxCam.setToOrtho(false, SCREENWIDTH, SCREENHEIGHT);
+		parallaxCam.zoom = ZOOM;
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/nes.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 8;
@@ -52,10 +55,13 @@ public class GraphicsHandler {
 		cam.position.x = MathUtils.round(MathUtils.clamp(cam.position.x, screenBoundary(SCREENWIDTH), MapHandler.mapWidth - screenBoundary(SCREENWIDTH)));
 		cam.position.y = MathUtils.round(MathUtils.clamp(cam.position.y, screenBoundary(SCREENHEIGHT), MapHandler.mapHeight - screenBoundary(SCREENHEIGHT)));
 		
+		parallaxCam.position.x = cam.position.x/2 + SCREENWIDTH/4;
+		parallaxCam.position.y = cam.position.y;
+		
 		if (!UptiltEngine.outOfHitlag()) shakeScreen();
 		
 		cam.update();
-		renderer.setView(cam);
+		parallaxCam.update();
 	}
 	
 	private static float screenBoundary(float dimension){
@@ -66,35 +72,21 @@ public class GraphicsHandler {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		batch.setProjectionMatrix(cam.combined);
 		int[] arr;
+		renderer.setView(parallaxCam);
 
-		arr = new int[]{0};  // render back
+		arr = new int[]{0, 1};  // render back
 		renderer.render(arr);
-
-		int numLayers = MapHandler.activeMap.getLayers().getCount() - 1;  // render tiles
+		
+		renderer.setView(cam);
+		int numLayers = MapHandler.activeMap.getLayers().getCount() - 2;  // render tiles
 		arr = new int[numLayers];
-		for (int i = 0; i < arr.length; ++i) arr[i] = i+1;
+		for (int i = 0; i < arr.length; ++i) {
+			arr[i] = i + 2;
+		}
 		renderer.render(arr);
 
 		batch.begin();  // render entities
-		for (Entity e: MapHandler.activeRoom.getEntityList()){
-			if (e instanceof Fighter) {
-				Fighter fi = (Fighter) e;
-				drawFighterPercentage(fi);
-				if (debug) drawState(fi);
-				batch.setColor(fi.getColor());
-				if (!fi.hitstunTimer.timeUp()) 
-					batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);
-				else if (fi.isInvincible()) 
-					batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
-				else if (fi.isCharging()) 
-					batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
-				
-				if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.4f, batch.getColor().b, 1);
-				if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.4f, 1);
-			}
-			batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
-			batch.setColor(1, 1, 1, 1);
-		}
+		for (Entity e: MapHandler.activeRoom.getEntityList()) renderEntity(e);
 		batch.end();
 		font.setColor(1, 1, 1, 1);
 		
@@ -122,6 +114,26 @@ public class GraphicsHandler {
 			if (e instanceof Fighter) debugRenderer.rect(r.x, r.y, r.width, r.height);
 		}
 		debugRenderer.end();
+	}
+	
+	private static void renderEntity(Entity e){
+		if (e instanceof Fighter) {
+			Fighter fi = (Fighter) e;
+			drawFighterPercentage(fi);
+			if (debug) drawState(fi);
+			batch.setColor(fi.getColor());
+			if (!fi.hitstunTimer.timeUp()) 
+				batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);
+			else if (fi.isInvincible()) 
+				batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
+			else if (fi.isCharging()) 
+				batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
+			
+			if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.4f, batch.getColor().b, 1);
+			if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.4f, 1);
+		}
+		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
+		batch.setColor(1, 1, 1, 1);
 	}
 
 	private static void drawFighterPercentage(Entity e) {

@@ -71,7 +71,7 @@ public class MoveList_Kicker extends MoveList{
 	/* CHARGE ATTACKS */
 
 	public Move sCharge() {
-		Move m = new Move(user, 30);
+		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/kicker/scharge.png", 6, 5);
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
 		Hitbox h1 = new Hitbox(user, 5, 3f, 15, 60, 10, 4, 12, new SFX.HeavyHit(), c);
@@ -87,7 +87,7 @@ public class MoveList_Kicker extends MoveList{
 	}
 
 	public Move uCharge() {
-		Move m = new Move(user, 30);
+		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/kicker/ucharge.png", 4, 8);
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
 		Hitbox h1 = new Hitbox(user, 5, 5f, 17, 90, 26,-16, 16, new SFX.HeavyHit(),  c);
@@ -106,7 +106,7 @@ public class MoveList_Kicker extends MoveList{
 	}
 
 	public Move dCharge() {
-		Move m = new Move(user, 32);
+		Move m = new Move(user, 42);
 		m.setAnimation("sprites/fighters/kicker/dcharge.png", 4, 8);
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
 		m.eventList.addCharge(user, c);
@@ -151,8 +151,8 @@ public class MoveList_Kicker extends MoveList{
 	public Move dAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/kicker/dair.png", 3, 10);
-		Hitbox h1 = new Hitbox(user, 2, 2.3f, 11, 270, 0, 0, 14, new SFX.MidHit());
-		Hitbox h2 = new Hitbox(user, 2, 2.5f, 14, 270, 0, -24, 18, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 1, 2.4f, 11, 270, 0, 0, 14, new SFX.MidHit());
+		Hitbox h2 = new Hitbox(user, 1, 2.6f, 14, 270, 0, -24, 18, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(h1, h2));
 		m.eventList.addActionCircle(h1, 11, 17);
 		m.eventList.addActionCircle(h2, 11, 17);

@@ -13,7 +13,7 @@ public class Move {
 	final Fighter user;
 	final Timer duration;
 	final EventList eventList = new EventList();
-	private boolean helpless = false, continueOnLanding = false, noTurn = false, connected = false;
+	private boolean helpless = false, continueOnLanding = false, noTurn = false, connected = false, stopsInAir = false;
 	float armor = 0;
 	Animation animation = null;
 	int addedFrames = 0;
@@ -32,9 +32,12 @@ public class Move {
 	}
 
 	public boolean done(){ return duration.timeUp(); }
+	public void setDone() { duration.end();}
 	public int getDuration() { return duration.getEndTime(); }
 	public boolean causesHelpless() { return helpless; }
 	public void setHelpless() { helpless = true; }
+	public void setStopsInAir() { stopsInAir = true;  }
+	public boolean stopsInAir() { return stopsInAir; }
 	public boolean continuesOnLanding() { return continueOnLanding; }
 	public boolean isNoTurn() { return noTurn; }
 	public void dontTurn() { noTurn = true; }

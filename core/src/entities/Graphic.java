@@ -81,10 +81,10 @@ public abstract class Graphic extends Entity{
 		public DustCloud(Entity e, float posX, float posY){
 			super(posX, posY, 4);
 			image = new Sprite(texture);
-			position.x -= image.getWidth()/2;
+			position.x -= image.getWidth();
 			if (e.direction == Direction.LEFT){
 				image.flip(true, false);
-				position.x += e.getImage().getWidth();
+				position.x += e.getImage().getWidth() * 1.5f;
 			}
 		}
 		void updatePosition(){

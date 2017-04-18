@@ -81,8 +81,8 @@ public class Hitbox extends ActionCircle{
 		knockback.set(knockbackFormula(target) * staleness, knockbackFormula(target) * staleness);
 		if (ANG == SAMURAIANGLE) setSamuraiAngle(target, knockback);
 		else knockback.setAngle(ANG);
-		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
 		knockback.x *= applyReverseHitbox(target);
+		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
 		int hitstun = hitstunFormula( knockbackFormula(target) );
 		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
 		if (groundedMeteor){
@@ -140,7 +140,7 @@ public class Hitbox extends ActionCircle{
 		return hitlag;
 	}
 
-	private static final float hitstunRatio = 4.2f;
+	private static final float hitstunRatio = 4.8f;
 	public int hitstunFormula(float knockback){
 		if (BKB + KBG == 0) return 0;
 		return  2 + (int) (knockback * hitstunRatio);
@@ -151,6 +151,7 @@ public class Hitbox extends ActionCircle{
 	private final float weightMod = 0.01f;
 	private final float minKnockback = 0.25f;
 	public float knockbackFormula(Fighter target){
+		if (BKB + KBG == 0) return 0;
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
 		knockback -= target.getArmor();
 		if (target.getState() == State.CROUCH) knockback *= crouchCancelMod;

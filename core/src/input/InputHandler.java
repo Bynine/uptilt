@@ -33,16 +33,16 @@ public abstract class InputHandler {
 	public void handleCommand(int command){
 		boolean wasCommandAccepted = false;
 
-		if (player.canAct()){
-			if (command == commandJump) wasCommandAccepted = player.tryJump();
-		}
-		if (player.canAttackBlock()){
+		if (player.canMove()){
 			switch (command){
 			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
 			case commandStickLeft:		wasCommandAccepted = player.tryStickBack(); break;
 			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
 			case commandStickDown:		wasCommandAccepted = player.tryStickDown(); break;
 			}
+		}
+		if (player.canAct()){
+			if (command == commandJump) wasCommandAccepted = player.tryJump();
 		}
 		if (player.canAttack()){
 			switch (command){

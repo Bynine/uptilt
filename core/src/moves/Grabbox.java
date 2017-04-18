@@ -14,7 +14,7 @@ public class Grabbox extends ActionCircle {
 	public void hitTarget(Fighter target) {
 		if (!didHitTarget(target)) return;
 		
-		target.takeGrab(user, target, caughtTimeFormula(target));
+		target.getGrabbed(user, target, caughtTimeFormula(target));
 		remove = true;
 	}
 	
