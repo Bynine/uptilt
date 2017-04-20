@@ -6,44 +6,81 @@ import com.badlogic.gdx.Input.Keys;
 
 import entities.Fighter;
 
-public class InputHandlerKeyboard extends InputHandler implements InputProcessor{
+public class InputHandlerKeyboard extends InputHandlerPlayer implements InputProcessor{
 
 	public InputHandlerKeyboard(Fighter player) {
 		super(player);
 	}
-
-	@Override
-	public void update() {
-		super.update();
-		if (Gdx.input.isKeyJustPressed(Keys.J)) handleCommand(commandJump);
-		if (Gdx.input.isKeyJustPressed(Keys.M)) handleCommand(commandAttack);
-		if (Gdx.input.isKeyJustPressed(Keys.A)) handleCommand(commandStickLeft);
-		if (Gdx.input.isKeyJustPressed(Keys.D)) handleCommand(commandStickRight);
-		if (Gdx.input.isKeyJustPressed(Keys.K)) handleCommand(commandCharge);
-		if (Gdx.input.isKeyJustPressed(Keys.N)) handleCommand(commandSpecial);
-		if (Gdx.input.isKeyJustPressed(Keys.I)) handleCommand(commandGrab);
-		if (Gdx.input.isKeyJustPressed(Keys.O)) handleCommand(commandBlock);
-		boolean jump = (Gdx.input.isKeyPressed(Keys.J));
-		player.handleJumpHeld(jump);
-	}
-
-	@Override
-	public boolean isCharging() {
-		return Gdx.input.isKeyPressed(Keys.K);
-	}
 	
-	@Override
 	public float getXInput() {
 		if (Gdx.input.isKeyPressed(Keys.D)) return  1;
 		if (Gdx.input.isKeyPressed(Keys.A)) return -1;
 		return 0;
 	}
 
-	@Override
 	public float getYInput() {
 		if (Gdx.input.isKeyPressed(Keys.S)) return  1;
 		if (Gdx.input.isKeyPressed(Keys.W)) return -1;
 		return 0;
+	}
+	
+	boolean attack(){
+		return Gdx.input.isKeyJustPressed(Keys.M);
+	}
+	
+	boolean special(){
+		return Gdx.input.isKeyJustPressed(Keys.N);
+	}
+	
+	private int chargeInput = Keys.K;
+	boolean charge(){
+		return Gdx.input.isKeyJustPressed(chargeInput);
+	}
+	
+	boolean chargeHold(){
+		return Gdx.input.isKeyPressed(chargeInput);
+	}
+	
+	private int jumpInput = Keys.J;
+	boolean jump(){
+		return Gdx.input.isKeyJustPressed(jumpInput);
+	}
+	
+	boolean jumpHold(){
+		return Gdx.input.isKeyPressed(jumpInput);
+	}
+	
+	boolean grab(){
+		return Gdx.input.isKeyJustPressed(Keys.I);
+	}
+	
+	private int blockInput = Keys.O;
+	boolean block(){
+		return Gdx.input.isKeyJustPressed(blockInput);
+	}
+	
+	boolean blockHold(){
+		return Gdx.input.isKeyPressed(blockInput);
+	}
+	
+	boolean taunt(){
+		return Gdx.input.isKeyJustPressed(Keys.L);
+	}
+	
+	boolean flickLeft(){
+		return Gdx.input.isKeyJustPressed(Keys.A);
+	}
+	
+	boolean flickRight(){
+		return Gdx.input.isKeyJustPressed(Keys.D);
+	}
+	
+	boolean flickUp(){
+		return Gdx.input.isKeyJustPressed(Keys.W);
+	}
+	
+	boolean flickDown(){
+		return Gdx.input.isKeyJustPressed(Keys.S);
 	}
 	
 	/* NOT USED */

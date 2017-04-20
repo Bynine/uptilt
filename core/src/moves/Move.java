@@ -12,13 +12,13 @@ import timers.Timer;
 public class Move {
 	final Fighter user;
 	final Timer duration;
-	final EventList eventList = new EventList();
+	public final EventList eventList = new EventList();
 	private boolean helpless = false, continueOnLanding = false, noTurn = false, connected = false, stopsInAir = false;
 	float armor = 0;
 	Animation animation = null;
 	int addedFrames = 0;
 
-	Move(Fighter user, int dur){
+	public Move(Fighter user, int dur){
 		this.user = user;
 		duration = new DurationTimer(dur);
 	}

@@ -9,11 +9,11 @@ import java.util.List;
 
 import main.MapHandler;
 import main.SFX;
+import movelists.MoveList;
+import movelists.Mook;
 import moves.Hitbox;
 import moves.IDMove;
 import moves.Move;
-import moves.MoveList;
-import moves.MoveList_Kicker;
 import timers.Timer;
 
 import com.badlogic.gdx.Gdx;
@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -53,7 +54,7 @@ public abstract class Fighter extends Entity{
 	private final int randomAnimationDisplacement;
 	final Vector2 spawnPoint;
 	private int team = 0, stocks = 1;
-	MoveList moveList = new MoveList_Kicker(this);
+	MoveList moveList = new Mook(this);
 	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
 
 	public Fighter(float posX, float posY, int team) {
@@ -120,7 +121,7 @@ public abstract class Fighter extends Entity{
 				pushAway(fi);
 				((Fighter) fi).pushAway(this);
 			}
-			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > superHitstunBase;
+			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > tumbleBK;
 			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == fi.getTeam() && !fi.hitstunTimer.timeUp();
 			if (knockInto && isTouching(fi, 8) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) knockBack(fi);
 		}
@@ -153,6 +154,7 @@ public abstract class Fighter extends Entity{
 
 	private float minCrouchHold = 0.9f;
 	private float minRunHold = 0.5f;
+	private float minRunFromAirHold = 0.9f;
 	private void updateGroundedState(){
 		if (jumpSquatTimer.timeUp() && state == State.JUMPSQUAT) {
 			state = State.JUMP;
@@ -171,7 +173,8 @@ public abstract class Fighter extends Entity{
 			else state = State.CROUCH;
 		}
 		else if (Math.abs(stickX) > minRunHold){
-			if (isRun() || (!inGroundedState(prevState)) ) state = State.RUN;
+			boolean fallToRun = !inGroundedState(prevState) && Math.abs(stickX) > minRunFromAirHold;
+			if (isRun() || fallToRun) state = State.RUN;
 			else if (state == State.DASH && !dashTimer.timeUp()) state = State.DASH;
 			else state = State.WALK;
 			boolean noWalls = (!doesCollide(position.x - 2, position.y) && direction == Direction.LEFT)
@@ -276,6 +279,16 @@ public abstract class Fighter extends Entity{
 			adjust++;
 			if (adjust > maxAdjust) break;
 		}
+	}
+	
+	public boolean doesCollide(float x, float y){
+		if (collision == Collision.GHOST) return false;
+		for (Rectangle r : tempRectangleList){
+			Rectangle thisR = getCollisionBox(x, y);
+			boolean upThroughThinPlatform = r.getHeight() <= 1 && (r.getY() - this.getPosition().y > 0 || stickY > 0.8f);
+			if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
+		}
+		return false;
 	}
 
 	void handleGravity(){
@@ -430,16 +443,26 @@ public abstract class Fighter extends Entity{
 	}
 
 	public boolean tryStickUp(){
-		return tryStickDown();
+		upDownStick();
+		return true; 
 	}
 
 	public boolean tryStickDown(){
+		upDownStick();
+		if (isGrounded()){
+			for (Rectangle r: tempRectangleList){
+				if (Math.abs(position.y - r.y) < 2 && r.getHeight() <= 1) position.y -= 2;
+			}
+		}
+		return true; 
+	}
+
+	private void upDownStick(){
 		if (state == State.DODGE) spotDodge();
 		else if (state == State.FALLEN){
 			state = State.STAND;
 			spotDodge();
 		}
-		return true; 
 	}
 
 	private void spotDodge(){
@@ -492,7 +515,6 @@ public abstract class Fighter extends Entity{
 		velocity.add(knockback);
 	}
 
-	private final float minimumTumbleKB = 10;
 	private void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy){
 		percentage += DAM;
 		if (knockbackIntensity(knockback) > 0){
@@ -505,7 +527,7 @@ public abstract class Fighter extends Entity{
 			setActiveMove(null);
 			attackTimer.end();
 		}
-		if (knockbackIntensity(knockback) > minimumTumbleKB) tumbling = true;
+		if (knockbackIntensity(knockback) > tumbleBK) tumbling = true;
 	}
 
 	private final float diStrength = 8;
@@ -584,7 +606,7 @@ public abstract class Fighter extends Entity{
 	public void setRespawnPoint(Vector2 startPosition) {
 		spawnPoint.set(startPosition);
 	}
-	
+
 	public static float knockbackIntensity(Vector2 knockback) { 
 		float intensity = (float) Math.sqrt(Math.pow(Math.abs(knockback.x), 2) + Math.pow(Math.abs(knockback.y), 2)); 
 		return intensity; 

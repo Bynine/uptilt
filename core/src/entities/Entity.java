@@ -25,10 +25,10 @@ public abstract class Entity {
 
 	float gravity = -0.35f;
 	float friction = 0.85f, airFriction = 0.95f;
-	final int superHitstunBase = 10;
+	final int tumbleBK = 10;
 
 	boolean toRemove = false;
-	private final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
+	protected final List<Rectangle> tempRectangleList = new ArrayList<Rectangle>();
 	public final Timer hitstunTimer = new Timer(10);
 	final Timer jumpTimer = new Timer(8);
 	final Timer inActionTimer = new Timer(0);
@@ -57,7 +57,7 @@ public abstract class Entity {
 			else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		}
 		int knockbackPower = (int) (Math.abs(velocity.x) + Math.abs(velocity.y));
-		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > superHitstunBase) {
+		if (!hitstunTimer.timeUp() && deltaTime % 4 == 0 && knockbackPower > tumbleBK) {
 			MapHandler.addEntity(new Graphic.SmokeTrail(this, knockbackPower));
 		}
 	}

@@ -1,22 +1,27 @@
-package moves;
+package movelists;
 
 import java.util.Arrays;
 
 import main.SFX;
+import moves.Action;
+import moves.ActionCircleGroup;
+import moves.Effect;
+import moves.Hitbox;
+import moves.Move;
 import moves.Effect.Charge;
 import entities.Fighter;
 import entities.Graphic;
 
-public class MoveList_Mook extends MoveList {
+public class Mook extends MoveList {
 
-	public MoveList_Mook(Fighter user) {
+	public Mook(Fighter user) {
 		super(user);
 	}
 	
 	public Move nWeak() {
 		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 9);
-		Hitbox h1 = new Hitbox(user, 0, 1, 3, Hitbox.SAMURAIANGLE, 16, 2, 12, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 0, 1, 4, Hitbox.SAMURAIANGLE, 16, 2, 12, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 8, 9);
 		return m;
 	}
@@ -25,7 +30,7 @@ public class MoveList_Mook extends MoveList {
 	public Move uWeak() {
 		Move m = new Move(user, uWeakLength);
 		m.setAnimation("sprites/fighters/mook/uweak.png", 2, uWeakLength/2);
-		Hitbox h1 = new Hitbox(user, 2, 2.3f, 7, 80, 4, 16, 18, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2, 1.8f, 7, 80, 4, 16, 18, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, uWeakLength/2, (uWeakLength/2) + 3);
 		m.eventList.addVelocityChange(user, uWeakLength/2, 0, 2);
 		return m;

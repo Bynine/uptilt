@@ -11,12 +11,13 @@ import input.Brain;
 
 public class Round {
 
-	Enemy mooks = new Enemy(Mook.class, Brain.MookBrain.class);
-	Enemy guns = new Enemy(Gunmin.class, Brain.GunminBrain.class);
-	Enemy alloy = new Enemy(AlloyMook.class, Brain.MookBrain.class);
-	Enemy rockets = new Enemy(Rocketmin.class, Brain.GunminBrain.class);
-	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
-	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, alloy, rockets, guns), 16, 4, 120, true);
+	Enemy mooks = new Enemy(F_Mook.class, Brain.MookBrain.class);
+	Enemy guns = new Enemy(F_Gunmin.class, Brain.GunminBrain.class);
+	Enemy alloy = new Enemy(F_AlloyMook.class, Brain.MookBrain.class);
+	Enemy rockets = new Enemy(F_Rocketmin.class, Brain.GunminBrain.class);
+	Enemy heavies = new Enemy(F_Heavy.class, Brain.Braindead.class);
+	Enemy kickers = new Enemy(F_Kicker.class, Brain.KickerBrain.class);
+	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(heavies), 16, 4, 120, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliens));
 	Fighter player;

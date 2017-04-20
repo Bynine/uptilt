@@ -1,11 +1,11 @@
-package moves;
+package movelists;
 
 import entities.Fighter;
 import entities.Projectile;
 
-public class MoveList_Rocketmin extends MoveList_Gunmin {
+public class Rocketmin extends Gunmin {
 
-	public MoveList_Rocketmin(Fighter user) {
+	public Rocketmin(Fighter user) {
 		super(user);
 	}
 	

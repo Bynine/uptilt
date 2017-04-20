@@ -1,5 +1,7 @@
-package moves;
+package movelists;
 
+import moves.IDMove;
+import moves.Move;
 import entities.Fighter;
 
 public abstract class MoveList {

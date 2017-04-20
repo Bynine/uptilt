@@ -1,7 +1,7 @@
 package entities;
 
 import main.GlobalRepo;
-import moves.MoveList_Gunmin;
+import movelists.Gunmin;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
-public class Gunmin extends Fighter {
+public class F_Gunmin extends Fighter {
 	
 	private TextureRegion stand = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/stand.png")));
 	private TextureRegion walk = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/walk.png")));
@@ -22,7 +22,7 @@ public class Gunmin extends Fighter {
 	private TextureRegion fallen = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/laser/fallen.png")));
 	private Animation tumble = GlobalRepo.makeAnimation("sprites/fighters/laser/tumble.png", 4, 1, 6, PlayMode.LOOP);
 
-	public Gunmin(float posX, float posY, int team) {
+	public F_Gunmin(float posX, float posY, int team) {
 		super(posX, posY, team);
 		walkAcc = 0.08f;
 		runAcc = 0.12f;
@@ -32,7 +32,7 @@ public class Gunmin extends Fighter {
 		doubleJumpStrength = 8;
 		friction = 0.94f;
 		jumpAcc = 0.6f;
-		moveList = new MoveList_Gunmin(this);
+		moveList = new Gunmin(this);
 		jumpSquatTimer.setEndTime(6);
 	}
 

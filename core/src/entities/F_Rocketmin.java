@@ -2,13 +2,13 @@ package entities;
 
 import com.badlogic.gdx.graphics.Color;
 
-import moves.MoveList_Rocketmin;
+import movelists.Rocketmin;
 
-public class Rocketmin extends Gunmin {
+public class F_Rocketmin extends F_Gunmin {
 
-	public Rocketmin(float posX, float posY, int team) {
+	public F_Rocketmin(float posX, float posY, int team) {
 		super(posX, posY, team);
-		moveList = new MoveList_Rocketmin(this);
+		moveList = new Rocketmin(this);
 		weight = 94;
 		friction = 0.97f;
 	}

@@ -1,15 +1,19 @@
-package moves;
+package movelists;
 
 import java.util.Arrays;
 
 import main.SFX;
+import moves.Action;
+import moves.ActionCircleGroup;
+import moves.Hitbox;
+import moves.Move;
 import entities.Fighter;
 import entities.Graphic;
 import entities.Projectile;
 
-public class MoveList_Gunmin extends MoveList {
+public class Gunmin extends MoveList {
 
-	public MoveList_Gunmin(Fighter user) {
+	public Gunmin(Fighter user) {
 		super(user);
 	}
 	

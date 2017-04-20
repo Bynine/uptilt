@@ -1,36 +1,29 @@
 package entities;
 
-import main.GlobalRepo;
+import input.Brain.*;
+import input.InputHandlerCPU;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
-public class Speedy extends Fighter {
+public class F_Dummy extends Fighter {
 	
-	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/speedy/stand.png")));
-	private Animation run = GlobalRepo.makeAnimation("sprites/fighters/speedy/run.png", 2, 1, 5, PlayMode.LOOP);
+	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 
-	public Speedy(float posX, float posY, int team) {
+	public F_Dummy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		runAcc = 1.8f;
-		runSpeed = 8.6f;
-		walkAcc = 0.82f;
-		walkSpeed = 4.9f;
-		friction = 0.82f;
-		gravity = -0.52f;
-		jumpAcc = 0.92f;
-		dashStrength = 4f;
-		doubleJumpStrength = 9.2f;
-		fallSpeed = -8f;
+		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
+		image = new Sprite(texture);
+		gravity = -0.42f;
+		weight = 100;
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime) { return texture; }
 	TextureRegion getStandFrame(float deltaTime) { return texture; }
-	TextureRegion getWalkFrame(float deltaTime) { return run.getKeyFrame(deltaTime); }
-	TextureRegion getRunFrame(float deltaTime) { return run.getKeyFrame(deltaTime); }
+	TextureRegion getWalkFrame(float deltaTime) { return texture; }
+	TextureRegion getRunFrame(float deltaTime) { return texture; }
 	TextureRegion getWallSlideFrame(float deltaTime) { return texture; }
 	TextureRegion getHelplessFrame(float deltaTime) { return texture; }
 	TextureRegion getGrabFrame(float deltaTime) { return texture; }

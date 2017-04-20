@@ -8,60 +8,66 @@ import entities.Fighter;
 
 public abstract class InputHandler {
 
-	public static final int commandNone		=-1, commandSpecial	= 1, commandAttack	= 0;
-	public static final int commandJump	= 2, commandCharge	= 3, commandBlock	= 4, commandGrab = 5;
-	public static final int commandTaunt = 6;
-	public static final int commandStickUp 	=20, commandStickLeft	= 21, commandStickRight	= 22,commandStickDown	= 23;
+	public static final int commandNone			=-1;
+	public static final int commandAttack		= 0;
+	public static final int commandSpecial		= 1;
+	public static final int commandJump			= 2;
+	public static final int commandCharge		= 3; 
+	public static final int commandDodge		= 4;
+	public static final int commandGrab 		= 5;
+	public static final int commandTaunt 		= 6;
+	public static final int commandStickUp 		=20;
+	public static final int commandStickLeft	=21;
+	public static final int commandStickRight	=22;
+	public static final int commandStickDown	=23;
 
-	Fighter player;
-	public InputHandler(Fighter player){
-		this.player = player;
+	Fighter fighter;
+	public InputHandler(Fighter fighter){
+		this.fighter = fighter;
 	}
 
 	public void update(){
-		try{
-			if (player.inputQueueTimer.timeUp()) player.queuedCommand = commandNone;
-			if (!player.inputQueueTimer.timeUp()) handleCommand(player.queuedCommand);
-		}
-		catch(Exception e) {};
+		if (fighter.inputQueueTimer.timeUp()) fighter.queuedCommand = commandNone;
+		if (!fighter.inputQueueTimer.timeUp()) handleCommand(fighter.queuedCommand);
 	}
 
 	public abstract float getXInput();
 	public abstract float getYInput();
 	public abstract boolean isCharging(); 
 
-	public void handleCommand(int command){
+	protected void handleCommand(int command){
 		boolean wasCommandAccepted = false;
 
-		if (player.canMove()){
+		if (fighter.canMove()){
 			switch (command){
-			case commandStickRight:		wasCommandAccepted = player.tryStickForward(); break;
-			case commandStickLeft:		wasCommandAccepted = player.tryStickBack(); break;
-			case commandStickUp:		wasCommandAccepted = player.tryStickUp(); break;
-			case commandStickDown:		wasCommandAccepted = player.tryStickDown(); break;
+			case commandStickRight:		wasCommandAccepted = fighter.tryStickForward(); break;
+			case commandStickLeft:		wasCommandAccepted = fighter.tryStickBack(); break;
+			case commandStickUp:		wasCommandAccepted = fighter.tryStickUp(); break;
+			case commandStickDown:		wasCommandAccepted = fighter.tryStickDown(); break;
 			}
 		}
-		if (player.canAct()){
-			if (command == commandJump) wasCommandAccepted = player.tryJump();
+		if (fighter.canAct()){
+			if (command == commandJump) wasCommandAccepted = fighter.tryJump();
 		}
-		if (player.canAttack()){
+		if (fighter.canAttack()){
 			switch (command){
-			case commandAttack:			wasCommandAccepted = player.tryNormal(); break;
-			case commandSpecial:		wasCommandAccepted = player.trySpecial(); break;
-			case commandGrab:	 		wasCommandAccepted = player.tryGrab(); break;
-			case commandCharge: 		wasCommandAccepted = player.tryCharge(); break;
-			case commandTaunt:			wasCommandAccepted = player.tryTaunt(); break;
+			case commandAttack:			wasCommandAccepted = fighter.tryNormal(); break;
+			case commandSpecial:		wasCommandAccepted = fighter.trySpecial(); break;
+			case commandGrab:	 		wasCommandAccepted = fighter.tryGrab(); break;
+			case commandCharge: 		wasCommandAccepted = fighter.tryCharge(); break;
+			case commandTaunt:			wasCommandAccepted = fighter.tryTaunt(); break;
+			case commandDodge:			wasCommandAccepted = fighter.tryDodge(); break;
 			default:					wasCommandAccepted = true; break;
 			}
 		}
 
-		if (!wasCommandAccepted && player.inputQueueTimer.timeUp() && !stickCommands.contains(command)) {
-			if (!(command == commandJump && player.isGrounded()) ){
-				player.queuedCommand = command;
-				player.inputQueueTimer.restart();
+		if (!wasCommandAccepted && fighter.inputQueueTimer.timeUp() && !stickCommands.contains(command)) {
+			if (!(command == commandJump && fighter.isGrounded()) ){
+				fighter.queuedCommand = command;
+				fighter.inputQueueTimer.restart();
 			}
 		}
-		else if (wasCommandAccepted) player.queuedCommand = commandNone;
+		else if (wasCommandAccepted) fighter.queuedCommand = commandNone;
 	}
 
 	private final List<Integer> stickCommands = new ArrayList<Integer>(Arrays.asList(commandStickUp, commandStickRight, commandStickLeft, commandStickDown));

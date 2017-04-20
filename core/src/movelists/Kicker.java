@@ -1,16 +1,22 @@
-package moves;
+package movelists;
 
 import java.util.Arrays;
 
 import main.SFX;
+import moves.Action;
+import moves.ActionCircleGroup;
+import moves.Effect;
+import moves.Grabbox;
+import moves.Hitbox;
+import moves.Move;
 import moves.Effect.Charge;
 import entities.Entity.Direction;
 import entities.Fighter;
 import entities.Projectile;
 
-public class MoveList_Kicker extends MoveList{
+public class Kicker extends MoveList{
 	
-	public MoveList_Kicker(Fighter user) {
+	public Kicker(Fighter user) {
 		super(user);
 	}
 
@@ -27,8 +33,8 @@ public class MoveList_Kicker extends MoveList{
 	public Move uWeak() {
 		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/kicker/uweak.png", 5, 6);
-		Hitbox knee = new Hitbox(user, 4, 0, 3, 90, 14, -4, 18, new SFX.LightHit());
-		Hitbox kick = new Hitbox(user, 3, 2, 7, 85, 22, 30, 14, new SFX.MidHit());
+		Hitbox knee = new Hitbox(user, 4.2f, 0, 3, 95, 14, -4, 18, new SFX.LightHit());
+		Hitbox kick = new Hitbox(user, 3, 2, 7, 85, 18, 34, 14, new SFX.MidHit());
 		m.eventList.addActionCircle(knee, 5, 8);
 		m.eventList.addActionCircle(kick, 18, 20);
 		return m;

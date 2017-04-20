@@ -46,7 +46,7 @@ public abstract class Effect extends Action{
 		private final Move move;
 		private final Fighter user;
 		private final int maxTime;
-		Charge(int start, int maxTime, float chargeSpeed, Fighter user, Move move) {
+		public Charge(int start, int maxTime, float chargeSpeed, Fighter user, Move move) {
 			super(start, start+1);
 			this.chargeSpeed = chargeSpeed;
 			this.move = move;

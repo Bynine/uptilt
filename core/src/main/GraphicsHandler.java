@@ -30,7 +30,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = false;
+	private static boolean debug = true;
 	
 	public static final int SCREENWIDTH  = (int) ((24 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((12 * GlobalRepo.TILE)/ZOOM);
