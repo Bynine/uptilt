@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 
 import entities.Fighter;
+import entities.Fighter.HitstunType;
 
 public abstract class ActionCircle {
 
@@ -29,6 +30,7 @@ public abstract class ActionCircle {
 	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
 	private Set<Fighter> s;
 	Property property = Property.NORMAL;
+	Fighter.HitstunType hitstunType = HitstunType.NORMAL;
 	ActionCircleGroup group = null;
 
 	public ActionCircle(Fighter user, float dispX, float dispY, int size){

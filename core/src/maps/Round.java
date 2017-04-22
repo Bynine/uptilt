@@ -11,14 +11,18 @@ import input.Brain;
 
 public class Round {
 
-	Enemy mooks = new Enemy(F_Mook.class, Brain.MookBrain.class);
-	Enemy guns = new Enemy(F_Gunmin.class, Brain.GunminBrain.class);
-	Enemy alloy = new Enemy(F_AlloyMook.class, Brain.MookBrain.class);
-	Enemy rockets = new Enemy(F_Rocketmin.class, Brain.GunminBrain.class);
-	Enemy heavies = new Enemy(F_Heavy.class, Brain.Braindead.class);
-	Enemy kickers = new Enemy(F_Kicker.class, Brain.KickerBrain.class);
-	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(heavies), 16, 4, 120, true);
+	Enemy mooks = new Enemy(Mook.class, Brain.MookBrain.class);
+	Enemy guns = new Enemy(Gunmin.class, Brain.GunminBrain.class);
+	Enemy alloys = new Enemy(AlloyMook.class, Brain.MookBrain.class);
+	Enemy rockets = new Enemy(Rocketmin.class, Brain.GunminBrain.class);
+	Enemy heavies = new Enemy(Heavy.class, Brain.MookBrain.class);
+	Enemy speedies = new Enemy(Speedy.class, Brain.SpeedyBrain.class);
+	Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
+	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
+	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, alloys, rockets, speedies), 16, 4, 180, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
+	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
+	EnemySpawner esTest = new EnemySpawner(Arrays.asList(speedies), 100, 1, 10, true);
 	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliens));
 	Fighter player;
 	boolean restarted = false;

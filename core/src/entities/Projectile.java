@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Arrays;
 import java.util.List;
 
 import timers.DurationTimer;
@@ -13,12 +14,13 @@ import com.badlogic.gdx.math.Rectangle;
 import main.MapHandler;
 import main.SFX;
 import moves.ActionCircle;
+import moves.ActionCircleGroup;
 import moves.Hitbox;
 import moves.ProjectileHitbox;
 
 public abstract class Projectile extends Entity{
 
-	ActionCircle ac;
+	Hitbox ac;
 	Fighter owner;
 	float velX, velY = 0;
 	public final Timer life = new DurationTimer(1);
@@ -100,11 +102,41 @@ public abstract class Projectile extends Entity{
 		}
 
 	}
+	
+	public abstract static class Explosive extends Projectile{
+		boolean exploded = false;
+		
+		public Explosive(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+		}
+		
+		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+			super.update(rectangleList, entityList, deltaTime);
+			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
+		}
+		
+		void explode(){
+			MapHandler.addEntity(getExplosion());
+			exploded = true;
+			life.end();
+		}
 
-	public static class Rocket extends Projectile{
+		public boolean doesCollide(float x, float y){
+			if (super.doesCollide(x, y)) explode();
+			return super.doesCollide(x, y);
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) explode();
+		}
+		
+		protected abstract Projectile getExplosion();
+		
+	}
+
+	public static class Rocket extends Explosive{
 
 		private final int lifeTime = 60;
-		boolean exploded = false;
 
 		public Rocket(float posX, float posY, Fighter owner) {
 			super(posX, posY + 24, owner);
@@ -118,31 +150,19 @@ public abstract class Projectile extends Entity{
 
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
-			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
-			if (Math.abs(velX) < 8) velX *= 1.04f;
+			if (Math.abs(velX) < 10) velX *= 1.06f;
 			if (deltaTime % 10 == 0) MapHandler.addEntity(new Graphic.SmokeTrail(this, 8));
 		}
 
-		public boolean doesCollide(float x, float y){
-			if (super.doesCollide(x, y)) explode();
-			return super.doesCollide(x, y);
-		}
-
-		void explode(){
-			MapHandler.addEntity(new Explosion(position.x, position.y, owner, this));
-			exploded = true;
-			life.end();
-		}
-		
-		void touchOtherProjectile(Projectile p){
-			if (!p.trans) explode();
+		protected Projectile getExplosion() {
+			return new Explosion(position.x, position.y, owner, this);
 		}
 	}
 
 	private static class Explosion extends Projectile{
 
 		private final int lifeTime = 4;
-		private final int displacement = 18;
+		private final int displacement = 40;
 
 		public Explosion(float posX, float posY, Fighter owner, Projectile rocket) {
 			super(0, 0, owner);
@@ -150,8 +170,13 @@ public abstract class Projectile extends Entity{
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
 			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
-			ac = new ProjectileHitbox(null, 8, 2, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			ac = new ProjectileHitbox(null, 8, 3, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac2 = new ProjectileHitbox(null, 7, 2, 10, Hitbox.SAMURAIANGLE, 0, 0, 60, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac3 = new ProjectileHitbox(null, 6, 0, 0, 20, 0, 0, 120, new SFX.HeavyHit(), this, lifeTime);
+			new ActionCircleGroup(Arrays.asList(ac, ac2, ac3));
 			MapHandler.addActionCircle(ac);
+			MapHandler.addActionCircle(ac2);
+			MapHandler.addActionCircle(ac3);
 		}
 		
 		void touchOtherProjectile(Projectile p){
@@ -258,6 +283,49 @@ public abstract class Projectile extends Entity{
 			if (!p.trans) life.end();
 		}
 
+	}
+	
+	public static class SuperLaser extends Explosive{
+
+		private final int lifeTime = 60;
+
+		public SuperLaser(float posX, float posY, Fighter owner) {
+			super(posX, posY + 32, owner);
+			new SFX.ChargeLaserFire().play();
+			new SFX.LaserFire().play();
+			setup("sprites/entities/superlaser.png", lifeTime, 6, 0);
+			ac = new ProjectileHitbox(owner, 0, 0, 5, 0, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
+			MapHandler.addActionCircle(ac);
+		}
+
+		protected Projectile getExplosion() {
+			return new LaserExplosion(position.x, position.y, owner, this);
+		}
+
+	}
+	
+	private static class LaserExplosion extends Projectile{
+
+		private final int lifeTime = 4;
+		private final int displacement = 18;
+
+		public LaserExplosion(float posX, float posY, Fighter owner, Projectile superlaser) {
+			super(0, 0, owner);
+			new SFX.ChargeLaserFire().play();
+			position.x = superlaser.position.x - displacement;
+			position.y = superlaser.position.y - displacement;
+			setup("sprites/entities/laserexplosion.png", lifeTime, 0, 0);
+			ac = new ProjectileHitbox(null, 6, 2, 20, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac2 = new ProjectileHitbox(null, 5, 1, 10, Hitbox.SAMURAIANGLE, 0, 0, 80, new SFX.HeavyHit(), this, lifeTime);
+			ac.setProperty(Hitbox.Property.ELECTRIC);
+			ac2.setProperty(Hitbox.Property.ELECTRIC);
+			MapHandler.addActionCircle(ac);
+			MapHandler.addActionCircle(ac2);
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
 	}
 
 }

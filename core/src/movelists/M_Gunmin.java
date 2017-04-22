@@ -11,9 +11,9 @@ import entities.Fighter;
 import entities.Graphic;
 import entities.Projectile;
 
-public class Gunmin extends MoveList {
+public class M_Gunmin extends MoveList {
 
-	public Gunmin(Fighter user) {
+	public M_Gunmin(Fighter user) {
 		super(user);
 	}
 	
@@ -102,6 +102,7 @@ public class Gunmin extends MoveList {
 	
 	public Move dAir() {
 		Move m = new Move(user, 45);
+		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
 		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
 		m.eventList.addVelocityChange(user, 42, -2, 0);
@@ -121,14 +122,14 @@ public class Gunmin extends MoveList {
 		Move m = new Move(user, 48);
 		user.flip();
 		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
-		m.eventList.addConstantVelocity(user, 2, 34, 2, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 2, 34, -2, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move rollBack() {
 		Move m = new Move(user, 48);
 		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
-		m.eventList.addConstantVelocity(user, 2, 34, 2, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 2, 34, -2, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	

@@ -10,7 +10,7 @@ import java.util.List;
 import main.MapHandler;
 import main.SFX;
 import movelists.MoveList;
-import movelists.Mook;
+import movelists.M_Mook;
 import moves.Hitbox;
 import moves.IDMove;
 import moves.Move;
@@ -28,7 +28,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Fighter extends Entity{
 
-	private final float unregisteredInputMax = 0.2f;
+	final float unregisteredInputMax = 0.2f;
 	float wallJumpStrengthX = 8f;
 	float wallJumpStrengthY = 7.2f;
 	float wallSlideSpeed = -1f;
@@ -54,8 +54,9 @@ public abstract class Fighter extends Entity{
 	private final int randomAnimationDisplacement;
 	final Vector2 spawnPoint;
 	private int team = 0, stocks = 1;
-	MoveList moveList = new Mook(this);
+	MoveList moveList = new M_Mook(this);
 	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
+	private HitstunType hitstunType = HitstunType.NORMAL;
 
 	public Fighter(float posX, float posY, int team) {
 		super(posX, posY);
@@ -122,6 +123,7 @@ public abstract class Fighter extends Entity{
 				((Fighter) fi).pushAway(this);
 			}
 			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > tumbleBK;
+			if (fi.hitstunType == HitstunType.SUPER) fighterGoingFastEnough = true;
 			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == fi.getTeam() && !fi.hitstunTimer.timeUp();
 			if (knockInto && isTouching(fi, 8) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) knockBack(fi);
 		}
@@ -136,14 +138,24 @@ public abstract class Fighter extends Entity{
 
 	public void knockBack(Fighter fi){
 		Vector2 knockIntoVector = new Vector2(fi.velocity.x, fi.velocity.y);
-		Hitbox h = new Hitbox(fi, (fi.weight/100.0f) * 3, 1.5f, knockbackIntensity(knockIntoVector), 
-				knockIntoVector.angle(), 0, 0, 0, null);
-		knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
-		knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
+		Hitbox h;
+		if (fi.hitstunType == HitstunType.SUPER) {
+			float bkb = ((fi.weight/100.0f) * 5) + knockbackIntensity(knockIntoVector)/5;
+			h = new Hitbox(fi, bkb, 2f, knockbackIntensity(knockIntoVector) * 2, knockIntoVector.angle(), 0, 0, 0, null);
+			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
+			float newAngle = h.getAngle();
+			knockIntoVector.setAngle(newAngle);
+			new SFX.MidHit().play();
+		}
+		else {
+			h = new Hitbox(fi, (fi.weight/100.0f) * 3, 1.5f, knockbackIntensity(knockIntoVector), knockIntoVector.angle(), 0, 0, 0, null);
+			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
+			knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
+			new SFX.LightHit().play();
+		}
 		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() );
 		fi.knockIntoTimer.restart();
 		knockIntoTimer.restart();
-		new SFX.LightHit().play();
 	}
 
 	void updateState(){
@@ -246,7 +258,10 @@ public abstract class Fighter extends Entity{
 			setImage(getActiveMove().move.getAnimation().getKeyFrame(getActiveMove().move.getFrame()));
 		}
 		if (!caughtTimer.timeUp()) setImage(getHelplessFrame(deltaTime));
-		if (!hitstunTimer.timeUp()) setImage(getHitstunFrame(deltaTime));
+		if (!hitstunTimer.timeUp()) {
+			if (hitstunType == HitstunType.SUPER) setImage(getTumbleFrame(deltaTime));
+			else setImage(getHitstunFrame(deltaTime));
+		}
 		if (!grabbingTimer.timeUp()) setImage(getGrabFrame(deltaTime));
 		adjustImage(deltaTime, prevImage);
 	}
@@ -280,12 +295,13 @@ public abstract class Fighter extends Entity{
 			if (adjust > maxAdjust) break;
 		}
 	}
-	
+
 	public boolean doesCollide(float x, float y){
 		if (collision == Collision.GHOST) return false;
 		for (Rectangle r : tempRectangleList){
 			Rectangle thisR = getCollisionBox(x, y);
-			boolean upThroughThinPlatform = r.getHeight() <= 1 && (r.getY() - this.getPosition().y > 0 || stickY > 0.8f);
+			boolean fallThrough = stickY > 0.95f && null == getActiveMove() && !inGroundedState();
+			boolean upThroughThinPlatform = r.getHeight() <= 1 && (r.getY() - this.getPosition().y > 0 || fallThrough);
 			if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
 		}
 		return false;
@@ -362,8 +378,8 @@ public abstract class Fighter extends Entity{
 		getVelocity().y += jumpStrength;
 	}
 
-	private final int wallSlideDistance = 1;
-	private boolean isWallSliding() {
+	protected final int wallSlideDistance = 1;
+	protected boolean isWallSliding() {
 		if (isGrounded() || velocity.y > 4 || !canAct()) return false;
 		boolean canWS = false;
 		if (prevStickX < -unregisteredInputMax) {
@@ -503,11 +519,11 @@ public abstract class Fighter extends Entity{
 	}
 
 	private void takeKnockIntoKnockback(Vector2 knockback, float DAM, int hitstun){
-		knockbackHelper(knockback, DAM, hitstun, knockbackIntensity(velocity) < knockbackIntensity(knockback));
+		knockbackHelper(knockback, DAM, hitstun, knockbackIntensity(velocity) < knockbackIntensity(knockback), HitstunType.NORMAL);
 	}
 
-	public void takeDamagingKnockback(Vector2 knockback, float DAM, int hitstun) {
-		knockbackHelper(knockback, DAM, hitstun, true);
+	public void takeDamagingKnockback(Vector2 knockback, float DAM, int hitstun, HitstunType hitboxhitstunType) {
+		knockbackHelper(knockback, DAM, hitstun, true, hitboxhitstunType);
 	}
 
 	public void takeRecoil(Vector2 knockback){
@@ -515,7 +531,7 @@ public abstract class Fighter extends Entity{
 		velocity.add(knockback);
 	}
 
-	private void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy){
+	private void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
 		percentage += DAM;
 		if (knockbackIntensity(knockback) > 0){
 			knockback.setAngle(directionalInfluenceAngle(knockback));
@@ -526,6 +542,7 @@ public abstract class Fighter extends Entity{
 			hitstunTimer.restart();
 			setActiveMove(null);
 			attackTimer.end();
+			hitstunType = ht;
 		}
 		if (knockbackIntensity(knockback) > tumbleBK) tumbling = true;
 	}
@@ -621,7 +638,7 @@ public abstract class Fighter extends Entity{
 	public boolean canAttackDodge() { return canAct() && state != State.WALLSLIDE; }
 	public boolean canAct(){ return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.FALLEN && state != State.HELPLESS && canMove(); }
 	public boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
-	public boolean isDashing() { return state == State.RUN || state == State.DASH; }
+	public boolean isRunning() { return state == State.RUN || state == State.DASH; }
 	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0 || !invincibleTimer.timeUp(); }
 	public boolean isInHitstun() { return !hitstunTimer.timeUp(); }
 	public boolean isCharging() {
@@ -646,10 +663,13 @@ public abstract class Fighter extends Entity{
 	public void setStocks(int i) { stocks = i; }
 	public Color getColor() { return new Color(1, 1, 1, 1); }
 	public List<IDMove> getMoveQueue() { return staleMoveQueue; }
-
 	public void setInvincible(int i) { 
 		invincibleTimer.restart();
 		invincibleTimer.setEndTime(i);
+	}
+
+	public enum HitstunType{
+		NORMAL, SUPER
 	}
 
 	abstract TextureRegion getStandFrame(float deltaTime);

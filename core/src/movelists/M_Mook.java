@@ -12,17 +12,17 @@ import moves.Effect.Charge;
 import entities.Fighter;
 import entities.Graphic;
 
-public class Speedy extends MoveList {
+public class M_Mook extends MoveList {
 
-	public Speedy(Fighter user) {
+	public M_Mook(Fighter user) {
 		super(user);
 	}
 	
 	public Move nWeak() {
-		Move m = new Move(user, 12);
+		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 9);
-		Hitbox h1 = new Hitbox(user, 1, 0.5f, 3, Hitbox.SAMURAIANGLE, 50, 2, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 6, 7);
+		Hitbox h1 = new Hitbox(user, 0, 1, 4, Hitbox.SAMURAIANGLE, 16, 2, 12, new SFX.LightHit());
+		m.eventList.addActionCircle(h1, 8, 9);
 		return m;
 	}
 	
@@ -30,7 +30,7 @@ public class Speedy extends MoveList {
 	public Move uWeak() {
 		Move m = new Move(user, uWeakLength);
 		m.setAnimation("sprites/fighters/mook/uweak.png", 2, uWeakLength/2);
-		Hitbox h1 = new Hitbox(user, 2, 2.3f, 7, 80, 4, 16, 18, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2, 1.8f, 7, 80, 4, 16, 18, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, uWeakLength/2, (uWeakLength/2) + 3);
 		m.eventList.addVelocityChange(user, uWeakLength/2, 0, 2);
 		return m;
@@ -180,14 +180,14 @@ public class Speedy extends MoveList {
 		Move m = new Move(user, 36);
 		user.flip();
 		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
-		m.eventList.addConstantVelocity(user, 2, 20, 3, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 2, 20, -3, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move rollBack() {
 		Move m = new Move(user, 36);
 		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
-		m.eventList.addConstantVelocity(user, 2, 20, 3, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 2, 20, -3, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	

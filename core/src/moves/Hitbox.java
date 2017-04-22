@@ -59,13 +59,6 @@ public class Hitbox extends ActionCircle{
 		this.charge = charge;
 	}
 
-	public void setProperty(Property property) { this.property = property; }
-
-	@Override
-	public Color getColor() {
-		return new Color(1, 0.2f, 0.2f, 0.75f);
-	}
-
 	private final int meteorAngleSize = 50;
 	private final int downAngle = 270;
 	private final float meteorHitstunMod = 1.25f;
@@ -89,7 +82,7 @@ public class Hitbox extends ActionCircle{
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun);
+		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun, hitstunType);
 		startHitlag(target);
 		MapHandler.addEntity(new Graphic.HitGraphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
@@ -126,11 +119,14 @@ public class Hitbox extends ActionCircle{
 	}
 
 	void startHitlag(Fighter target){
-		int hitlag = hitlagFormula(knockbackFormula(target));
+		if (target != UptiltEngine.getPlayer() && user != UptiltEngine.getPlayer()) return;
+		float hit = knockbackFormula(target);
+		if (target.getArmor() > 0) hit += target.getArmor() * 2;
+		int hitlag = hitlagFormula(hit);
 		UptiltEngine.causeHitlag(hitlag);
 	}
 
-	private final int hitlagCap = 16;
+	private final int hitlagCap = 20;
 	private final float hitlagRatio = 0.5f;
 	private final float electricHitlagMultiplier = 1.5f;
 	protected int hitlagFormula(float knockback) {
@@ -181,5 +177,10 @@ public class Hitbox extends ActionCircle{
 	public enum Property { NORMAL, ELECTRIC  }
 	public float getDamage() { return DAM; }
 	public float getAngle() { return ANG; }
+	public void setProperty(Property property) { this.property = property; }
+	public void setHitstunType(Fighter.HitstunType ht) { hitstunType = ht; }
+	public Color getColor() {
+		return new Color(1, 0.2f, 0.2f, 0.75f);
+	}
 	
 }

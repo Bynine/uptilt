@@ -1,7 +1,7 @@
 package entities;
 
 import main.GlobalRepo;
-import movelists.Mook;
+import movelists.M_Mook;
 import input.InputHandlerCPU;
 import input.Brain.MookBrain;
 
@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
-public class F_Mook extends Fighter {
+public class Mook extends Fighter {
 	
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/mook/stand.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/mook/walk.png", 2, 1, 16, PlayMode.LOOP);
@@ -26,12 +26,12 @@ public class F_Mook extends Fighter {
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/dash.png")));
 	private TextureRegion wallSlideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/wallslide.png")));
 
-	public F_Mook(float posX, float posY, int team) {
+	public Mook(float posX, float posY, int team) {
 		super(posX, posY, team);
 		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(standImage.getKeyFrame(0));
 		gravity = -0.45f;
-		weight = 76;
+		weight = 80;
 		jumpAcc = 0.52f;
 		airSpeed = 2f;
 		walkSpeed = 2.5f;
@@ -40,7 +40,7 @@ public class F_Mook extends Fighter {
 		wallJumpStrengthX = 7f;
 		wallJumpStrengthY = 6.2f;
 		doubleJumpStrength = 7.5f;
-		moveList = new Mook(this);
+		moveList = new M_Mook(this);
 		jumpSquatTimer.setEndTime(5);
 	}
 

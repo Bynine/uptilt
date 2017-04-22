@@ -83,7 +83,7 @@ public abstract class MoveList {
 
 	public IDMove selectNormalMove(){
 		if (user.isGrounded()) {
-			if (user.isDashing()) return new IDMove(slide(), 0);
+			if (user.isRunning()) return new IDMove(slide(), 0);
 			else if (user.holdUp()) return new IDMove(uWeak(), 1);
 			else if (user.holdDown()) return new IDMove(dWeak(), 2);
 			else if (user.holdForward()) return new IDMove(sWeak(), 3);
@@ -124,7 +124,7 @@ public abstract class MoveList {
 			if (user.holdBack()) return new IDMove(airBackGrab(), 30);
 			else return new IDMove(airGrab(), 31);
 		}
-		else if (user.isDashing()) return new IDMove(dashGrab(), 32);
+		else if (user.isRunning()) return new IDMove(dashGrab(), 32);
 		return new IDMove(grab(), 33);
 	}
 

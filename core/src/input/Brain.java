@@ -210,6 +210,63 @@ public abstract class Brain{
 
 	}
 
+	public static class SpeedyBrain extends Brain{
+
+		public SpeedyBrain(InputHandlerCPU body) {
+			super(body);
+			aggressiveness = 0.1f;
+		}
+
+		void update(InputPackage pack){
+			super.update(pack);
+			if (pack.state == State.WALLSLIDE) return;
+			if (changeDirection.timeUp()) headTowardPlayer(changeDirection, pack);
+			if (!performJump.timeUp()) performJump(performJump);
+			if (pack.state == State.FALLEN && Math.random() < 0.02) getUp();
+			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
+			else if (Math.abs(pack.distanceYFromPlayer - 40) < 90) {
+				if (Math.abs(pack.distanceXFromPlayer) < 30 && Math.random() < 0.02) crouchBeforeAttacking();
+				if (Math.abs(pack.distanceXFromPlayer) < 70 && Math.random() < 0.02 && pack.isGrounded) performJump(performJump);
+				if (Math.random() < 0.8) {
+					if (pack.isRunning && Math.abs(pack.distanceXFromPlayer) < 100) attackPlayer(pack, InputHandler.commandAttack);
+					else if (Math.abs(pack.distanceXFromPlayer) < 30) attackPlayer(pack, InputHandler.commandAttack);
+				}
+				else if (Math.random() < 0.05 && Math.abs(pack.distanceXFromPlayer) < 60) attackPlayer(pack, InputHandler.commandCharge);
+			}
+			if (pack.isOffStage) {
+				attemptRecovery(pack, waitToUseUpSpecial);
+			}
+			if (changeUpDown.timeUp()) changeUpDown(); 
+		}
+
+		boolean isCharging(InputPackage pack){
+			if (Math.random() < 0.9) return true;
+			else return false;
+		}
+
+		void headTowardPlayer(Timer changeDirection, InputPackage pack){
+			body.xInput = setInput(-pack.distanceXFromPlayer);
+			if (Math.random() < 0.75 && Math.abs(pack.distanceXFromPlayer) > 100) { // run toward
+				if (pack.distanceXFromPlayer > 0) body.handleCommand(InputHandler.commandStickRight);
+				else body.handleCommand(InputHandler.commandStickLeft);
+			}
+			changeDirection.restart();
+		}
+
+		void attemptRecovery(InputPackage pack, Timer waitToUseUpSpecial){
+			if (pack.distanceFromCenter < 0) body.xInput = 1;
+			else body.xInput = -1;
+			if (pack.awayFromWall){
+				if (!pack.hasDoubleJumped) {
+					body.handleCommand(InputHandler.commandJump);
+					waitToUseUpSpecial.restart();
+				}
+				else if (waitToUseUpSpecial.timeUp()) body.handleCommand(InputHandler.commandSpecial);
+			}
+		}
+
+	}
+
 	public static class KickerBrain extends Brain{
 
 		public KickerBrain(InputHandlerCPU body) {

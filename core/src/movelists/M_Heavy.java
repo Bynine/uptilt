@@ -2,6 +2,8 @@ package movelists;
 
 import java.util.Arrays;
 
+import entities.Fighter;
+import entities.Graphic;
 import main.SFX;
 import moves.Action;
 import moves.ActionCircleGroup;
@@ -9,48 +11,42 @@ import moves.Effect;
 import moves.Hitbox;
 import moves.Move;
 import moves.Effect.Charge;
-import entities.Fighter;
-import entities.Graphic;
 
-public class Mook extends MoveList {
+public class M_Heavy extends MoveList {
 
-	public Mook(Fighter user) {
+	public M_Heavy(Fighter user) {
 		super(user);
 	}
-	
+
 	public Move nWeak() {
-		Move m = new Move(user, 18);
-		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 9);
-		Hitbox h1 = new Hitbox(user, 0, 1, 4, Hitbox.SAMURAIANGLE, 16, 2, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 8, 9);
+		Move m = new Move(user, 25);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
+		Hitbox h1 = new Hitbox(user, 2, 0.5f, 7, Hitbox.SAMURAIANGLE, 50, -16, 20, new SFX.LightHit());
+		m.eventList.addActionCircle(h1, 10, 11);
 		return m;
 	}
 	
-	private final int uWeakLength = 24;
 	public Move uWeak() {
-		Move m = new Move(user, uWeakLength);
-		m.setAnimation("sprites/fighters/mook/uweak.png", 2, uWeakLength/2);
+		Move m = new Move(user, 40);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 2, 1.8f, 7, 80, 4, 16, 18, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, uWeakLength/2, (uWeakLength/2) + 3);
-		m.eventList.addVelocityChange(user, uWeakLength/2, 0, 2);
+		m.eventList.addActionCircle(h1, 20, 24);
 		return m;
 	}
 	
-	private final int sWeakLength = 24;
 	public Move sWeak() {
-		Move m = new Move(user, sWeakLength);
-		m.setAnimation("sprites/fighters/mook/sweak.png", 2, sWeakLength/2);
+		Move m = new Move(user, 40);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1, 2.1f, 6, Hitbox.SAMURAIANGLE, 26, 4, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, sWeakLength/2, (sWeakLength/2) + 3);
+		m.eventList.addActionCircle(h1, 20, 24);
 		return m;
 	}
 	
-	private final int dWeakLength = 28;
 	public Move dWeak() {
-		Move m = new Move(user, dWeakLength);
-		m.setAnimation("sprites/fighters/mook/dweak.png", 2, dWeakLength/2);
+		Move m = new Move(user, 40);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 3, 1f, 5, Hitbox.SAMURAIANGLE, 20, 0, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, dWeakLength/2, (dWeakLength/2) + 3);
+		m.eventList.addActionCircle(h1, 20, 24);
 		return m;
 	}
 	
@@ -58,7 +54,7 @@ public class Mook extends MoveList {
 		Move m = new Move(user, 60);
 		m.setContinueOnLanding();
 		m.setStopsInAir();
-		m.setAnimation("sprites/fighters/mook/slide.png", 4, 15);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox early = new Hitbox(user, 3, 2.5f, 9, 40, 16, -12, 24, new SFX.MidHit());
 		Hitbox late = new Hitbox(user, 2, 2, 6, 40, 16, -12, 24, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
@@ -72,7 +68,7 @@ public class Mook extends MoveList {
 	
 	public Move nAir() {
 		Move m = new Move(user, 32);
-		m.setAnimation("sprites/fighters/mook/nair.png", 4, 2);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1, 2, 6, Hitbox.SAMURAIANGLE, 0, 0, 24, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 8, 24);
 		return m;
@@ -80,7 +76,7 @@ public class Mook extends MoveList {
 	
 	public Move fAir() {
 		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/sweak.png", 2, 12);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.6f, 10, Hitbox.SAMURAIANGLE, 24, 0, 16, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 9, 12);
 		return m;
@@ -88,7 +84,7 @@ public class Mook extends MoveList {
 	
 	public Move bAir() {
 		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/bair.png", 3, 8);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, Hitbox.SAMURAIANGLE, -20, 0, 20, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 9, 14);
 		return m;
@@ -96,7 +92,7 @@ public class Mook extends MoveList {
 	
 	public Move uAir() {
 		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/uair.png", 3, 8);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, 90, 4, 16, 20, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 9, 14);
 		return m;
@@ -104,7 +100,7 @@ public class Mook extends MoveList {
 	
 	public Move dAir() {
 		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/dair.png", 3, 8);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, 270, 0, -20, 20, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 9, 14);
 		return m;
@@ -115,7 +111,7 @@ public class Mook extends MoveList {
 		int sChargeFrameSpeed = 8;
 		Move m = new Move(user, spinFrames * sChargeFrameSpeed);
 		m.setContinueOnLanding();
-		m.setAnimation("sprites/fighters/mook/scharge.png", spinFrames, sChargeFrameSpeed);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Effect.Charge c = new Charge(6, 36, 0.01f, user, m);
 		Hitbox h1 = new Hitbox(user, 3, 2.6f, 12, Hitbox.SAMURAIANGLE, 26, 4, 16, new SFX.MidHit(), c);
 		Hitbox h2 = new Hitbox(user, 2.5f, 2.4f, 11, Hitbox.SAMURAIANGLE, 26, 4, 16, new SFX.MidHit(), c);
@@ -132,8 +128,8 @@ public class Mook extends MoveList {
 	}
 	
 	public Move uCharge() {
-		Move m = new Move(user, 60);
-		m.setAnimation("sprites/fighters/mook/ucharge.png", 4, 15);
+		Move m = new Move(user, 120);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Effect.Charge c = new Charge(6, 36, 0.01f, user, m);
 		Hitbox h1 = new Hitbox(user, 3, 2.7f, 12, 77, 32, 8, 14, new SFX.MidHit(), c);
 		m.eventList.addCharge(user, c);
@@ -145,7 +141,7 @@ public class Mook extends MoveList {
 		int dChargeFrameSpeed = 8;
 		Move m = new Move(user, spinFrames * dChargeFrameSpeed);
 		m.setContinueOnLanding();
-		m.setAnimation("sprites/fighters/mook/dcharge.png", spinFrames, dChargeFrameSpeed);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		Effect.Charge c = new Charge(6, 36, 0.01f, user, m);
 		Hitbox h1 = new Hitbox(user, 2, 2.7f, 11, Hitbox.SAMURAIANGLE, 24, 4, 12, new SFX.MidHit(), c);
 		Hitbox h1b = new Hitbox(user, 2, 2.7f, 11, Hitbox.SAMURAIANGLE, -24, 4, 12, new SFX.MidHit(), c);
@@ -177,7 +173,7 @@ public class Mook extends MoveList {
 	}
 	
 	public Move rollForward() {
-		Move m = new Move(user, 36);
+		Move m = new Move(user, 45);
 		user.flip();
 		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
 		m.eventList.addConstantVelocity(user, 2, 20, 3, Action.ChangeVelocity.noChange);
@@ -185,26 +181,26 @@ public class Mook extends MoveList {
 	}
 	
 	public Move rollBack() {
-		Move m = new Move(user, 36);
+		Move m = new Move(user, 45);
 		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
 		m.eventList.addConstantVelocity(user, 2, 20, 3, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move dodge() {
-		Move m = new Move(user, 25);
+		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/mook/ngetup.png", 1, 1);
 		return m;
 	}
 
 	public Move land() {
-		Move m = new Move(user, 7);
-		m.setAnimation("sprites/fighters/mook/crouch.png", 1, 1);
+		Move m = new Move(user, 12);
+		m.setAnimation("sprites/fighters/heavy/crouch.png", 1, 1);
 		return m;
 	}
 
 	public Move skid() {
-		return new Move(user, 8);
+		return new Move(user, 12);
 	}
 
 	public Move taunt() {

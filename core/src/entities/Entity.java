@@ -266,6 +266,7 @@ public abstract class Entity {
 	public Sprite getImage() { return image; }
 	protected boolean inGroundedState() { return groundedStates.contains(state);}
 	protected boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
+	public float getGravity() { return gravity; }
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }

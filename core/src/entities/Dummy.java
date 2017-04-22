@@ -1,25 +1,25 @@
 package entities;
 
-import movelists.Heavy;
+import input.Brain.*;
+import input.InputHandlerCPU;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class F_Heavy extends Fighter {
+public class Dummy extends Fighter {
 	
-	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/heavy/stand.png")));
+	private TextureRegion texture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
 
-	public F_Heavy(float posX, float posY, int team) {
+	public Dummy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 200;
-		gravity = -0.4f;
-		friction = 0.7f;
-		armor = 2.5f;
-		jumpSquatTimer.setEndTime(10);
-		moveList = new Heavy(this);
+		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
+		image = new Sprite(texture);
+		gravity = -0.42f;
+		weight = 100;
 	}
-
+	
 	TextureRegion getJumpFrame(float deltaTime) { return texture; }
 	TextureRegion getStandFrame(float deltaTime) { return texture; }
 	TextureRegion getWalkFrame(float deltaTime) { return texture; }

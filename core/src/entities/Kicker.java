@@ -1,7 +1,7 @@
 package entities;
 
 import main.GlobalRepo;
-import movelists.Kicker;
+import movelists.M_Kicker;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
-public class F_Kicker extends Fighter {
+public class Kicker extends Fighter {
 
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 6, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 2, 1, 12, PlayMode.LOOP);
@@ -30,7 +30,7 @@ public class F_Kicker extends Fighter {
 	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
 	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fallen.png")));
 
-	public F_Kicker(float posX, float posY, int team) {
+	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
 		runAcc = 1.7f;
 		runSpeed = 8.3f;
@@ -42,7 +42,7 @@ public class F_Kicker extends Fighter {
 		dashStrength = 0f;
 		doubleJumpStrength = 10.2f;
 		fallSpeed = -7f;
-		moveList = new Kicker(this);
+		moveList = new M_Kicker(this);
 	}
 	
 	private final float hurtBoxReduction = 0.9f;

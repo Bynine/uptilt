@@ -17,12 +17,12 @@ public class EntityLoader {
 
 		switch(m.getName().toLowerCase()){
 		case "kicker": {
-			F_Kicker kicker = new F_Kicker(x, y, 1);
+			Kicker kicker = new Kicker(x, y, 1);
 			kicker.setInputHandler(new InputHandlerCPU(kicker, Brain.MookBrain.class));
 			return kicker;
 		}
 		default: {
-			F_Dummy dummy = new F_Dummy(x, y, 1);
+			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));
 			dummy.setStocks(999);
 			return dummy;
