@@ -46,8 +46,8 @@ public abstract class Action {
 
 		void performAction(){
 			if (null != charge){
-				velX *= Math.pow(charge.getHeldCharge(), 2);
-				velY *= Math.pow(charge.getHeldCharge(), 2);
+				if (velX != noChange) velX *= Math.pow(charge.getHeldCharge(), 2);
+				if (velY != noChange) velY *= Math.pow(charge.getHeldCharge(), 2);
 			}
 			if (velX != noChange) user.getVelocity().x = velX * user.direct();
 			if (velY != noChange) user.getVelocity().y = velY;

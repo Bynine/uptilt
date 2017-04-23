@@ -138,6 +138,10 @@ public class M_Gunmin extends MoveList {
 		m.setAnimation("sprites/fighters/laser/ngetup.png", 1, 1);
 		return m;
 	}
+	
+	public Move getUpAttack() {
+		return dodge();
+	}
 
 	public Move land() {
 		return new Move(user, 6);

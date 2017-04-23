@@ -30,7 +30,7 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	public static final int SCREENWIDTH  = (int) ((24 * GlobalRepo.TILE)/ZOOM);
 	public static final int SCREENHEIGHT = (int) ((12 * GlobalRepo.TILE)/ZOOM);
@@ -90,12 +90,17 @@ public class GraphicsHandler {
 		batch.end();
 		font.setColor(1, 1, 1, 1);
 		
+		float stockLocationMod = 1/4.5f;
 		batch.begin();
-		font.draw(batch, "stocks: " + UptiltEngine.getPlayer().getStocks(), cam.position.x - SCREENWIDTH/5, cam.position.y - SCREENHEIGHT/5);
+		font.draw(batch, "stocks: " + UptiltEngine.getPlayer().getStocks(), 
+				cam.position.x - SCREENWIDTH*stockLocationMod, cam.position.y - SCREENHEIGHT*stockLocationMod);
+		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
 		batch.end();
 
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
+		
+		
 		
 		if (!debug) return;
 		Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -129,8 +134,8 @@ public class GraphicsHandler {
 			else if (fi.isCharging()) 
 				batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
 			
-			if (fi.getTeam() == GlobalRepo.BAD) batch.setColor(batch.getColor().r, batch.getColor().g - 0.4f, batch.getColor().b, 1);
-			if (fi.getTeam() == GlobalRepo.GOOD) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.4f, 1);
+			if (fi.getTeam() == GlobalRepo.BADTEAM) batch.setColor(batch.getColor().r, batch.getColor().g - 0.4f, batch.getColor().b, 1);
+			if (fi.getTeam() == GlobalRepo.GOODTEAM) batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b - 0.4f, 1);
 		}
 		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		batch.setColor(1, 1, 1, 1);

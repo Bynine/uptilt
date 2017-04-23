@@ -1,8 +1,11 @@
 package input;
 
+import timers.Timer;
 import entities.Fighter;
 
 public abstract class InputHandlerPlayer extends InputHandler {
+	
+	private final Timer techTimer = new Timer(20);
 
 	public InputHandlerPlayer(Fighter player) {
 		super(player);
@@ -24,6 +27,8 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		
 		fighter.handleJumpHeld(jumpHold());
 		fighter.handleBlockHeld(blockHold());
+		
+		if (block() && techTimer.timeUp()) techTimer.restart();
 	}
 
 	private void inputToCommand(boolean input, int command){
@@ -32,6 +37,10 @@ public abstract class InputHandlerPlayer extends InputHandler {
 	
 	public boolean isCharging(){
 		return chargeHold();
+	}
+	
+	public boolean isTeching(){
+		return !techTimer.timeUp();
 	}
 
 	abstract boolean attack();
@@ -45,7 +54,7 @@ public abstract class InputHandlerPlayer extends InputHandler {
 	abstract boolean flickRight();
 	abstract boolean flickUp();
 	abstract boolean flickDown();
-	// abstract boolean pause();
+	abstract boolean pause();
 
 	abstract boolean chargeHold();
 	abstract boolean jumpHold();

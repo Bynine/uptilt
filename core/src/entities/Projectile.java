@@ -86,7 +86,7 @@ public abstract class Projectile extends Entity{
 		public Spiker(float posX, float posY, Fighter owner) {
 			super(posX, posY + 30, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
-			setup("sprites/entities/projectile.png", lifeTime, 12, 0);
+			setup("sprites/entities/ripwheel.png", lifeTime, 12, 0);
 			ac = new ProjectileHitbox(owner, 1.2f, 0.02f, 4, 90, 0, 0, 11, new SFX.LightHit(), this, lifeTime);
 			ac.setRefresh(8);
 			MapHandler.addActionCircle(ac);

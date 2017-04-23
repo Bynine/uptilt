@@ -192,6 +192,10 @@ public class M_Heavy extends MoveList {
 		m.setAnimation("sprites/fighters/mook/ngetup.png", 1, 1);
 		return m;
 	}
+	
+	public Move getUpAttack() {
+		return dodge();
+	}
 
 	public Move land() {
 		Move m = new Move(user, 12);

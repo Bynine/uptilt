@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import main.GlobalRepo;
 import main.MapHandler;
 import main.SFX;
 import movelists.MoveList;
@@ -73,7 +74,6 @@ public abstract class Fighter extends Entity{
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		stickX = getInputHandler().getXInput();
 		stickY = getInputHandler().getYInput();
-		getInputHandler().update();
 
 		if (!grabbingTimer.timeUp()) handleThrow();
 		if (null != getActiveMove()) {
@@ -204,7 +204,7 @@ public abstract class Fighter extends Entity{
 		return (state == State.RUN || enterRun) && !turningAround;
 	}
 
-	private void updateAerialState(){
+	protected void updateAerialState(){
 		if (state == State.HELPLESS) return;
 		if (isWallSliding()) state = State.WALLSLIDE;
 		else if (!jumpTimer.timeUp()) state = State.JUMP;
@@ -300,11 +300,16 @@ public abstract class Fighter extends Entity{
 		if (collision == Collision.GHOST) return false;
 		for (Rectangle r : tempRectangleList){
 			Rectangle thisR = getCollisionBox(x, y);
-			boolean fallThrough = stickY > 0.95f && null == getActiveMove() && !inGroundedState();
+			boolean fallThrough = stickY > 0.95f && null == getActiveMove() && !inGroundedState() && hitstunTimer.timeUp();
 			boolean upThroughThinPlatform = r.getHeight() <= 1 && (r.getY() - this.getPosition().y > 0 || fallThrough);
 			if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
 		}
 		return false;
+	}
+
+	void bounceOffWall(){
+		if (inputHandler.isTeching()) setInvincible(20);
+		else super.bounceOffWall();
 	}
 
 	void handleGravity(){
@@ -363,6 +368,10 @@ public abstract class Fighter extends Entity{
 		else if (isWallSliding()) {
 			wallJump(); return true;
 		}
+		else if (isAboveEnemy() != null){
+			Fighter f = isAboveEnemy();
+			footStool(f); return true;
+		}
 		else if (!doubleJumped && state != State.JUMP){
 			doubleJump(); return true;
 		}
@@ -410,9 +419,48 @@ public abstract class Fighter extends Entity{
 		tumbling = false;
 	}
 
+	private final Vector2 footStoolKB = new Vector2(0, 0);
+	private final int footStoolDuration = 30;
+	private void footStool(Fighter footStoolee){
+		boolean prevDJ = doubleJumped;
+		doubleJump();
+		doubleJumped = prevDJ;
+		new SFX.FootStool().play();
+		footStoolee.velocity.set(footStoolKB);
+		footStoolee.tumbling = true;
+		if (footStoolee.hitstunTimer.timeUp()){
+			footStoolee.hitstunTimer.setEndTime(footStoolDuration);
+			footStoolee.hitstunTimer.restart();
+		}
+	}
+
+	private Fighter isAboveEnemy(){
+		if (team != GlobalRepo.GOODTEAM) return null;
+		for (Entity en: MapHandler.getEntities()) {
+			if (en instanceof Fighter){
+				Fighter fi = (Fighter) en;
+				if (fi != this && isAbove(fi)) return fi;
+			}
+		}
+		return null;
+	}
+
+	private boolean isAbove(Fighter en){
+		boolean xCorrect = Math.abs(en.getCenter().x - getCenter().x) < en.getImage().getWidth()/1.5f;
+		boolean yCorrect = Math.abs(en.getCenter().y - position.y) < en.getImage().getHeight()/1.5f;
+		return xCorrect && yCorrect;
+	}
+
 	public boolean tryNormal(){
-		startAttack(moveList.selectNormalMove());
-		return true;
+		if (state == State.FALLEN){
+			state = State.STAND;
+			startAttack(new IDMove(moveList.getUpAttack(), -1));
+		}
+		else if (canAttack()) {
+			startAttack(moveList.selectNormalMove());
+			return true;
+		}
+		return false;
 	}
 
 	public boolean trySpecial(){
@@ -580,8 +628,11 @@ public abstract class Fighter extends Entity{
 	}
 
 	public void ground(){
-		if (hitstunTimer.getCounter() > 1 && velocity.y < 0){
-			if (tumbling) state = State.FALLEN;
+		if (hitstunTimer.getCounter() > 1 && velocity.y < 0){	
+			if (tumbling) {
+				if (inputHandler.isTeching()) setInvincible(20);
+				else state = State.FALLEN;
+			}
 			hitstunTimer.end();
 		}
 		tumbling = false;
@@ -615,8 +666,7 @@ public abstract class Fighter extends Entity{
 		doubleJumped = false;
 		tumbling = false;
 		for (Timer t: timerList) t.end();
-		invincibleTimer.setEndTime(60);
-		invincibleTimer.restart();
+		setInvincible(120);
 		staleMoveQueue.clear();
 	}
 

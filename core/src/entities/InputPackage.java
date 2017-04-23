@@ -25,7 +25,7 @@ public class InputPackage {
 		hasDoubleJumped = fighter.doubleJumped;
 		isGrounded = fighter.isGrounded();
 		isRunning = fighter.isRunning();
-		awayFromWall = distanceFromEdges(-64, fighter);
+		awayFromWall = distanceFromEdges(-48, fighter);
 		distanceFromCenter = fighter.position.x - (MapHandler.getStageSides()[0] + MapHandler.getStageSides()[1])/2;
 		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - UptiltEngine.getPlayer().position.x;
 		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - UptiltEngine.getPlayer().position.y;
@@ -35,6 +35,6 @@ public class InputPackage {
 	}
 	
 	private boolean distanceFromEdges(float dist, Fighter fighter){
-		return (fighter.position.x - dist*2 <= MapHandler.getStageSides()[0] || fighter.position.x + dist  >= MapHandler.getStageSides()[1]);
+		return (fighter.position.x - dist*2 <= MapHandler.getStageSides()[0] || fighter.position.x + dist*2 >= MapHandler.getStageSides()[1]);
 	}
 }

@@ -69,7 +69,7 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	}
 	
 	boolean block(){
-		return Math.abs(currShoulder) > depressed && (Math.abs(currShoulder - prevShoulder)) > depressed;
+		return blockHold() && (prevShoulder - currShoulder) > depressed;
 	}
 	
 	boolean blockHold(){
@@ -113,6 +113,7 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	boolean charge(){ return false; }
 	boolean jump(){ return false; }
 	boolean grab(){ return false; }
+	boolean pause(){ return false; }
 	
 	/* NOT USED */
 

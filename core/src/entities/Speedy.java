@@ -16,15 +16,17 @@ public class Speedy extends Fighter {
 	private TextureRegion crouch = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/speedy/crouch.png")));
 	private TextureRegion hitstun = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/speedy/hitstun.png")));
 	private TextureRegion jump = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/speedy/jump.png")));
+	private TextureRegion fallen = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/speedy/fallen.png")));
 	private Animation run = GlobalRepo.makeAnimation("sprites/fighters/speedy/run.png", 3, 1, 4, PlayMode.LOOP);
 	private Animation walk = GlobalRepo.makeAnimation("sprites/fighters/speedy/run.png", 3, 1, 8, PlayMode.LOOP);
 	private Animation tumble = GlobalRepo.makeAnimation("sprites/fighters/speedy/dair.png", 2, 1, 6, PlayMode.LOOP_RANDOM);
+	private Animation helpless = GlobalRepo.makeAnimation("sprites/fighters/speedy/fair.png", 2, 1, 6, PlayMode.LOOP_RANDOM);
 	private Animation wallSlide = GlobalRepo.makeAnimation("sprites/fighters/speedy/wallslide.png", 3, 1, 18, PlayMode.LOOP);
 
 	public Speedy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		runAcc = 1.8f;
-		runSpeed = 9f;
+		runAcc = 3f;
+		runSpeed = 10.5f;
 		walkAcc = 1.4f;
 		walkSpeed = 6.3f;
 		airAcc = 0.4f;
@@ -41,7 +43,7 @@ public class Speedy extends Fighter {
 	}
 	
 	protected boolean isWallSliding() {
-		if (isGrounded() || velocity.y > 4 || !canAct()) return false;
+		if (inGroundedState() || velocity.y > 4 || !(canAct() || state == State.HELPLESS)) return false;
 		boolean canWS = false;
 		if (prevStickX < -unregisteredInputMax) {
 			canWS = doesCollide(position.x - wallSlideDistance, position.y);
@@ -51,7 +53,15 @@ public class Speedy extends Fighter {
 			canWS = doesCollide(position.x + wallSlideDistance, position.y);
 			if (direction == Direction.LEFT && canWS) flip();
 		}
+		if (canWS) state = State.WALLSLIDE;
 		return canWS;
+	}
+	
+	protected void updateAerialState(){
+		if (isWallSliding()) state = State.WALLSLIDE;
+		else if (state == State.HELPLESS) return;
+		else if (!jumpTimer.timeUp()) state = State.JUMP;
+		else state = State.FALL;
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime) { return jump; }
@@ -59,7 +69,7 @@ public class Speedy extends Fighter {
 	TextureRegion getWalkFrame(float deltaTime) { return walk.getKeyFrame(deltaTime); }
 	TextureRegion getRunFrame(float deltaTime) { return run.getKeyFrame(deltaTime); }
 	TextureRegion getWallSlideFrame(float deltaTime) { return wallSlide.getKeyFrame(deltaTime); }
-	TextureRegion getHelplessFrame(float deltaTime) { return stand; }
+	TextureRegion getHelplessFrame(float deltaTime) { return helpless.getKeyFrame(deltaTime); }
 	TextureRegion getGrabFrame(float deltaTime) { return stand; }
 	TextureRegion getFallFrame(float deltaTime) { return dash; }
 	TextureRegion getAscendFrame(float deltaTime) { return jump; }
@@ -69,6 +79,6 @@ public class Speedy extends Fighter {
 	TextureRegion getJumpSquatFrame(float deltaTime) { return crouch; }
 	TextureRegion getTumbleFrame(float deltaTime) { return tumble.getKeyFrame(deltaTime); }
 	TextureRegion getHitstunFrame(float deltaTime) { return hitstun; }
-	TextureRegion getFallenFrame(float deltaTime) { return stand; }
+	TextureRegion getFallenFrame(float deltaTime) { return fallen; }
 
 }

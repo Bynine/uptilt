@@ -9,6 +9,9 @@ public class Rocketmin extends Gunmin {
 	public Rocketmin(float posX, float posY, int team) {
 		super(posX, posY, team);
 		moveList = new M_Rocketmin(this);
+		walkAcc = 0.09f;
+		runAcc = 0.15f;
+		airAcc = 0.17f;
 		weight = 94;
 		friction = 0.97f;
 	}

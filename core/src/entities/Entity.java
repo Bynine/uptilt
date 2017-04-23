@@ -42,7 +42,6 @@ public abstract class Entity {
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-		//if (this instanceof Kicker) System.out.println(state);
 		updateState();
 		handleDirection();
 		handleMovement();
@@ -138,9 +137,7 @@ public abstract class Entity {
 		for (int i = 0; i < collisionCheck; ++i)
 			if (doesCollide(position.x + velocity.x, position.y)) {
 				if (!hitstunTimer.timeUp()) {
-					// TODO: make actually hit wall. right now bounces off before it even touches
-					velocity.x *= bounce;
-					UptiltEngine.causeHitlag((int)(velocity.x / 3));
+					bounceOffWall();
 					return;
 				}
 				else velocity.x *= softening;
@@ -148,6 +145,12 @@ public abstract class Entity {
 		if (doesCollide(position.x + velocity.x, position.y)) {
 			velocity.x = 0;
 		}
+	}
+	
+	void bounceOffWall(){
+		//if (inputHandler.isTeching()) setInvincible(20);
+		velocity.x *= bounce;
+		UptiltEngine.causeHitlag((int)(velocity.x / 3));
 	}
 
 	void checkFloor(){
@@ -267,6 +270,12 @@ public abstract class Entity {
 	protected boolean inGroundedState() { return groundedStates.contains(state);}
 	protected boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
 	public float getGravity() { return gravity; }
+	public Vector2 getCenter() {
+		Vector2 center = new Vector2();
+		center.x = position.x +  image.getWidth()/2;
+		center.y = position.y + image.getHeight()/2;
+		return center;
+	}
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }

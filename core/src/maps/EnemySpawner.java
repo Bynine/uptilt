@@ -28,7 +28,7 @@ public class EnemySpawner {
 	}
 
 	void update(float deltaTime){
-		if (deltaTime % frequency == 0 && amount > 0 && spawnedEntities.size() < capacity) spawnNewEnemy();
+		if (deltaTime % frequency == 1 && amount > 0 && spawnedEntities.size() < capacity) spawnNewEnemy();
 
 		Iterator<Fighter> spawnIter = spawnedEntities.iterator();
 		while (spawnIter.hasNext()){

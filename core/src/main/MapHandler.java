@@ -27,16 +27,23 @@ public class MapHandler {
 	private static final List<Rectangle> rectangleList = new ArrayList<>();
 	static int mapWidth;
 	static int mapHeight; 
-	static Fighter player;
 
-	static void begin(Fighter playern){
-		player = playern;
+	static void begin(){
 		activeLevel = new Level_Stages();
 		activeRoom = activeLevel.getRoom(0);
 		activeMap = activeRoom.getMap();
 		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
 		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
+	}
+
+	static void updateInputs(){
+		for (Entity en: activeRoom.getEntityList()){
+			if (en instanceof Fighter){
+				Fighter fi = (Fighter) en;
+				fi.getInputHandler().update();
+			}
+		}
 	}
 
 	static void updateEntities(){
@@ -58,7 +65,7 @@ public class MapHandler {
 				else entityIter.remove();
 			}
 		}
-		if (player.isOOB(mapWidth, mapHeight)) resetRoom();
+		if (UptiltEngine.getPlayer().isOOB(mapWidth, mapHeight)) resetRoom();
 	}
 
 	static void updateActionCircleInteractions(){
@@ -95,7 +102,7 @@ public class MapHandler {
 	public static void updateRoomMap(Room room) {
 		activeRoom = room;
 		activeMap = activeRoom.getMap();
-		activeRoom.initEntities(player);
+		activeRoom.initEntities(UptiltEngine.getPlayer());
 		rectangleList.clear();
 		activeRoom.setup();
 		rectangleList.addAll(activeRoom.getRectangleList());
@@ -109,9 +116,9 @@ public class MapHandler {
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }
 	public static ActionCircle addActionCircle(ActionCircle ac){ 
-			return activeRoom.addActionCircle(ac); 
-		}
-	
+		return activeRoom.addActionCircle(ac); 
+	}
+
 	public static int[] getStageSides() { 
 		if (activeRoom == null) return new int[]{0, 0};
 		else return activeRoom.getSides();
@@ -124,6 +131,11 @@ public class MapHandler {
 	public static Vector2 getSpawnPoint() {
 		if (activeRoom == null) return new Vector2(0, 0);
 		else return activeRoom.getSpawnPoint();
+	}
+
+	public static List<Entity> getEntities() {
+		if (activeRoom == null) return new ArrayList<Entity>();
+		else return activeRoom.getEntityList();
 	}
 
 }

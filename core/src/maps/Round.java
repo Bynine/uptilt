@@ -19,10 +19,10 @@ public class Round {
 	Enemy speedies = new Enemy(Speedy.class, Brain.SpeedyBrain.class);
 	Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
 	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
-	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, alloys, rockets, speedies), 16, 4, 180, true);
+	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, alloys, rockets, speedies), 16, 8, 60, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
-	EnemySpawner esTest = new EnemySpawner(Arrays.asList(speedies), 100, 1, 10, true);
+	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);
 	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliens));
 	Fighter player;
 	boolean restarted = false;

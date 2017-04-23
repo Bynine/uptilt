@@ -23,34 +23,48 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
 	private static int deltaTime = 0;
 	private static Fighter player1;
-	FPSLogger fpsLogger = new FPSLogger();
+	private static boolean paused = false;
 	Round round;
+
+	/* DEBUG */
+	FPSLogger fpsLogger = new FPSLogger();
+	boolean p2Toggle = false;
+	boolean fpsLog = true;
 
 	public void create () {
 		player1 = new Kicker(0, 0, 0);
 		InputHandlerController ch = new InputHandlerController(player1);
-		if (!ch.setupController(0)) startWithKeyboard();
+		if (!ch.setupController(0)) startWithKeyboard(player1);
 		else player1.setInputHandler(ch);
 		GraphicsHandler.begin();
-		MapHandler.begin(player1);
-		
+		MapHandler.begin();
+
+		if (p2Toggle){
+			Fighter player2 = new Kicker(600, 600, 0);
+			startWithKeyboard(player2);
+			MapHandler.addEntity(player2);
+		}
+
 		round = new Round(player1);
 	}
 
-	private void startWithKeyboard(){
-		InputHandlerKeyboard kh = new InputHandlerKeyboard(player1);
-		player1.setInputHandler(kh);
+	private void startWithKeyboard(Fighter player){
+		InputHandlerKeyboard kh = new InputHandlerKeyboard(player);
+		player.setInputHandler(kh);
 	}
 
 	public void render () {
 		deltaTime++;
 		updateTimers();
 		round.update(deltaTime);
-		//fpsLogger.log();
+		if (fpsLog) fpsLogger.log();
 
-		MapHandler.activeRoom.update(deltaTime);
-		MapHandler.updateActionCircleInteractions();
-		if (outOfHitlag()) MapHandler.updateEntities();
+		MapHandler.updateInputs();
+		if (!paused){
+			MapHandler.activeRoom.update(deltaTime);
+			MapHandler.updateActionCircleInteractions();
+			if (outOfHitlag()) MapHandler.updateEntities();
+		}
 		GraphicsHandler.updateGraphics();
 		GraphicsHandler.updateCamera(player1);
 	}
@@ -64,6 +78,10 @@ public class UptiltEngine extends ApplicationAdapter {
 		hitlagTimer.restart();
 	}
 
+	public static void pauseGame() {
+		paused = !paused;
+	}
+
 	public static void changeRoom (Room room, Vector2 position) {
 		deltaTime = 0;
 		player1.setPosition(position);
@@ -71,8 +89,9 @@ public class UptiltEngine extends ApplicationAdapter {
 		GraphicsHandler.updateRoomGraphics(player1);
 	}
 
-	static float getVolume(){ return volume; }
-	static int getDeltaTime(){ return deltaTime; }
+	public static float getVolume(){ return volume; }
+	public static int getDeltaTime(){ return deltaTime; }
+	public static boolean isPaused() { return paused; }
 	public static Fighter getPlayer(){ return player1; }
 	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
 

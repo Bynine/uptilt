@@ -83,6 +83,10 @@ public class InputHandlerKeyboard extends InputHandlerPlayer implements InputPro
 		return Gdx.input.isKeyJustPressed(Keys.S);
 	}
 	
+	boolean pause(){
+		return Gdx.input.isKeyJustPressed(Keys.ENTER);
+	}
+	
 	/* NOT USED */
 
 	@Override public boolean keyDown(int keycode) { return false; }

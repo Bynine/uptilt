@@ -72,6 +72,7 @@ public abstract class MoveList {
 	public abstract Move rollForward();
 	public abstract Move rollBack();
 	public abstract Move airDodge();
+	public abstract Move getUpAttack();
 	public abstract Move dodge();
 
 	/* misc */

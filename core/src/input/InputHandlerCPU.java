@@ -32,6 +32,10 @@ public class InputHandlerCPU extends InputHandler {
 	public boolean isCharging() {
 		return false;
 	}
+	
+	public boolean isTeching() {
+		return false;
+	}
 
 	public float getXInput() {
 		return xInput;
