@@ -18,7 +18,7 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		inputToCommand(charge(), commandCharge);
 		inputToCommand(jump(), commandJump);
 		inputToCommand(grab(), commandGrab);
-		inputToCommand(block(), commandDodge);
+		inputToCommand(dodge(), commandDodge);
 		inputToCommand(taunt(), commandTaunt);
 		inputToCommand(flickLeft(), commandStickLeft);
 		inputToCommand(flickRight(), commandStickRight);
@@ -28,7 +28,7 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		fighter.handleJumpHeld(jumpHold());
 		fighter.handleBlockHeld(blockHold());
 		
-		if (block() && techTimer.timeUp()) techTimer.restart();
+		if (dodge() && techTimer.timeUp()) techTimer.restart();
 	}
 
 	private void inputToCommand(boolean input, int command){
@@ -48,7 +48,7 @@ public abstract class InputHandlerPlayer extends InputHandler {
 	abstract boolean charge();
 	abstract boolean jump();
 	abstract boolean grab();
-	abstract boolean block();
+	abstract boolean dodge();
 	abstract boolean taunt();
 	abstract boolean flickLeft();
 	abstract boolean flickRight();

@@ -55,7 +55,7 @@ public class InputHandlerKeyboard extends InputHandlerPlayer implements InputPro
 	}
 	
 	private int blockInput = Keys.O;
-	boolean block(){
+	boolean dodge(){
 		return Gdx.input.isKeyJustPressed(blockInput);
 	}
 	
@@ -84,7 +84,7 @@ public class InputHandlerKeyboard extends InputHandlerPlayer implements InputPro
 	}
 	
 	boolean pause(){
-		return Gdx.input.isKeyJustPressed(Keys.ENTER);
+		return Gdx.input.isKeyPressed(Keys.P);
 	}
 	
 	/* NOT USED */

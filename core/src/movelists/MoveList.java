@@ -7,6 +7,7 @@ import entities.Fighter;
 public abstract class MoveList {
 	
 	public static final int noStaleMove = -1;
+	public static final int noMove = -2;
 	final Fighter user;
 	
 	MoveList(Fighter user){
@@ -144,7 +145,7 @@ public abstract class MoveList {
 	
 	public IDMove selectBlock() {
 		if (!user.isGrounded()) return new IDMove(airDodge(), noStaleMove);
-		else return new IDMove(null, noStaleMove);
+		else return new IDMove(null, noMove);
 	}
 	
 	public IDMove selectTaunt() {

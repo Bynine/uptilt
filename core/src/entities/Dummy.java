@@ -1,8 +1,5 @@
 package entities;
 
-import input.Brain.*;
-import input.InputHandlerCPU;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -14,7 +11,6 @@ public class Dummy extends Fighter {
 
 	public Dummy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(texture);
 		gravity = -0.42f;
 		weight = 100;

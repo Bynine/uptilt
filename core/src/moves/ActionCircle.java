@@ -78,8 +78,8 @@ public abstract class ActionCircle {
 		setInitialHit(false);
 	}
 
-	float getX(){ return user.getPosition().x + user.getHurtBox().getWidth()/2 + (user.direct() * dispX); }
-	float getY(){ return user.getPosition().y + user.getHurtBox().getHeight()/2 + dispY; }
+	float getX(){ return user.getPosition().x + user.getImage().getWidth()/2 + (user.direct() * dispX); }
+	float getY(){ return user.getPosition().y + user.getImage().getHeight()/2 + dispY; }
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 

@@ -32,28 +32,24 @@ public class Kicker extends Fighter {
 
 	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
-		runAcc = 1.7f;
-		runSpeed = 8.3f;
+		runAcc = 2.4f;
+		runSpeed = 8.8f;
 		walkAcc = 0.75f;
 		walkSpeed = 3.9f;
-		friction = 0.82f;
-		gravity = -0.5f;
-		jumpAcc = 1.02f;
+		friction = 0.80f;
+		gravity = -0.54f;
+		jumpAcc = 1.09f;
 		dashStrength = 0f;
-		doubleJumpStrength = 10.2f;
+		doubleJumpStrength = 10.7f;
 		fallSpeed = -7f;
+		jumpSquatTimer.setEndTime(3);
+		footStoolDuration = 25;
+		dashTimer.setEndTime(20);
 		moveList = new M_Kicker(this);
 	}
 	
-	private final float hurtBoxReduction = 0.9f;
-	public Rectangle getHurtBox(){
-		Rectangle r = image.getBoundingRectangle();
-		float widthDiff = (36 - r.width)/2;
-		r.width *= hurtBoxReduction;
-		r.height *= hurtBoxReduction;
-		r.y += 6;
-		if (direction == Direction.LEFT) r.x -= widthDiff;
-		return r;
+	public Rectangle getNormalHurtBox(){
+		return GlobalRepo.makeHurtBoxDynamic(this, 0.8f, 0.9f);
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime){

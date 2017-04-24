@@ -57,7 +57,9 @@ public abstract class InputHandler {
 			fighter.queuedCommand = command;
 			fighter.inputQueueTimer.restart();
 		}
-		else if (wasCommandAccepted) fighter.queuedCommand = commandNone;
+		else if (wasCommandAccepted && !(command == commandDodge)) {
+			fighter.queuedCommand = commandNone;
+		}
 	}
 
 	private boolean handleCanMoveActions(int command){
@@ -85,7 +87,7 @@ public abstract class InputHandler {
 		case commandTaunt:			return fighter.tryTaunt();
 		case commandDodge:			return fighter.tryDodge();
 		}
-		return true;
+		return false;
 	}
 
 	private final List<Integer> stickCommands = new ArrayList<Integer>(Arrays.asList(commandStickUp, commandStickRight, commandStickLeft, commandStickDown));

@@ -28,8 +28,9 @@ public class UptiltEngine extends ApplicationAdapter {
 
 	/* DEBUG */
 	FPSLogger fpsLogger = new FPSLogger();
+	boolean fpsLogToggle = false;
 	boolean p2Toggle = false;
-	boolean fpsLog = true;
+	boolean roundToggle = true;
 
 	public void create () {
 		player1 = new Kicker(0, 0, 0);
@@ -40,7 +41,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		MapHandler.begin();
 
 		if (p2Toggle){
-			Fighter player2 = new Kicker(600, 600, 0);
+			Fighter player2 = new Frog(600, 600, 0);
 			startWithKeyboard(player2);
 			MapHandler.addEntity(player2);
 		}
@@ -56,8 +57,8 @@ public class UptiltEngine extends ApplicationAdapter {
 	public void render () {
 		deltaTime++;
 		updateTimers();
-		round.update(deltaTime);
-		if (fpsLog) fpsLogger.log();
+		if (roundToggle) round.update(deltaTime);
+		if (fpsLogToggle) fpsLogger.log();
 
 		MapHandler.updateInputs();
 		if (!paused){

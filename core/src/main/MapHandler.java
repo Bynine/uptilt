@@ -30,7 +30,7 @@ public class MapHandler {
 
 	static void begin(){
 		activeLevel = new Level_Stages();
-		activeRoom = activeLevel.getRoom(0);
+		activeRoom = activeLevel.getRoom(3);
 		activeMap = activeRoom.getMap();
 		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
 		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());

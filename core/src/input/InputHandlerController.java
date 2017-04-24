@@ -68,7 +68,7 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 		return controller.getAxis(AXIS_LEFT_Y);
 	}
 	
-	boolean block(){
+	boolean dodge(){
 		return blockHold() && (prevShoulder - currShoulder) > depressed;
 	}
 	

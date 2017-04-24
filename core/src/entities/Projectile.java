@@ -172,7 +172,7 @@ public abstract class Projectile extends Entity{
 			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
 			ac = new ProjectileHitbox(null, 8, 3, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			Hitbox ac2 = new ProjectileHitbox(null, 7, 2, 10, Hitbox.SAMURAIANGLE, 0, 0, 60, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac3 = new ProjectileHitbox(null, 6, 0, 0, 20, 0, 0, 120, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac3 = new ProjectileHitbox(null, 5, 0, 0, 20, 0, 0, 120, new SFX.LightHit(), this, lifeTime);
 			new ActionCircleGroup(Arrays.asList(ac, ac2, ac3));
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
@@ -201,6 +201,27 @@ public abstract class Projectile extends Entity{
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}
+	}
+	
+	public static class Dumpling extends Projectile{
+		private final int lifeTime = 160;
+
+		public Dumpling(float posX, float posY, Fighter owner) {
+			super(posX, posY + 30, owner);
+			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
+			setup("sprites/entities/dumpling.png", lifeTime, 6, 0);
+			ac = new ProjectileHitbox(owner, 7, 2, 16, 100, 0, 0, 30, new SFX.HeavyHit(), this, lifeTime);
+			MapHandler.addActionCircle(ac);
+		}
+
+		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+			super.update(rectangleList, entityList, deltaTime);
+		}
+		
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) p.life.end();
+		}
+
 	}
 
 	public static class Laser extends Projectile{

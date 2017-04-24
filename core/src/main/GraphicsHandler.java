@@ -100,9 +100,10 @@ public class GraphicsHandler {
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
 		
-		
-		
-		if (!debug) return;
+		if (debug) debugRender();
+	}
+	
+	private static void debugRender(){
 		Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		debugRenderer.setProjectionMatrix(cam.combined);
@@ -113,7 +114,7 @@ public class GraphicsHandler {
 			if (ac.toRemove()) debugRenderer.setColor(0.9f, 1, 1, 0.5f);
 			debugRenderer.circle(c.x, c.y, c.radius);
 		}
-		debugRenderer.setColor(0, 1, 0, 0.1f);
+		debugRenderer.setColor(0, 1, 0, 0.5f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
 			if (e instanceof Fighter) debugRenderer.rect(r.x, r.y, r.width, r.height);

@@ -1,14 +1,24 @@
 package main;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 
 public abstract class SFX {
 	
 	String url = null;
+	
 	public void play() {
 		if (null != url) Gdx.audio.newSound(Gdx.files.internal(url)).play(UptiltEngine.getVolume());
 	}
-	void setSFX(String url){
+	
+	public void playDirectional(float pan){
+		if (null != url) {
+			Sound sfx = Gdx.audio.newSound(Gdx.files.internal(url));
+			sfx.setPan(sfx.play(), pan, UptiltEngine.getVolume());
+		}
+	}
+	
+	protected void setSFX(String url){
 		this.url = "sfx" + url;
 	}
 	

@@ -1,108 +1,57 @@
 package entities;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import main.GlobalRepo;
+import movelists.M_Dog;
 
-public class Dog extends Fighter {
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.math.Rectangle;
+
+public class Dog extends Fighter{
+	
+	private TextureRegion stand = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/dog/stand.png")));
+	private TextureRegion dash = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/dog/dash.png")));
+	private TextureRegion crouch = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/dog/crouch.png")));
+	private TextureRegion jumpSquat = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/dog/jumpsquat.png")));
+	private Animation walk = GlobalRepo.makeAnimation("sprites/fighters/dog/walk.png", 2, 1, 12, PlayMode.LOOP);
+	private Animation run = GlobalRepo.makeAnimation("sprites/fighters/dog/run.png", 2, 1, 8, PlayMode.LOOP);
 
 	public Dog(float posX, float posY, int team) {
 		super(posX, posY, team);
-		// TODO Auto-generated constructor stub
+		runAcc = 1.5f;
+		runSpeed = 7.5f;
+		walkAcc = 0.75f;
+		walkSpeed = 3.2f;
+		friction = 0.92f;
+		fallSpeed = -6f;
+		airFriction = 0.96f;
+		weight = 85;
+		dashStrength = -1;
+		moveList = new M_Dog(this);
 	}
-
-	@Override
-	TextureRegion getStandFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public Rectangle getNormalHurtBox(){
+		return GlobalRepo.makeHurtBoxDynamic(this, 0.9f, 0.8f);
 	}
-
-	@Override
-	TextureRegion getWalkFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getRunFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getJumpFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getWallSlideFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getHelplessFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getGrabFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getFallFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getAscendFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getCrouchFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getDashFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getDodgeFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getJumpSquatFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getTumbleFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getHitstunFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	TextureRegion getFallenFrame(float deltaTime) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	TextureRegion getJumpFrame(float deltaTime) { return stand; }
+	TextureRegion getStandFrame(float deltaTime) { return stand; }
+	TextureRegion getWalkFrame(float deltaTime) { return walk.getKeyFrame(deltaTime); }
+	TextureRegion getRunFrame(float deltaTime) { return run.getKeyFrame(deltaTime); }
+	TextureRegion getWallSlideFrame(float deltaTime) { return stand; }
+	TextureRegion getHelplessFrame(float deltaTime) { return stand; }
+	TextureRegion getGrabFrame(float deltaTime) { return stand; }
+	TextureRegion getFallFrame(float deltaTime) { return stand; }
+	TextureRegion getAscendFrame(float deltaTime) { return stand; }
+	TextureRegion getCrouchFrame(float deltaTime) { return crouch; }
+	TextureRegion getDashFrame(float deltaTime) { return dash; }
+	TextureRegion getDodgeFrame(float deltaTime) { return stand; }
+	TextureRegion getJumpSquatFrame(float deltaTime) { return jumpSquat; }
+	TextureRegion getTumbleFrame(float deltaTime) { return stand; }
+	TextureRegion getHitstunFrame(float deltaTime) { return stand; }
+	TextureRegion getFallenFrame(float deltaTime) { return stand; }
 
 }
