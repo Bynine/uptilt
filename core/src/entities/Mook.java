@@ -42,6 +42,7 @@ public class Mook extends Fighter {
 		doubleJumpStrength = 7.5f;
 		moveList = new M_Mook(this);
 		jumpSquatTimer.setEndTime(5);
+		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 
 	TextureRegion getJumpFrame(float deltaTime) { return jumpImage.getKeyFrame(deltaTime); }

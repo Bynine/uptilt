@@ -15,7 +15,7 @@ public class Room_Platforming extends Room {
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/standard.tmx");
+		return tmxMapLoader.load("maps/freeroam.tmx");
 	}
 
 	public int[] getSides() {
@@ -35,7 +35,7 @@ public class Room_Platforming extends Room {
 
 	@Override
 	public Vector2 getStartPosition() {
-		return new Vector2(10 * GlobalRepo.TILE, 11 * GlobalRepo.TILE);
+		return new Vector2(9 * GlobalRepo.TILE, 3 * GlobalRepo.TILE);
 	}
 
 }

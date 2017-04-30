@@ -25,15 +25,16 @@ public class GraphicsHandler {
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final OrthographicCamera parallaxCam = new OrthographicCamera();
 	private static final int camAdjustmentSpeed = 8;
-	private static final float ZOOM = 1/2f;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static boolean debug = false;
 	
-	public static final int SCREENWIDTH  = (int) ((24 * GlobalRepo.TILE)/ZOOM);
-	public static final int SCREENHEIGHT = (int) ((12 * GlobalRepo.TILE)/ZOOM);
+	public static final int SCREENWIDTH  = (int) ((48 * GlobalRepo.TILE));
+	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
+	private static final float ZOOM2X = 1/2f;
+	@SuppressWarnings("unused") private static final float ZOOM1X = 1/1f;
+	static float ZOOM = ZOOM2X;
 	
 	public static void begin() {
 		batch = new SpriteBatch();
@@ -65,7 +66,7 @@ public class GraphicsHandler {
 	}
 	
 	private static float screenBoundary(float dimension){
-		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE;
+		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE * 3;
 	}
 	
 	static void updateGraphics(){
@@ -100,10 +101,10 @@ public class GraphicsHandler {
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
 		
-		if (debug) debugRender();
+		if (UptiltEngine.debugToggle) debugRender();
 	}
 	
-	private static void debugRender(){
+	public static void debugRender(){
 		Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		debugRenderer.setProjectionMatrix(cam.combined);
@@ -117,7 +118,9 @@ public class GraphicsHandler {
 		debugRenderer.setColor(0, 1, 0, 0.5f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
-			if (e instanceof Fighter) debugRenderer.rect(r.x, r.y, r.width, r.height);
+			if (e instanceof Fighter) {
+				debugRenderer.rect(r.x, r.y, r.width, r.height);
+			}
 		}
 		debugRenderer.end();
 	}
@@ -126,7 +129,7 @@ public class GraphicsHandler {
 		if (e instanceof Fighter) {
 			Fighter fi = (Fighter) e;
 			drawFighterPercentage(fi);
-			if (debug) drawState(fi);
+			if (UptiltEngine.debugToggle) drawState(e);
 			batch.setColor(fi.getColor());
 			if (!fi.hitstunTimer.timeUp()) 
 				batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);

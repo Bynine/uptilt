@@ -27,7 +27,8 @@ public class InputPackage {
 		isRunning = fighter.isRunning();
 		awayFromWall = distanceFromEdges(-48, fighter);
 		distanceFromCenter = fighter.position.x - (MapHandler.getStageSides()[0] + MapHandler.getStageSides()[1])/2;
-		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - UptiltEngine.getPlayer().position.x;
+		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - 
+				(UptiltEngine.getPlayer().position.x + UptiltEngine.getPlayer().getHurtBox().getWidth()/2) ;
 		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - UptiltEngine.getPlayer().position.y;
 		direct = fighter.direct();
 		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;

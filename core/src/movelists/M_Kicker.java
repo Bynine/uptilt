@@ -7,6 +7,7 @@ import main.SFX;
 import moves.Action;
 import moves.ActionCircleGroup;
 import moves.Effect;
+import moves.Effect.ConstantVelocity;
 import moves.Grabbox;
 import moves.Hitbox;
 import moves.Move;
@@ -36,7 +37,7 @@ public class M_Kicker extends MoveList{
 		m.setAnimation("sprites/fighters/kicker/uweak.png", 3, 6);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 60));
 		Hitbox swing = new Hitbox(user, 3, 2, 5, 95, 6, 4, 24, new SFX.LightHit());
-		Hitbox foot =  new Hitbox(user, 3, 3, 6, 85, 0, 34, 14, new SFX.MidHit());
+		Hitbox foot =  new Hitbox(user, 3, 2, 6, 85, 0, 34, 14, new SFX.MidHit());
 		m.eventList.addActionCircle(swing, 6, 12);
 		m.eventList.addActionCircle(foot, 8, 15);
 		return m;
@@ -45,10 +46,12 @@ public class M_Kicker extends MoveList{
 	public Move dWeak() {
 		Move m = new Move(user, 16);
 		m.setAnimation("sprites/fighters/kicker/dweak.png", 1, 1);
-		Hitbox inner = new Hitbox(user, 3, 0.8f, 6, 86, 15, -5, 15, new SFX.LightHit());
-		Hitbox outer = new Hitbox(user, 3, 0.8f, 7, 96, 30, -4, 12, new SFX.LightHit());
-		new ActionCircleGroup(Arrays.asList(inner, outer));
+		Hitbox inner = new Hitbox(user, 3, 0.7f, 6, 82, 0, -5, 15, new SFX.LightHit());
+		Hitbox midd = new Hitbox(user, 3, 0.8f, 8, 88, 15, -5, 15, new SFX.LightHit());
+		Hitbox outer = new Hitbox(user, 3, 0.9f, 10, 96, 30, -4, 12, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(inner, midd, outer));
 		m.eventList.addActionCircle(inner, 6, 9);
+		m.eventList.addActionCircle(midd, 6, 9);
 		m.eventList.addActionCircle(outer, 6, 9);
 		return m;
 	}
@@ -57,9 +60,11 @@ public class M_Kicker extends MoveList{
 		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/kicker/sweak.png", 1, 1);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 60));
+		Hitbox vinner = new Hitbox(user, 2, 2.4f, 10, 70, 6, 4, 14, new SFX.MidHit());
 		Hitbox inner = new Hitbox(user, 2, 2.4f, 10, 60, 20, 4, 14, new SFX.MidHit());
 		Hitbox outer = new Hitbox(user, 2, 2.4f, 10, 60, 34, 4, 12, new SFX.MidHit());
-		new ActionCircleGroup(Arrays.asList(inner, outer));
+		new ActionCircleGroup(Arrays.asList(vinner, inner, outer));
+		m.eventList.addActionCircle(vinner, 6, 9);
 		m.eventList.addActionCircle(inner, 6, 9);
 		m.eventList.addActionCircle(outer, 6, 9);
 		return m;
@@ -68,7 +73,7 @@ public class M_Kicker extends MoveList{
 	public Move slide() { 
 		Move m = new Move(user, 24);
 		m.dontTurn();
-		m.setAnimation("sprites/fighters/kicker/nair.png", 1, 1);
+		m.setAnimation("sprites/fighters/kicker/slideattack.png", 1, 1);
 		Hitbox early = new Hitbox(user, 4, 3, 10, 65, 16, -4, 20, new SFX.MidHit());
 		Hitbox late = new Hitbox(user, 2, 2, 7, 90, 24, -4, 14, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
@@ -93,13 +98,13 @@ public class M_Kicker extends MoveList{
 		m.eventList.addActionCircle(h1, 12, 18);
 		m.eventList.addActionCircle(h2, 12, 18);
 		m.eventList.addActionCircle(h3, 12, 18);
-		m.eventList.addVelocityChangeCharge(user, 12, 8, Action.ChangeVelocity.noChange, c);
 		return m;
 	}
 
 	public Move uCharge() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/kicker/ucharge.png", 5, 6);
+		m.setHurtBox(GlobalRepo.makeHurtBox(user, 30, 50));
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
 		Hitbox h1 = new Hitbox(user, 7, 	4, 18, 90, 26,-12, 18, new SFX.HeavyHit(), 	 c);
 		Hitbox h2 = new Hitbox(user, 6, 	4, 16, 87, 22, 21, 16, new SFX.HeavyHit(), 	 c);
@@ -139,9 +144,9 @@ public class M_Kicker extends MoveList{
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/kicker/nair.png", 1, 1);
 		Hitbox earlyBody = new Hitbox(user, 4, 1.5f, 11, 75, -10, 0, 20, new SFX.MidHit());
-		Hitbox earlyFoot = new Hitbox(user, 4, 1.4f, 12, 90, 24, -6, 12, new SFX.MidHit());
+		Hitbox earlyFoot = new Hitbox(user, 4, 1.4f, 12, 90, 24, -6, 16, new SFX.MidHit());
 		Hitbox lateBody = new Hitbox(user, 2, 1.1f, 8, 80, -10, 0, 16, new SFX.LightHit());
-		Hitbox lateFoot = new Hitbox(user, 2, 1.1f, 9, 90, 24, -6, 8, new SFX.LightHit());
+		Hitbox lateFoot = new Hitbox(user, 2, 1.1f, 9, 90, 24, -6, 12, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(earlyBody, earlyFoot, lateBody, lateFoot));
 		m.eventList.addActionCircle(earlyBody, 3, 6);
 		m.eventList.addActionCircle(earlyFoot, 3, 6);
@@ -153,10 +158,10 @@ public class M_Kicker extends MoveList{
 	public Move uAir() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/kicker/uair.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 2, 0, 3, 90, 0, 20, 15, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2.4f, 0, 3, 90, 0, 20, 15, new SFX.LightHit());
 		Hitbox h2 = new Hitbox(user, 2, 3.2f, 8, 90, 0, 24, 18, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 7, 10);
-		m.eventList.addActionCircle(h2, 12, 15);
+		m.eventList.addActionCircle(h2, 14, 17);
 		return m;
 	}
 
@@ -199,16 +204,17 @@ public class M_Kicker extends MoveList{
 
 	/* SPECIAL ATTACKS */
 
-	private final int fire = 16;
+	int start = 15;
+	int end = start + 25;
 	public Move uSpecial() {
-		Move m = new Move(user, 30);
-		m.setContinueOnLanding();
+		Move m = new Move(user, end + 1);
 		m.setAnimation("sprites/fighters/kicker/uspecial.png", 1, 1);
-		Hitbox upward = new Hitbox(user, 5, 2, 10, 90, 0, 20, 16, new SFX.MidHit());
-		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 7f);
-		m.eventList.addProjectile(user, Projectile.ShotgunBlast.class, fire - 1);
-		m.eventList.addVelocityChange(user, fire, Action.ChangeVelocity.noChange, 18);
-		m.eventList.addActionCircle(upward, fire, fire + 20);
+		Hitbox h1 = new Hitbox(user, 5, 2, 10, 90, 0, 0, 24, new SFX.MidHit());
+		h1.setMovesAheadMod(2);
+		m.eventList.addConstantVelocity(user, 0, start, ConstantVelocity.noChange, 0);
+		m.eventList.addConstantAngledVelocity(user, start, end, 12);
+		m.eventList.addActionCircle(h1, start, end);
+		m.eventList.addConstantVelocity(user, end, end + 1, 0, 0);
 		m.setHelpless();
 		return m;
 	}

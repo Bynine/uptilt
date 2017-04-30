@@ -40,6 +40,7 @@ public class Speedy extends Fighter {
 		weight = 75;
 		wallSlideSpeed = 4;
 		moveList = new M_Speedy(this);
+		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 	
 	protected boolean isWallSliding() {

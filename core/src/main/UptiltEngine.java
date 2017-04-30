@@ -28,9 +28,10 @@ public class UptiltEngine extends ApplicationAdapter {
 
 	/* DEBUG */
 	FPSLogger fpsLogger = new FPSLogger();
-	boolean fpsLogToggle = false;
-	boolean p2Toggle = false;
-	boolean roundToggle = true;
+	public static boolean fpsLogToggle = false;
+	public static boolean p2Toggle = false;
+	public static boolean roundToggle = true;
+	public static boolean debugToggle = false;
 
 	public void create () {
 		player1 = new Kicker(0, 0, 0);

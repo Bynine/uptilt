@@ -48,11 +48,6 @@ public class EventList {
 		actionStartTimes.add(start);
 	}
 	
-	public void addAngledVelocityChange(Fighter user, int start, float vel) {
-		actionList.add(new Action.ChangeVelocityAngled(user, vel));
-		actionStartTimes.add(start);
-	}
-	
 	public void addSound(SFX sfx, int start){
 		actionList.add(new Action.PlaySFX(sfx));
 		actionStartTimes.add(start);
@@ -72,6 +67,10 @@ public class EventList {
 
 	public void addConstantVelocity(Fighter user, int start, int end, float velX, float velY) {
 		effectList.add(new Effect.ConstantVelocity(user, velX, velY, start, end));
+	}
+
+	public void addConstantAngledVelocity(Fighter user, int start, int end, float vel) {
+		effectList.add(new Effect.ConstantVelocityAngled(user, start, end, vel));
 	}
 
 	public void addCharge(Fighter user, Charge c) {

@@ -25,8 +25,8 @@ public abstract class ActionCircle {
 	final Timer duration = new DurationTimer(5);
 	final Timer refreshTimer = new DurationTimer(6);
 	private boolean initialHit;
-	boolean remove = false;
-	boolean doesRefresh = false;
+	boolean remove = false, doesRefresh = false;
+	float movesAheadMod = 1;
 	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
 	private Set<Fighter> s;
 	Property property = Property.NORMAL;
@@ -61,8 +61,7 @@ public abstract class ActionCircle {
 		checkGroup();
 		duration.countUp();
 		if (UptiltEngine.outOfHitlag()){
-			area.x = getX();
-			area.y = getY();
+			updatePosition();
 			if (isInitialHit()) remove = true;
 		}
 	}
@@ -78,8 +77,14 @@ public abstract class ActionCircle {
 		setInitialHit(false);
 	}
 
-	float getX(){ return user.getPosition().x + user.getImage().getWidth()/2 + (user.direct() * dispX); }
-	float getY(){ return user.getPosition().y + user.getImage().getHeight()/2 + dispY; }
+	float getX(){ 
+		return user.getPosition().x + user.getImage().getWidth()/2 + (user.direct() * dispX  + (movesAheadMod * user.getVelocity().x) ); 
+	}
+	
+	float getY(){
+		return user.getPosition().y + user.getImage().getHeight()/2 + dispY  + (movesAheadMod * user.getVelocity().y);
+	}
+
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 
@@ -95,14 +100,13 @@ public abstract class ActionCircle {
 		return initialHit;
 	}
 
-	public void setInitialHit(boolean initialHit) {
-		this.initialHit = initialHit;
-	}
+	public void setInitialHit(boolean initialHit) { this.initialHit = initialHit; }
+	public void setMovesAheadMod(float mod) { movesAheadMod = mod; }
 
 	public boolean hitAnybody() {
 		return hitFighterList.size() >= 1;
 	}
-	
+
 	protected Object clone() throws CloneNotSupportedException { return super.clone(); }
 
 }

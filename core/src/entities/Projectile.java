@@ -145,7 +145,7 @@ public abstract class Projectile extends Entity{
 			ac = new ProjectileHitbox(owner, 0, 0, 5, Hitbox.SAMURAIANGLE, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 			velX = owner.direct() * 2;
-			if (owner.holdUp()) velX = 1;
+			if (owner.isHoldUp()) velX = 1;
 		}
 
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){

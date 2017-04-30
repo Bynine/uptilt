@@ -19,7 +19,7 @@ public class Round {
 	Enemy speedies = new Enemy(Speedy.class, Brain.SpeedyBrain.class);
 	Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
 	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
-	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, alloys, rockets, speedies), 16, 4, 120, true);
+	EnemySpawner esAliens = new EnemySpawner(Arrays.asList(mooks, guns, alloys, rockets, speedies), 16, 4, 80, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
 	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);

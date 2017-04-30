@@ -76,7 +76,7 @@ public class Hitbox extends ActionCircle{
 		else knockback.setAngle(ANG);
 		knockback.x *= applyReverseHitbox(target);
 		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
-		int hitstun = hitstunFormula( knockbackFormula(target) );
+		int hitstun = hitstunFormula( target, knockbackFormula(target) );
 		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
 		if (groundedMeteor){
 			knockback.y *= meteorGroundMod;
@@ -136,10 +136,10 @@ public class Hitbox extends ActionCircle{
 		return hitlag;
 	}
 
-	private static final float hitstunRatio = 4.8f;
-	public int hitstunFormula(float knockback){
+	private static final float hitstunRatio = 4f;
+	public int hitstunFormula(Fighter target, float knockback){
 		if (BKB + KBG == 0) return 0;
-		return  2 + (int) (knockback * hitstunRatio);
+		return  2 + (int) (knockback * hitstunRatio * target.getHitstunMod());
 	}
 
 	private float crouchCancelMod = .75f;

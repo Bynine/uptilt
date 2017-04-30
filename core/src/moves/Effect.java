@@ -2,6 +2,8 @@ package moves;
 
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector2;
+
 import main.MapHandler;
 import entities.Fighter;
 import entities.Graphic;
@@ -36,6 +38,30 @@ public abstract class Effect extends Action{
 				return;
 			}
 			if (velY != noChange) user.getVelocity().y = velY;
+		}
+		void finish() { /* */ }
+	}
+	
+	public static class ConstantVelocityAngled extends Effect {
+		final Fighter user;
+		final float velocity;
+		boolean firstTime = true;
+		Vector2 newVelocity, angle;
+		
+		ConstantVelocityAngled(Fighter user, int start, int end, float velocity){
+			super(start, end);
+			this.user = user;
+			this.velocity = velocity;
+		}
+		void performAction() {
+			if (firstTime){
+				newVelocity = new Vector2(velocity, velocity);
+				angle = new Vector2(user.getStickX(), -user.getStickY());
+				newVelocity.setAngle(angle.angle());
+			}
+			user.getVelocity().x = newVelocity.x;
+			user.getVelocity().y = newVelocity.y;
+			if (firstTime) firstTime = false;
 		}
 		void finish() { /* */ }
 	}

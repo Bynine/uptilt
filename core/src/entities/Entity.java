@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.MapHandler;
+import main.SFX;
 import main.UptiltEngine;
 import timers.Timer;
 
@@ -148,9 +149,13 @@ public abstract class Entity {
 	}
 	
 	void bounceOffWall(){
-		//if (inputHandler.isTeching()) setInvincible(20);
 		velocity.x *= bounce;
 		UptiltEngine.causeHitlag((int)(velocity.x / 3));
+		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y));
+		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y + image.getHeight()));
+		if (velocity.x > 12) new SFX.MeatyHit().play();
+		else if (velocity.x > 8) new SFX.MidHit().play();
+		else new SFX.LightHit().play();
 	}
 
 	void checkFloor(){

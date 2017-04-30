@@ -34,6 +34,7 @@ public class Gunmin extends Fighter {
 		jumpAcc = 0.6f;
 		moveList = new M_Gunmin(this);
 		jumpSquatTimer.setEndTime(6);
+		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 
 	TextureRegion getJumpFrame(float deltaTime) { return jump; }

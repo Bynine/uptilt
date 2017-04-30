@@ -41,6 +41,8 @@ public class Kicker extends Fighter {
 		jumpAcc = 1.09f;
 		dashStrength = 0f;
 		doubleJumpStrength = 10.7f;
+		wallJumpStrengthX = 7.5f;
+		wallJumpStrengthY = 8.4f;
 		fallSpeed = -7f;
 		jumpSquatTimer.setEndTime(3);
 		footStoolDuration = 25;

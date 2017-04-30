@@ -1,5 +1,7 @@
 package maps;
 
+import java.lang.reflect.InvocationTargetException;
+
 import input.Brain;
 import input.InputHandlerCPU;
 
@@ -16,11 +18,9 @@ public class EntityLoader {
 		float y = mp.get("y", Float.class);
 
 		switch(m.getName().toLowerCase()){
-		case "kicker": {
-			Kicker kicker = new Kicker(x, y, 1);
-			kicker.setInputHandler(new InputHandlerCPU(kicker, Brain.MookBrain.class));
-			return kicker;
-		}
+		case "mook": return makeNewEnemy(Mook.class, Brain.MookBrain.class, x, y);
+		case "gunmin": return makeNewEnemy(Gunmin.class, Brain.GunminBrain.class, x, y);
+		case "speedy": return makeNewEnemy(Speedy.class, Brain.SpeedyBrain.class, x, y);
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));
@@ -28,5 +28,19 @@ public class EntityLoader {
 			return dummy;
 		}
 		}
+	}
+	
+	private Fighter makeNewEnemy(Class <? extends Fighter> fiClass, Class <? extends Brain> brClass, float x, float y){
+		Fighter enemy;
+		try {
+			enemy = fiClass.getDeclaredConstructor(float.class, float.class, int.class).newInstance(x, y, 1);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			enemy = new Mook(x, y, 1);
+		}
+		enemy.setInputHandler(new InputHandlerCPU(enemy, brClass));
+		return enemy;
 	}
 }

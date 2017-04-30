@@ -17,6 +17,7 @@ public class GlobalRepo {
 	public static final int TILE = 32;
 	public static final int GOODTEAM = 0;
 	public static final int BADTEAM = 1;
+	public static final float ENEMYHITSTUNMOD = 1.5f;
 	
 	/* GLOBAL METHODS */
 
@@ -33,6 +34,10 @@ public class GlobalRepo {
 		Animation animation = new Animation(speed, frames);
 		animation.setPlayMode(playMode);
 		return animation;
+	}
+	
+	public static void log(String str){
+		System.out.println(str + " at " + UptiltEngine.getDeltaTime());
 	}
 	
 	public static Rectangle makeHurtBox(Entity user, int width, int height){
