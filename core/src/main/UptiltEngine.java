@@ -21,33 +21,40 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static float volume = 1f;
 	private static final Timer hitlagTimer = new Timer(0);
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
+	private static final List<Fighter> playerList = new ArrayList<Fighter>();
 	private static int deltaTime = 0;
 	private static Fighter player1;
 	private static boolean paused = false;
-	Round round;
+	private static FPSLogger fpsLogger = new FPSLogger();
+	private static Round round;
 
 	/* DEBUG */
-	FPSLogger fpsLogger = new FPSLogger();
-	public static boolean fpsLogToggle = false;
-	public static boolean p2Toggle = false;
-	public static boolean roundToggle = true;
-	public static boolean debugToggle = false;
+	public static boolean 	fpsLogToggle 	= false;
+	public static boolean 	p2Toggle 		= false;
+	public static boolean 	roundToggle 	= true;
+	public static boolean 	debugToggle 	= false;
+	private static int 		roomChoice 		= 2;
 
 	public void create () {
-		player1 = new Kicker(0, 0, 0);
-		InputHandlerController ch = new InputHandlerController(player1);
-		if (!ch.setupController(0)) startWithKeyboard(player1);
-		else player1.setInputHandler(ch);
+		player1 = new Frog(0, 0, 0);
+		beginFighter(player1, 0);
 		GraphicsHandler.begin();
-		MapHandler.begin();
+		MapHandler.begin(roomChoice);
 
 		if (p2Toggle){
-			Fighter player2 = new Frog(600, 600, 0);
-			startWithKeyboard(player2);
+			Fighter player2 = new Frog(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
+			beginFighter(player2, 1);
 			MapHandler.addEntity(player2);
 		}
-
-		round = new Round(player1);
+		
+		round = new Round();
+	}
+	
+	private void beginFighter(Fighter player, int cont){
+		playerList.add(player);
+		InputHandlerController ch = new InputHandlerController(player);
+		if (!ch.setupController(cont)) startWithKeyboard(player);
+		else player.setInputHandler(ch);
 	}
 
 	private void startWithKeyboard(Fighter player){
@@ -68,7 +75,7 @@ public class UptiltEngine extends ApplicationAdapter {
 			if (outOfHitlag()) MapHandler.updateEntities();
 		}
 		GraphicsHandler.updateGraphics();
-		GraphicsHandler.updateCamera(player1);
+		GraphicsHandler.updateCamera();
 	}
 
 	private void updateTimers(){
@@ -94,7 +101,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	public static float getVolume(){ return volume; }
 	public static int getDeltaTime(){ return deltaTime; }
 	public static boolean isPaused() { return paused; }
-	public static Fighter getPlayer(){ return player1; }
+	public static List<Fighter> getPlayers(){ return playerList; }
 	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
 
 }

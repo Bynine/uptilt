@@ -27,14 +27,14 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Fighter extends Entity{
+public abstract class Fighter extends Hittable{
 
 	final float unregisteredInputMax = 0.2f;
 	boolean doubleJumped, blockHeld, tumbling = false, slowed = true;
 	public int queuedCommand = InputHandler.commandNone;
 	public final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0);
-	final Timer caughtTimer = new Timer(0), grabbingTimer = new Timer(0), dashTimer = new Timer(20);
-	private final Timer knockIntoTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(1);
+	final Timer grabbingTimer = new Timer(0), dashTimer = new Timer(20);
+	private final Timer invincibleTimer = new Timer(0), dodgeTimer = new Timer(1);
 	private final Timer footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0, prevPositionX = 0, prevPositionY = 0;
 
@@ -45,16 +45,17 @@ public abstract class Fighter extends Entity{
 	float wallJumpStrengthY = 7.2f;
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
-	float hitstunMod = 1;
 
 	Vector2 footStoolKB = new Vector2(0, 0);
 	int footStoolDuration = 30;
 	int footStoolDamage = 0;
 
-	private TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
-	private Fighter caughtFighter = null;
+	protected TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
+	protected TextureRegion defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconalien.png")));
+	
+	private Hittable caughtFighter = null;
 	private IDMove activeMove = null; 
-	float percentage = 0, armor = 0, weight = 100;
+	
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private float initialHitAngle = 0;
 	private final int randomAnimationDisplacement;
@@ -62,7 +63,6 @@ public abstract class Fighter extends Entity{
 	private int team = 0, stocks = 1;
 	MoveList moveList = new M_Mook(this);
 	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
-	private HitstunType hitstunType = HitstunType.NORMAL;
 
 	public Fighter(float posX, float posY, int team) {
 		super(posX, posY);
@@ -134,45 +134,8 @@ public abstract class Fighter extends Entity{
 			boolean fighterGoingFastEnough = knockbackIntensity(fi.velocity) > tumbleBK;
 			if (fi.hitstunType == HitstunType.SUPER) fighterGoingFastEnough = true;
 			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == fi.getTeam() && !fi.hitstunTimer.timeUp();
-			if (knockInto && isTouching(fi, 8) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) getHitByKBFighter(fi);
+			if (knockInto && isTouching(fi, 8) && knockbackIntensity(fi.velocity) > knockbackIntensity(velocity)) getHitByHurtlingObject(fi);
 		}
-	}
-
-	private final float pushForce = 0.04f;
-	private void pushAway(Entity e){
-		float dirPush = Math.signum(e.position.x - this.position.x);
-		velocity.x -= dirPush * pushForce;
-	}
-
-	public void getHitByKBFighter(Fighter fi){
-		Vector2 knockIntoVector = new Vector2(fi.velocity.x, fi.velocity.y);
-		Hitbox h;
-		if (fi.hitstunType != HitstunType.NORMAL) {
-			if (fi.hitstunType == HitstunType.ULTRA){ // ultra hitstun
-				float bkb = ((fi.weight/100.0f) * 4) + knockbackIntensity(knockIntoVector)/5;
-				h = new Hitbox(fi, bkb, 2f, knockbackIntensity(knockIntoVector) * 2, knockIntoVector.angle(), 0, 0, 0, null);
-				new SFX.MeatyHit().play();
-			}
-			else{ // super hitstun
-				float bkb = ((fi.weight/100.0f) * 6) + knockbackIntensity(knockIntoVector)/5;
-				h = new Hitbox(fi, bkb, 2f, knockbackIntensity(knockIntoVector) * 3, knockIntoVector.angle(), 0, 0, 0, null);
-				new SFX.MidHit().play();
-			}
-			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
-			float newAngle = h.getAngle();
-			knockIntoVector.setAngle(newAngle);
-		}
-		else { // ultra hitstun
-			h = new Hitbox(fi, (fi.weight/100.0f) * 3, 1.5f, knockbackIntensity(knockIntoVector), knockIntoVector.angle(), 0, 0, 0, null);
-			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
-			knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
-			new SFX.LightHit().play();
-		}
-		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() );
-		fi.knockIntoTimer.restart();
-		knockIntoTimer.restart();
-		float dampen = 0.9f;
-		fi.velocity.set(fi.velocity.x * dampen, fi.velocity.y * dampen);
 	}
 
 	void updateState(){
@@ -563,7 +526,9 @@ public abstract class Fighter extends Entity{
 		tumbling = false;
 		super.ground();
 		if (null != getActiveMove() && !getActiveMove().move.continuesOnLanding()) endAttack();
-		if (velocity.y < 0 && getActiveMove() == null && state != State.FALLEN) startAttack(new IDMove(moveList.land(), MoveList.noStaleMove));
+		if (velocity.y < 0 && getActiveMove() == null && state != State.FALLEN){
+			startAttack(new IDMove(moveList.land(), MoveList.noStaleMove));
+		}
 		doubleJumped = false;
 	}
 
@@ -615,6 +580,43 @@ public abstract class Fighter extends Entity{
 		if (Math.abs(velocity.x) < Math.abs(speed)) velocity.x += Math.signum(stickX) * acc; 
 	}
 
+	private final float pushForce = 0.04f;
+	private void pushAway(Entity e){
+		float dirPush = Math.signum(e.position.x - this.position.x);
+		velocity.x -= dirPush * pushForce;
+	}
+
+	public void getHitByHurtlingObject(Fighter fi){
+		Vector2 knockIntoVector = new Vector2(fi.velocity.x, fi.velocity.y);
+		Hitbox h;
+		if (fi.hitstunType != HitstunType.NORMAL) {
+			if (fi.hitstunType == HitstunType.ULTRA){ // ultra hitstun
+				float bkb = ((fi.weight/100.0f) * 4) + knockbackIntensity(knockIntoVector)/5;
+				h = new Hitbox(fi, bkb, 2f, knockbackIntensity(knockIntoVector) * 2, knockIntoVector.angle(), 0, 0, 0, null);
+				new SFX.MeatyHit().play();
+			}
+			else{ // super hitstun
+				float bkb = ((fi.weight/100.0f) * 6) + knockbackIntensity(knockIntoVector)/5;
+				h = new Hitbox(fi, bkb, 2f, knockbackIntensity(knockIntoVector) * 3, knockIntoVector.angle(), 0, 0, 0, null);
+				new SFX.MidHit().play();
+			}
+			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
+			float newAngle = h.getAngle();
+			knockIntoVector.setAngle(newAngle);
+		}
+		else { // ultra hitstun
+			h = new Hitbox(fi, (fi.weight/100.0f) * 3, 1.5f, knockbackIntensity(knockIntoVector), knockIntoVector.angle(), 0, 0, 0, null);
+			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
+			knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
+			new SFX.LightHit().play();
+		}
+		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() );
+		fi.knockIntoTimer.restart();
+		knockIntoTimer.restart();
+		float dampen = 0.9f;
+		fi.velocity.set(fi.velocity.x * dampen, fi.velocity.y * dampen);
+	}
+	
 	private void takeKnockIntoKnockback(Vector2 knockback, float DAM, int hitstun){
 		knockbackHelper(knockback, DAM, hitstun, knockbackIntensity(velocity) < knockbackIntensity(knockback), HitstunType.NORMAL);
 	}
@@ -658,7 +660,7 @@ public abstract class Fighter extends Entity{
 		return knockback.angle();
 	}
 
-	public void getGrabbed(Fighter user, Fighter target, int caughtTime) {
+	public void getGrabbed(Fighter user, Hittable target, int caughtTime) {
 		float heldDistance = 24;
 		user.isNowGrabbing(target, caughtTime);
 		float newPosX = user.position.x + (heldDistance * user.direct());
@@ -670,7 +672,7 @@ public abstract class Fighter extends Entity{
 		endAttack();
 	}
 
-	public void isNowGrabbing(Fighter target, int caughtTime){
+	public void isNowGrabbing(Hittable target, int caughtTime){
 		caughtFighter = target;
 		grabbingTimer.setEndTime(caughtTime);
 		grabbingTimer.restart();
@@ -691,8 +693,6 @@ public abstract class Fighter extends Entity{
 	}
 
 	public void setRespawnPoint(Vector2 startPosition) { spawnPoint.set(startPosition); }
-	public float getPercentage() { return percentage; }
-	public float getWeight() { return weight; }
 	public float getStickX() { return stickX; }
 	public float getStickY() { return stickY; }
 	public InputHandler getInputHandler() { return inputHandler; }
@@ -742,8 +742,6 @@ public abstract class Fighter extends Entity{
 	public boolean isHoldForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
 	public boolean isHoldBack() 		{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 
-	public enum HitstunType{ NORMAL, SUPER, ULTRA }
-
 	abstract TextureRegion getStandFrame(float deltaTime);
 	abstract TextureRegion getWalkFrame(float deltaTime);
 	abstract TextureRegion getRunFrame(float deltaTime);
@@ -760,5 +758,8 @@ public abstract class Fighter extends Entity{
 	abstract TextureRegion getTumbleFrame(float deltaTime);
 	abstract TextureRegion getHitstunFrame(float deltaTime);
 	abstract TextureRegion getFallenFrame(float deltaTime);
+	public TextureRegion getIcon(){
+		return defaultIcon;
+	}
 
 }

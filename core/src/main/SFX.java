@@ -32,5 +32,6 @@ public abstract class SFX {
 	public static class Explode extends SFX{ public Explode(){ setSFX("/melee/explode.wav"); } }
 	public static class HomeRun extends SFX{ public HomeRun(){ setSFX("/melee/KRRIIIIING.wav"); } }
 	public static class FootStool extends SFX{ public FootStool(){ setSFX("/footstool.wav"); } }
+	public static class Ground extends SFX{ public Ground(){ setSFX("/land.mp3"); } }
 	
 }

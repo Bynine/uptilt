@@ -182,7 +182,6 @@ public class M_Speedy extends MoveList {
 	public Move uSpecial() {
 		Move m = new Move(user, 16);
 		m.setHelpless();
-		System.out.println("Speedy used up special");
 		m.eventList.addVelocityChange(user, 1, Action.ChangeVelocity.noChange, 12);
 		return m;
 	}

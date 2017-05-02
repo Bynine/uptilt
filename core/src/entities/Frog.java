@@ -45,10 +45,11 @@ public class Frog extends Fighter {
 		wallJumpStrengthY = 8.4f;
 		dashStrength = -1f;
 		friction = 0.83f;
-		jumpSquatTimer.setEndTime(6);
+		jumpSquatTimer.setEndTime(5);
 		moveList = new M_Frog(this);
 		footStoolKB.set(0, -1);
 		footStoolDuration = 40;
+		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconfrog.png")));
 	}
 	
 	public Rectangle getNormalHurtBox(){

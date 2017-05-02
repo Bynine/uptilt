@@ -32,8 +32,8 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	}
 
 	public boolean setupController(int index){
+		if (Controllers.getControllers().size <= index) return false;
 		Controllers.addListener(this);
-		if (Controllers.getControllers().size == 0) return false;
 		controller = Controllers.getControllers().get(index);
 		return true;
 	}

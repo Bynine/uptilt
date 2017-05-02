@@ -98,6 +98,7 @@ public abstract class Entity {
 
 	private final float lowerLimit = 0.01f;
 	void limitingForces(List<Rectangle> mapRectangleList, List<Entity> entityList){
+		handleWind();
 		handleGravity();
 		handleFriction();
 		limitSpeeds();
@@ -107,6 +108,10 @@ public abstract class Entity {
 		checkFloor();
 		if (Math.abs(velocity.x) < lowerLimit) velocity.x = 0;
 		if (Math.abs(velocity.y) < lowerLimit) velocity.y = 0;
+	}
+	
+	void handleWind(){
+		velocity.x += MapHandler.getRoomWind();
 	}
 
 	void handleGravity(){
@@ -252,9 +257,10 @@ public abstract class Entity {
 	}
 
 	public void ground(){ 
-		if (velocity.y < -0.1 && !inGroundedState()){
+		if (velocity.y < -1 && !inGroundedState()){
 			MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
 			MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
+			new SFX.Ground().play();
 		}
 	}
 

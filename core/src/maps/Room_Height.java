@@ -6,36 +6,36 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
-public class Room_Platforming extends Room {
+public class Room_Height extends Room {
 
-	public Room_Platforming(Level superLevel) {
+	public Room_Height(Level superLevel) {
 		super(superLevel);
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/song of storm crow.mp3"));
 		setup();
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/freeroam.tmx");
+		return tmxMapLoader.load("maps/height.tmx");
 	}
 
 	public int[] getSides() {
-		return new int[]{2 * GlobalRepo.TILE, 100 * GlobalRepo.TILE};
+		return new int[]{10 * GlobalRepo.TILE, 23 * GlobalRepo.TILE};
 	}
 
 	@Override
 	public float getFloor() {
-		return 10 * GlobalRepo.TILE;
+		return 5 * GlobalRepo.TILE;
 	}
 
 	@Override
 	public Vector2 getSpawnPoint() {
-		if (Math.random() < 0.5) return new Vector2(40 * GlobalRepo.TILE, 30 * GlobalRepo.TILE);
-		else return new Vector2(70 * GlobalRepo.TILE, 30 * GlobalRepo.TILE);
+		if (Math.random() < 0.5) return new Vector2(11 * GlobalRepo.TILE, 26 * GlobalRepo.TILE);
+		else return new Vector2(22 * GlobalRepo.TILE, 26 * GlobalRepo.TILE);
 	}
 
 	@Override
 	public Vector2 getStartPosition() {
-		return new Vector2(9 * GlobalRepo.TILE, 3 * GlobalRepo.TILE);
+		return new Vector2(14 * GlobalRepo.TILE, 5 * GlobalRepo.TILE);
 	}
 
 }

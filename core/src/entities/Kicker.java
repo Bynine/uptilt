@@ -48,6 +48,7 @@ public class Kicker extends Fighter {
 		footStoolDuration = 25;
 		dashTimer.setEndTime(20);
 		moveList = new M_Kicker(this);
+		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
 	}
 	
 	public Rectangle getNormalHurtBox(){

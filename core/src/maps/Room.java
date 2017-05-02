@@ -3,6 +3,7 @@ package maps;
 import java.util.ArrayList;
 import java.util.List;
 
+import main.UptiltEngine;
 import moves.ActionCircle;
 
 import com.badlogic.gdx.audio.Music;
@@ -28,6 +29,7 @@ public abstract class Room {
 	protected Music roomMusic;
 	protected float r, g, b = 1;
 	protected float a = 0;
+	protected float wind = 0;
 	Level superLevel;
 
 	public Room(Level superLevel){
@@ -46,11 +48,14 @@ public abstract class Room {
 		//roomMusic.play();
 	}
 
-	public void initEntities(Fighter player){
+	public void initEntities(){
 		clearOut();
-		player.setPosition(getStartPosition());
-		player.setRespawnPoint(getStartPosition());
-		entityList.add(player);
+		for (Fighter player: UptiltEngine.getPlayers()){
+			player.setPercentage(0);
+			player.setPosition(getStartPosition());
+			player.setRespawnPoint(getStartPosition());
+			entityList.add(player);
+		}
 
 		for (MapObject m: mapEntities) entityList.add(new EntityLoader().loadEntity(m));
 	}
@@ -100,5 +105,6 @@ public abstract class Room {
 	public float getB(){ return b; }
 	public float getG(){ return g; }
 	public float getA(){ return a; }
+	public float getWind() { return wind; }
 
 }

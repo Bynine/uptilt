@@ -11,7 +11,7 @@ import moves.Hitbox;
 import moves.Move;
 import moves.Effect.Charge;
 import entities.Fighter;
-import entities.Fighter.HitstunType;
+import entities.Hittable.HitstunType;
 import entities.Projectile;
 import entities.Entity.Direction;
 
@@ -206,16 +206,19 @@ public class M_Frog extends M_Kicker {
 		Move m = new Move(user, 10);
 		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/frog/crouch.png", 1, 1);
+		Hitbox h1 = new Hitbox(user, 3, 3, 12, Hitbox.SAMURAIANGLE, 0, -24, 30, new SFX.MidHit());
+		m.eventList.addActionCircle(h1, 8, 10);
 		m.eventList.addVelocityChange(user, 10, Action.ChangeVelocity.noChange, 20);
 		return m;
 	}
 
 	private Move aerialUSpecial(){
 		Move m = new Move(user, 30);
-		m.setContinueOnLanding();
+		m.setHelpless();
+		Hitbox h1 = new Hitbox(user, 6, 3, 20, 270, 0, -48, 16, new SFX.MeatyHit());
 		m.setAnimation("sprites/fighters/frog/fjump.png", 1, 1);
 		m.eventList.addVelocityChange(user, 5, Action.ChangeVelocity.noChange, 17);
-		m.setHelpless();
+		m.eventList.addActionCircle(h1, 4, 6);
 		return m;
 	}
 

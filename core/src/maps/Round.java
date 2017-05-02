@@ -24,17 +24,19 @@ public class Round {
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
 	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);
 	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliens));
-	Fighter player;
 	boolean restarted = false;
 
-	public Round(Fighter player){
-		this.player = player;
+	public Round(){
 		setup();
 	}
 
 	public void update(float deltaTime){
 		for (EnemySpawner fs: fSList) fs.update(deltaTime);
-		if (UptiltEngine.getPlayer().getStocks() == 0) restart();
+		boolean shouldRestart = true;
+		for (Fighter player: (UptiltEngine.getPlayers() ) ){
+			if (player.getStocks() > 0) shouldRestart = false;
+		}
+		if (shouldRestart) restart();
 	}
 
 	private void restart(){
@@ -43,7 +45,9 @@ public class Round {
 	}
 
 	private void setup(){
-		player.setStocks(3);
+		for (Fighter player: (UptiltEngine.getPlayers() ) ){
+			player.setStocks(3);
+		}
 		for (EnemySpawner fs: fSList) fs.restart();
 	}
 

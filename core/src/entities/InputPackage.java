@@ -15,10 +15,11 @@ public class InputPackage {
 	
 	/**
 	 * 
-	 * distance X : left of player is negative, right is positive
+	 * distance X: left of player is negative, right is positive
 	 * distance Y: below player is negative, above is positive
 	 */
 	InputPackage(Fighter fighter){
+		Fighter target = getTarget(fighter);
 		state = fighter.state;
 		isOffStage = (!fighter.isGrounded() && distanceFromEdges(0, fighter) );
 		isBelowStage = (fighter.position.y < MapHandler.getStageFloor());
@@ -28,8 +29,8 @@ public class InputPackage {
 		awayFromWall = distanceFromEdges(-48, fighter);
 		distanceFromCenter = fighter.position.x - (MapHandler.getStageSides()[0] + MapHandler.getStageSides()[1])/2;
 		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - 
-				(UptiltEngine.getPlayer().position.x + UptiltEngine.getPlayer().getHurtBox().getWidth()/2) ;
-		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - UptiltEngine.getPlayer().position.y;
+				(target.position.x + target.getHurtBox().getWidth()/2) ;
+		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - target.position.y;
 		direct = fighter.direct();
 		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;
 		else activeMove = null;
@@ -37,5 +38,13 @@ public class InputPackage {
 	
 	private boolean distanceFromEdges(float dist, Fighter fighter){
 		return (fighter.position.x - dist*2 <= MapHandler.getStageSides()[0] || fighter.position.x + dist*2 >= MapHandler.getStageSides()[1]);
+	}
+	
+	private Fighter getTarget(Fighter fighter){
+		Fighter target = UptiltEngine.getPlayers().get(0);
+		for (Fighter player: UptiltEngine.getPlayers()){
+			if (fighter.getPosition().dst(player.getPosition() ) < fighter.getPosition().dst(target.getPosition() )) target = player;
+		}
+		return target;
 	}
 }

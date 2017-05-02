@@ -159,7 +159,7 @@ public class M_Kicker extends MoveList{
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/kicker/uair.png", 1, 1);
 		Hitbox h1 = new Hitbox(user, 2.4f, 0, 3, 90, 0, 20, 15, new SFX.LightHit());
-		Hitbox h2 = new Hitbox(user, 2, 3.2f, 8, 90, 0, 24, 18, new SFX.MidHit());
+		Hitbox h2 = new Hitbox(user, 2, 5f, 8, 90, 0, 24, 18, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 7, 10);
 		m.eventList.addActionCircle(h2, 14, 17);
 		return m;

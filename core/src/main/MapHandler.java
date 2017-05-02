@@ -28,9 +28,9 @@ public class MapHandler {
 	static int mapWidth;
 	static int mapHeight; 
 
-	static void begin(){
+	static void begin(int startMap){
 		activeLevel = new Level_Stages();
-		activeRoom = activeLevel.getRoom(0);
+		activeRoom = activeLevel.getRoom(startMap);
 		activeMap = activeRoom.getMap();
 		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
 		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());
@@ -56,7 +56,7 @@ public class MapHandler {
 				if (en instanceof Fighter){
 					Fighter fi = (Fighter) en;
 					new SFX.Explode().play();
-					if (fi.getStocks() > 1 || fi == UptiltEngine.getPlayer()) fi.respawn();
+					if (fi.getStocks() > 1) fi.respawn();
 					else {
 						fi.setStocks(0);
 						entityIter.remove();
@@ -65,7 +65,6 @@ public class MapHandler {
 				else entityIter.remove();
 			}
 		}
-		if (UptiltEngine.getPlayer().isOOB(mapWidth, mapHeight)) resetRoom();
 	}
 
 	static void updateActionCircleInteractions(){
@@ -102,7 +101,7 @@ public class MapHandler {
 	public static void updateRoomMap(Room room) {
 		activeRoom = room;
 		activeMap = activeRoom.getMap();
-		activeRoom.initEntities(UptiltEngine.getPlayer());
+		activeRoom.initEntities();
 		rectangleList.clear();
 		activeRoom.setup();
 		rectangleList.addAll(activeRoom.getRectangleList());
@@ -136,6 +135,11 @@ public class MapHandler {
 	public static List<Entity> getEntities() {
 		if (activeRoom == null) return new ArrayList<Entity>();
 		else return activeRoom.getEntityList();
+	}
+	
+	public static float getRoomWind(){
+		if (activeRoom == null) return 0;
+		else return activeRoom.getWind();
 	}
 
 }

@@ -119,7 +119,7 @@ public class Hitbox extends ActionCircle{
 	}
 
 	void startHitlag(Fighter target){
-		if (target != UptiltEngine.getPlayer() && user != UptiltEngine.getPlayer()) return;
+		if (!UptiltEngine.getPlayers().contains(target) && !UptiltEngine.getPlayers().contains(user)) return;
 		float hit = knockbackFormula(target);
 		if (target.getArmor() > 0) hit += target.getArmor() * 2;
 		int hitlag = hitlagFormula(hit);
@@ -143,7 +143,7 @@ public class Hitbox extends ActionCircle{
 	}
 
 	private float crouchCancelMod = .75f;
-	private final float kbgMod = 0.04f;
+	private final float kbgMod = 0.032f;
 	private final float weightMod = 0.01f;
 	private final float minKnockback = 0.25f;
 	public float knockbackFormula(Fighter target){
