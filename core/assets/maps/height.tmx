@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="34" height="26" tilewidth="32" tileheight="32" nextobjectid="41">
  <tileset firstgid="1" name="town" tilewidth="32" tileheight="32" spacing="1" tilecount="32" columns="8">
-  <image source="../sprites/tilesets/town.PNG" width="276" height="149"/>
+  <image source="../sprites/tilesets/night.png" width="276" height="149"/>
  </tileset>
  <tileset firstgid="33" name="background" tilewidth="32" tileheight="32" spacing="1" tilecount="4" columns="2">
   <image source="../sprites/tilesets/background.png" width="65" height="65"/>
@@ -85,7 +85,7 @@
 0,0,0,0,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,0,0,0,0,
@@ -128,8 +128,8 @@
  </layer>
  <objectgroup name="COLLISION">
   <object id="26" x="320" y="672" width="448" height="256"/>
-  <object id="28" x="320" y="384" width="128" height="192"/>
-  <object id="29" x="640" y="384" width="128" height="192"/>
+  <object id="28" x="320" y="384" width="128" height="160"/>
+  <object id="29" x="640" y="384" width="128" height="160"/>
  </objectgroup>
  <objectgroup name="ENTITIES"/>
 </map>

@@ -65,8 +65,8 @@ public class M_Dog extends MoveList {
 	public Move sWeak() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/dog/stand.png", 1, 1);
-		Hitbox inner = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAIANGLE, 20, 4, 14, new SFX.MidHit());
-		Hitbox outer = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAIANGLE, 34, 4, 12, new SFX.MidHit());
+		Hitbox inner = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAI, 20, 4, 14, new SFX.MidHit());
+		Hitbox outer = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAI, 34, 4, 12, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(inner, outer));
 		m.eventList.addActionCircle(inner, 6, 9);
 		m.eventList.addActionCircle(outer, 6, 9);
@@ -211,7 +211,6 @@ public class M_Dog extends MoveList {
 		m.setAnimation("sprites/fighters/dog/stand.png", 1, 1);
 		Hitbox upward = new Hitbox(user, 5, 2, 10, 90, 0, 20, 16, new SFX.MidHit());
 		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 7f);
-		m.eventList.addProjectile(user, Projectile.ShotgunBlast.class, fire - 1);
 		m.eventList.addVelocityChange(user, fire, Action.ChangeVelocity.noChange, 16);
 		m.eventList.addActionCircle(upward, fire, fire + 20);
 		m.setHelpless();
@@ -232,7 +231,7 @@ public class M_Dog extends MoveList {
 	public Move sSpecial() {
 		Move m = new Move(user, 48);
 		m.setAnimation("sprites/fighters/dog/stand.png", 1, 1);
-		Hitbox early = new Hitbox(user, 6, 2.5f, 13, Hitbox.SAMURAIANGLE, 10, -4, 20, new SFX.HeavyHit());
+		Hitbox early = new Hitbox(user, 6, 2.5f, 13, Hitbox.SAMURAI, 10, -4, 20, new SFX.HeavyHit());
 		Hitbox late = new Hitbox(user, 3, 1, 9, 80, 12, -4, 14, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
 		if (user.isGrounded()) m.eventList.addVelocityChange(user, 10, Action.ChangeVelocity.noChange, 8);
@@ -247,7 +246,7 @@ public class M_Dog extends MoveList {
 		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/dog/stand.png", 1, 1);
 		m.setContinueOnLanding();
-		m.eventList.addProjectile(user, Projectile.Spiker.class, 12);
+		m.eventList.addProjectile(user, Projectile.Stunner.class, 12);
 		return m;
 	}
 

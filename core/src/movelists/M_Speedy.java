@@ -20,7 +20,7 @@ public class M_Speedy extends MoveList {
 	public Move nWeak() {
 		Move m = new Move(user, 14);
 		m.setAnimation("sprites/fighters/speedy/nweak.png", 2, 7);
-		Hitbox h1 = new Hitbox(user, 2, 0.5f, 3, Hitbox.SAMURAIANGLE, 38, 2, 12, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 2, 0.5f, 3, Hitbox.SAMURAI, 38, 2, 12, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 7, 8);
 		return m;
 	}
@@ -41,7 +41,7 @@ public class M_Speedy extends MoveList {
 		m.setAnimation("sprites/fighters/speedy/nweak.png", 2, 4);
 		Hitbox bite1 = new Hitbox(user, 3, 0, 2, 90, 26, -4, 12, new SFX.MidHit());
 		Hitbox bite2 = new Hitbox(user, 2, 0, 2, 90, 26, 12, 12, new SFX.MidHit());
-		Hitbox bite3 = new Hitbox(user, 1, 2, 5, Hitbox.SAMURAIANGLE, 26, 4, 12, new SFX.MidHit());
+		Hitbox bite3 = new Hitbox(user, 1, 2, 5, Hitbox.SAMURAI, 26, 4, 12, new SFX.MidHit());
 		m.eventList.addActionCircle(bite1, 9, 11);
 		m.eventList.addActionCircle(bite2, 14, 16);
 		m.eventList.addActionCircle(bite3, 21, 23);
@@ -51,7 +51,7 @@ public class M_Speedy extends MoveList {
 	public Move dWeak() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/speedy/dweak.png", 2, 10);
-		Hitbox h1 = new Hitbox(user, 3, 1f, 5, Hitbox.SAMURAIANGLE, 30, 0, 12, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 3, 1f, 5, Hitbox.SAMURAI, 30, 0, 12, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 10, 12);
 		return m;
 	}
@@ -71,10 +71,10 @@ public class M_Speedy extends MoveList {
 	public Move nAir() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/speedy/nair.png", 5, 4);
-		Hitbox h1 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAIANGLE, -nDisp, -nDisp, 12, new SFX.MidHit());
-		Hitbox h2 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAIANGLE,  nDisp, -nDisp, 12, new SFX.MidHit());
-		Hitbox h3 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAIANGLE, -nDisp,  nDisp, 12, new SFX.MidHit());
-		Hitbox h4 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAIANGLE,  nDisp,  nDisp, 12, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp, -nDisp, 12, new SFX.MidHit());
+		Hitbox h2 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp, -nDisp, 12, new SFX.MidHit());
+		Hitbox h3 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp,  nDisp, 12, new SFX.MidHit());
+		Hitbox h4 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp,  nDisp, 12, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(h1, h2, h3, h4));
 		m.eventList.addActionCircle(h1, 9, 12);
 		m.eventList.addActionCircle(h2, 9, 12);
@@ -101,8 +101,8 @@ public class M_Speedy extends MoveList {
 		m.setAnimation("sprites/fighters/speedy/wallslide.png", 3, 24);
 		Hitbox early1 = new Hitbox(user, 1.5f, 2.1f, 11, 30, -20,  10, 14, new SFX.MidHit());
 		Hitbox early2 = new Hitbox(user, 1.5f, 2.1f, 11, 30, -20, -10, 14, new SFX.MidHit());
-		Hitbox late1 = new Hitbox(user, 1.2f, 0.5f, 6, Hitbox.SAMURAIANGLE, -18,  7, 10, new SFX.LightHit());
-		Hitbox late2 = new Hitbox(user, 1.2f, 0.5f, 6, Hitbox.SAMURAIANGLE, -18, -7, 10, new SFX.LightHit());
+		Hitbox late1 = new Hitbox(user, 1.2f, 0.5f, 6, Hitbox.SAMURAI, -18,  7, 10, new SFX.LightHit());
+		Hitbox late2 = new Hitbox(user, 1.2f, 0.5f, 6, Hitbox.SAMURAI, -18, -7, 10, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
 		m.eventList.addActionCircle(early1, 9, 10);
 		m.eventList.addActionCircle(early2, 9, 10);

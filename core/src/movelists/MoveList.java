@@ -144,7 +144,7 @@ public abstract class MoveList {
 	}
 	
 	public IDMove selectBlock() {
-		if (!user.isGrounded()) return new IDMove(airDodge(), noStaleMove);
+		if (!user.isGrounded() && (user.isHoldUp() || user.isHoldDown() || user.isHoldBack() || user.isHoldForward())) return new IDMove(airDodge(), noStaleMove);
 		else return new IDMove(null, noMove);
 	}
 	

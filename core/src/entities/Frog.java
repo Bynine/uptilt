@@ -35,9 +35,9 @@ public class Frog extends Fighter {
 		super(posX, posY, team);
 		weight = 120;
 		runAcc = 2.2f;
-		runSpeed = 9.2f;
-		airSpeed = 3.4f;
-		airAcc = 0.29f;
+		runSpeed = 8.9f;
+		airSpeed = 4f;
+		airAcc = 0.31f;
 		gravity = -0.48f;
 		jumpAcc = 1.1f;
 		doubleJumpStrength = 10;

@@ -25,7 +25,7 @@ public class Gunmin extends Fighter {
 	public Gunmin(float posX, float posY, int team) {
 		super(posX, posY, team);
 		walkAcc = 0.08f;
-		runAcc = 0.12f;
+		runAcc = 0.11f;
 		airAcc = 0.13f;
 		gravity = -0.38f;
 		weight = 64;

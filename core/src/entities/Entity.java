@@ -155,17 +155,32 @@ public abstract class Entity {
 	
 	void bounceOffWall(){
 		velocity.x *= bounce;
-		UptiltEngine.causeHitlag((int)(velocity.x / 3));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y + image.getHeight()));
-		if (velocity.x > 12) new SFX.MeatyHit().play();
-		else if (velocity.x > 8) new SFX.MidHit().play();
+		bounceOff();
+	}
+	
+	void bounceOffCeiling(){
+		velocity.y *= bounce;
+		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + image.getHeight()/2));
+		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + image.getHeight()/2));
+		bounceOff();
+	}
+	
+	void bounceOff(){
+		UptiltEngine.causeHitlag((int)(knockbackIntensity(velocity) / 4));
+		if (knockbackIntensity(velocity) > 14) new SFX.MeatyHit().play();
+		else if (knockbackIntensity(velocity) > 9) new SFX.MidHit().play();
 		else new SFX.LightHit().play();
 	}
 
 	void checkFloor(){
 		for (int i = 0; i < collisionCheck; ++i)
 			if (doesCollide(position.x, position.y + velocity.y)) {
+				if (!hitstunTimer.timeUp() && velocity.y > 0) {
+					bounceOffCeiling();
+					return;
+				}
 				velocity.y *= softening;
 			}
 		if (doesCollide(position.x, position.y + velocity.y)) velocity.y = 0;
@@ -210,8 +225,9 @@ public abstract class Entity {
 
 	public boolean isOOB(int mapWidth, int mapHeight) {
 		int OOBGrace = 2;
+		boolean highNotHitstun = (mapHeight + image.getHeight()*OOBGrace) < position.y && !hitstunTimer.timeUp();
 		if (position.x < (0 - image.getWidth()*OOBGrace) || (mapWidth + image.getWidth()*OOBGrace) < position.x) return true;
-		if (position.y < (0 - image.getHeight()*OOBGrace) || (mapHeight + image.getHeight()*OOBGrace) < position.y) return true;
+		if (position.y < (0 - image.getHeight()*OOBGrace) || highNotHitstun) return true;
 		return false;
 	}
 
@@ -286,6 +302,10 @@ public abstract class Entity {
 		center.x = position.x +  image.getWidth()/2;
 		center.y = position.y + image.getHeight()/2;
 		return center;
+	}
+	public static float knockbackIntensity(Vector2 knockback) { 
+		float intensity = (float) Math.sqrt(Math.pow(Math.abs(knockback.x), 2) + Math.pow(Math.abs(knockback.y), 2)); 
+		return intensity; 
 	}
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 

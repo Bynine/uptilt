@@ -1,5 +1,6 @@
 package moves;
 
+import main.MapHandler;
 import main.SFX;
 import main.UptiltEngine;
 
@@ -34,6 +35,18 @@ public class ProjectileHitbox extends Hitbox {
 	
 	void handlePerfectBlockingKnockback(){
 		proj.reverse();
+	}
+	
+	private final float reflectMultiplier = 1.5f;
+	void touchOtherActionCircles(){
+		for (ActionCircle ac: MapHandler.getActionCircles()){
+			if (Intersector.overlaps(this.area, ac.area) && ac.doesReflect() && !ac.user.equals(user) ){
+				proj.reflect(ac.user);
+				user = proj.getUser();
+				DAM *= reflectMultiplier;
+				KBG *= reflectMultiplier;
+			}
+		}
 	}
 	
 	float getX(){ 

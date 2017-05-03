@@ -26,7 +26,7 @@ public class Speedy extends Fighter {
 	public Speedy(float posX, float posY, int team) {
 		super(posX, posY, team);
 		runAcc = 3f;
-		runSpeed = 10.5f;
+		runSpeed = 9.5f;
 		walkAcc = 1.4f;
 		walkSpeed = 6.3f;
 		airAcc = 0.4f;

@@ -27,11 +27,14 @@ public abstract class SFX {
 	public static class MidHit extends SFX{ public MidHit(){ setSFX("/melee/smack.wav"); } }
 	public static class MeatyHit extends SFX{ public MeatyHit(){ setSFX("/melee/blow.wav"); } }
 	public static class HeavyHit extends SFX{ public HeavyHit(){ setSFX("/melee/heavy2.wav"); } }
+	public static class SharpHit extends SFX{ public SharpHit(){ setSFX("/melee/shika.wav"); } }
 	public static class LaserFire extends SFX{ public LaserFire(){ setSFX("/melee/pew.wav"); } }
 	public static class ChargeLaserFire extends SFX{ public ChargeLaserFire(){ setSFX("/melee/vwoop.wav"); } }
-	public static class Explode extends SFX{ public Explode(){ setSFX("/melee/explode.wav"); } }
+	public static class Explode extends SFX{ public Explode(){ setSFX("/melee/fire.wav"); } }
+	public static class Die extends SFX{ public Die(){ setSFX("/melee/explode.wav"); } }
 	public static class HomeRun extends SFX{ public HomeRun(){ setSFX("/melee/KRRIIIIING.wav"); } }
 	public static class FootStool extends SFX{ public FootStool(){ setSFX("/footstool.wav"); } }
 	public static class Ground extends SFX{ public Ground(){ setSFX("/land.mp3"); } }
+	public static class Tech extends SFX{ public Tech(){ setSFX("/tada.mp3"); } }
 	
 }

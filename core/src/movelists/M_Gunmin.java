@@ -24,7 +24,7 @@ public class M_Gunmin extends MoveList {
 	public Move nWeak() {
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/laser/nweak.png", 4, 6);
-		Hitbox h1 = new Hitbox(user, 2, 1, 2, Hitbox.SAMURAIANGLE, 24, 6, 10, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2, 1, 2, Hitbox.SAMURAI, 24, 6, 10, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 12, 18);
 		return m;
 	}
@@ -86,7 +86,7 @@ public class M_Gunmin extends MoveList {
 	public Move bAir() {
 		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/laser/bair.png", 4, 7);
-		Hitbox h1 = new Hitbox(user, 0.5f, 2f, 4, Hitbox.SAMURAIANGLE, -30, 0, 16, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 0.5f, 2f, 4, Hitbox.SAMURAI, -30, 0, 16, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 14, 20);
 		return m;
 	}

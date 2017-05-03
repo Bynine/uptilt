@@ -23,20 +23,19 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
 	private static final List<Fighter> playerList = new ArrayList<Fighter>();
 	private static int deltaTime = 0;
-	private static Fighter player1;
-	private static boolean paused = false;
 	private static FPSLogger fpsLogger = new FPSLogger();
 	private static Round round;
+	private static boolean paused = false;
 
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
 	public static boolean 	debugToggle 	= false;
-	private static int 		roomChoice 		= 2;
+	private static int 		roomChoice 		= 0;
 
 	public void create () {
-		player1 = new Frog(0, 0, 0);
+		Fighter player1 = new Kicker(0, 0, 0);
 		beginFighter(player1, 0);
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
@@ -50,14 +49,23 @@ public class UptiltEngine extends ApplicationAdapter {
 		round = new Round();
 	}
 	
-	private void beginFighter(Fighter player, int cont){
+	public static void debug(Fighter newPlayer1){
+		playerList.clear();
+		Fighter player1 = newPlayer1;
+		beginFighter(player1, 0);
+		GraphicsHandler.begin();
+		MapHandler.begin(roomChoice);
+		round = new Round();
+	}
+	
+	private static void beginFighter(Fighter player, int cont){
 		playerList.add(player);
 		InputHandlerController ch = new InputHandlerController(player);
 		if (!ch.setupController(cont)) startWithKeyboard(player);
 		else player.setInputHandler(ch);
 	}
 
-	private void startWithKeyboard(Fighter player){
+	private static void startWithKeyboard(Fighter player){
 		InputHandlerKeyboard kh = new InputHandlerKeyboard(player);
 		player.setInputHandler(kh);
 	}
@@ -93,9 +101,11 @@ public class UptiltEngine extends ApplicationAdapter {
 
 	public static void changeRoom (Room room, Vector2 position) {
 		deltaTime = 0;
-		player1.setPosition(position);
+		for (Fighter player: getPlayers()){
+			player.setPosition(position);
+		}
 		MapHandler.updateRoomMap(room);
-		GraphicsHandler.updateRoomGraphics(player1);
+		GraphicsHandler.updateRoomGraphics(getPlayers().get(0));
 	}
 
 	public static float getVolume(){ return volume; }

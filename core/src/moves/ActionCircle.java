@@ -19,13 +19,12 @@ import entities.Hittable.HitstunType;
 
 public abstract class ActionCircle {
 
-	final Fighter user;
+	Fighter user;
 	final float dispX, dispY;
 	final Circle area;
 	final Timer duration = new DurationTimer(5);
 	final Timer refreshTimer = new DurationTimer(6);
-	private boolean initialHit;
-	boolean remove = false, doesRefresh = false;
+	boolean initialHit = false, remove = false, doesRefresh = false, reflects = false;
 	float movesAheadMod = 1;
 	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
 	private Set<Fighter> s;
@@ -64,6 +63,7 @@ public abstract class ActionCircle {
 			updatePosition();
 			if (isInitialHit()) remove = true;
 		}
+		touchOtherActionCircles();
 	}
 
 	public void updatePosition() {
@@ -76,6 +76,10 @@ public abstract class ActionCircle {
 		remove = false;
 		setInitialHit(false);
 	}
+	
+	void touchOtherActionCircles(){
+		/* */
+	}
 
 	float getX(){ 
 		return user.getPosition().x + user.getImage().getWidth()/2 + (user.direct() * dispX  + (movesAheadMod * user.getVelocity().x) ); 
@@ -84,29 +88,22 @@ public abstract class ActionCircle {
 	float getY(){
 		return user.getPosition().y + user.getImage().getHeight()/2 + dispY  + (movesAheadMod * user.getVelocity().y);
 	}
-
+	
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
 	boolean didHitTarget(Fighter target){ 
 		return user.getTeam() != target.getTeam() && !remove && !user.attackTimer.timeUp() 
 				&& !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()) && !hitFighterList.contains(target); 
 	}
+	public boolean isInitialHit() { return initialHit; }
+	public boolean hitAnybody() { return hitFighterList.size() >= 1; }
+	public boolean doesReflect() { return reflects; }
 	public void setRefresh(int time) { 
 		refreshTimer.setEndTime(time);
 		doesRefresh = true; 
 	}
-
-	public boolean isInitialHit() {
-		return initialHit;
-	}
-
 	public void setInitialHit(boolean initialHit) { this.initialHit = initialHit; }
+	public void setReflects() { reflects = true; }
 	public void setMovesAheadMod(float mod) { movesAheadMod = mod; }
-
-	public boolean hitAnybody() {
-		return hitFighterList.size() >= 1;
-	}
-
-	protected Object clone() throws CloneNotSupportedException { return super.clone(); }
 
 }

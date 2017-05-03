@@ -9,13 +9,15 @@ import timers.Timer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
+import entities.Hittable.HitstunType;
 import main.MapHandler;
 import main.SFX;
-import moves.ActionCircle;
 import moves.ActionCircleGroup;
 import moves.Hitbox;
+import moves.Hitbox.Property;
 import moves.ProjectileHitbox;
 
 public abstract class Projectile extends Entity{
@@ -39,8 +41,7 @@ public abstract class Projectile extends Entity{
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-		velocity.x = velX;
-		velocity.y = velY;
+		updateVelocity(rectangleList, entityList);
 		if (life.timeUp()) setRemove();
 		setupRectangles(rectangleList, entityList);
 		checkWalls();
@@ -49,6 +50,11 @@ public abstract class Projectile extends Entity{
 		updateTimers();
 		updatePosition();
 		updateImagePosition(deltaTime);
+	}
+
+	void updateVelocity(List<Rectangle> rectangleList, List<Entity> entityList){
+		velocity.x = velX;
+		velocity.y = velY;
 	}
 
 	/** texture string, lifetime, velocity x, velocity y **/
@@ -66,7 +72,7 @@ public abstract class Projectile extends Entity{
 		if (hitWall) life.end();
 		return hitWall;
 	}
-	
+
 	void handleTouchHelper(Entity e){
 		if (isTouching(e, 0) && e instanceof Projectile){
 			Projectile p = (Projectile) e;
@@ -77,61 +83,68 @@ public abstract class Projectile extends Entity{
 			if (collides) touchOtherProjectile(p);
 		}
 	}
-	
+
+	public void reflect(Fighter reflector){
+		reverse();
+		if (null != owner) owner = reflector;
+		life.restart();
+	}
+
+
+	public Fighter getUser() {
+		return owner;
+	}
+
 	abstract void touchOtherProjectile(Projectile p);
 
-	public static class Spiker extends Projectile{
-		private final int lifeTime = 60;
-
-		public Spiker(float posX, float posY, Fighter owner) {
-			super(posX, posY + 30, owner);
-			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
-			setup("sprites/entities/ripwheel.png", lifeTime, 12, 0);
-			ac = new ProjectileHitbox(owner, 1.2f, 0.02f, 4, 90, 0, 0, 11, new SFX.LightHit(), this, lifeTime);
-			ac.setRefresh(8);
-			MapHandler.addActionCircle(ac);
-		}
-
-		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-			super.update(rectangleList, entityList, deltaTime);
-			if (ac.hitAnybody()) velX *= 0.3f;
-		}
-		
-		void touchOtherProjectile(Projectile p){
-			if (!p.trans) life.moveCounterForward(20);
-		}
-
-	}
-	
 	public abstract static class Explosive extends Projectile{
 		boolean exploded = false;
-		
+
 		public Explosive(float posX, float posY, Fighter owner) {
 			super(posX, posY, owner);
 		}
-		
+
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
-			if ( (ac.hitAnybody() || life.timeUp()) && !exploded) explode();
+			if ( (ac.hitAnybody() || 
+					life.timeUp()) && !exploded) explode();
 		}
-		
+
 		void explode(){
 			MapHandler.addEntity(getExplosion());
 			exploded = true;
 			life.end();
 		}
 
-		public boolean doesCollide(float x, float y){
-			if (super.doesCollide(x, y)) explode();
-			return super.doesCollide(x, y);
-		}
-		
 		void touchOtherProjectile(Projectile p){
 			if (!p.trans) explode();
 		}
-		
+
 		protected abstract Projectile getExplosion();
-		
+
+	}
+
+	public static class Stunner extends Projectile{
+		private final int lifeTime = 60;
+
+		public Stunner(float posX, float posY, Fighter owner) {
+			super(posX, posY + 30, owner);
+			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
+			setup("sprites/entities/ripwheel.png", lifeTime, 12, 0);
+			ac = new ProjectileHitbox(owner, 1, 0, 15, 0, 0, 0, 12, new SFX.SharpHit(), this, lifeTime);
+			ac.setProperty(Property.STUN);
+			MapHandler.addActionCircle(ac);
+		}
+
+		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+			super.update(rectangleList, entityList, deltaTime);
+			if (ac.hitAnybody()) life.end();
+		}
+
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) life.moveCounterForward(20);
+		}
+
 	}
 
 	public static class Rocket extends Explosive{
@@ -142,7 +155,7 @@ public abstract class Projectile extends Entity{
 			super(posX, posY + 24, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
 			setup("sprites/entities/rocket.png", lifeTime, 6, 0);
-			ac = new ProjectileHitbox(owner, 0, 0, 5, Hitbox.SAMURAIANGLE, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 0, 0, 5, Hitbox.SAMURAI, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 			velX = owner.direct() * 2;
 			if (owner.isHoldUp()) velX = 1;
@@ -154,55 +167,142 @@ public abstract class Projectile extends Entity{
 			if (deltaTime % 10 == 0) MapHandler.addEntity(new Graphic.SmokeTrail(this, 8));
 		}
 
+		public boolean doesCollide(float x, float y){
+			if (super.doesCollide(x, y)) explode();
+			return super.doesCollide(x, y);
+		}
+
 		protected Projectile getExplosion() {
-			return new Explosion(position.x, position.y, owner, this);
+			return new RocketExplosion(owner, this);
 		}
 	}
 
-	private static class Explosion extends Projectile{
+	private static class RocketExplosion extends Projectile{
 
 		private final int lifeTime = 4;
 		private final int displacement = 40;
 
-		public Explosion(float posX, float posY, Fighter owner, Projectile rocket) {
+		public RocketExplosion(Fighter owner, Projectile rocket) {
 			super(0, 0, owner);
 			new SFX.Explode().play();
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
 			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
-			ac = new ProjectileHitbox(null, 8, 3, 30, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac2 = new ProjectileHitbox(null, 7, 2, 10, Hitbox.SAMURAIANGLE, 0, 0, 60, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac3 = new ProjectileHitbox(null, 5, 0, 0, 20, 0, 0, 120, new SFX.LightHit(), this, lifeTime);
+			ac = new ProjectileHitbox(null, 10, 4, 30, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			ac.setHitstunType(HitstunType.SUPER);
+			Hitbox ac2 = new ProjectileHitbox(null, 8, 3, 20, Hitbox.SAMURAI, 0, 0, 60, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac3 = new ProjectileHitbox(null, 5, 1, 0, 10, 0, 0, 120, new SFX.LightHit(), this, lifeTime);
 			new ActionCircleGroup(Arrays.asList(ac, ac2, ac3));
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
 			MapHandler.addActionCircle(ac3);
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}
 	}
 
-	public static class ShotgunBlast extends Projectile{
+	public static class Grenade extends Projectile{
+		private final int lifeTime = 90;
+		boolean exploded = false;
+		private final Timer bounceTimer = new Timer(20);
 
-		private final int lifeTime = 2;
+		public Grenade(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+			setup("sprites/entities/grenade.png", lifeTime, 0, 0);
+			ac = new ProjectileHitbox(owner, 2.0f, 1.0f, 5, Hitbox.SAMURAI, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
+			MapHandler.addActionCircle(ac);
+			float additionalSpeed = 0;
+			if (Math.signum(owner.getStickX()) == owner.direct()) additionalSpeed = (owner.getStickX() * 5);
+			velocity.x = owner.direct() * 5 + additionalSpeed;
+			velocity.y = 7;
+			airFriction = 0.993f;
+			friction = 0.97f;
+			gravity = -0.42f;
+			timerList.add(bounceTimer);
+		}
 
-		public ShotgunBlast(float posX, float posY, Fighter owner) {
-			super(posX, posY - 24, owner);
+		private final int hitSetTimer = 12;
+		void updateVelocity(List<Rectangle> rectangleList, List<Entity> entityList){
+			for (Entity en: entityList){
+				if (en != this && en != owner){
+					if (Intersector.overlaps(getImage().getBoundingRectangle(), en.getHurtBox()) && bounceTimer.timeUp() ) {
+						velocity.x *= 0.5;
+						velocity.y += 3;
+						if ((life.getEndTime() - life.getCounter()) > hitSetTimer) {
+							life.setEndTime(hitSetTimer);
+							life.restart();
+						}
+						bounceTimer.restart();
+					}
+				}
+			}
+			super.limitingForces(rectangleList, entityList);
+		}
+
+		void checkWalls(){
+			double horizontalBounceMod = -0.9;
+			if (doesCollide(position.x + velocity.x, position.y)) velocity.x *= horizontalBounceMod;
+		}
+
+		void checkFloor(){
+			double verticalBounceMod = -0.6;
+			if (doesCollide(position.x, position.y + velocity.y)) velocity.y *= verticalBounceMod;
+		}
+
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) reverse();
+		}
+
+		public boolean doesCollide(float x, float y){
+			if (collision == Collision.GHOST) return false;
+			for (Rectangle r : tempRectangleList){
+				Rectangle thisR = getCollisionBox(x, y);
+				boolean upThroughThinPlatform = r.getHeight() <= 1 && r.getY() - this.getPosition().y > 0;
+				if (!upThroughThinPlatform && Intersector.overlaps(thisR, r) && thisR != r) return true;
+			}
+			return false;
+		}
+
+		protected Projectile getExplosion() {
+			return new GrenadeExplosion(owner, this);
+		}
+
+		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+			if (life.timeUp() && !exploded){
+				MapHandler.addEntity(getExplosion());
+				exploded = true;
+				life.end();
+			}
+			super.update(rectangleList, entityList, deltaTime);
+		}
+
+	}
+
+	private static class GrenadeExplosion extends Projectile{
+
+		private final int lifeTime = 4;
+		private final int displacement = 20;
+
+		public GrenadeExplosion(Fighter owner, Projectile grenade) {
+			super(0, 0, owner);
 			new SFX.Explode().play();
-			setup("sprites/entities/blast.png", lifeTime, 0, 0);
-			ac = new ProjectileHitbox(owner, 8, 2, 16, 270, 0, 0, 20, new SFX.HeavyHit(), this, lifeTime);
-			ActionCircle ac2 = new ProjectileHitbox(owner, 5, 2, 16, 270, 5, -20, 10, new SFX.HeavyHit(), this, lifeTime);
+			position.x = grenade.position.x - displacement;
+			position.y = grenade.position.y - displacement;
+			setup("sprites/entities/grenadeexplosion.png", lifeTime, 0, 0);
+			ac = new ProjectileHitbox(null, 6, 4, 20, 90, 0, 0, 30, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac2 = new ProjectileHitbox(null, 5, 3, 10, Hitbox.SAMURAI, 0, 0, 50, new SFX.HeavyHit(), this, lifeTime);
+			new ActionCircleGroup(Arrays.asList(ac, ac2));
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}
 	}
-	
+
 	public static class Dumpling extends Projectile{
 		private final int lifeTime = 160;
 
@@ -217,7 +317,7 @@ public abstract class Projectile extends Entity{
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			if (!p.trans) p.life.end();
 		}
@@ -237,27 +337,27 @@ public abstract class Projectile extends Entity{
 			ac = new ProjectileHitbox(owner, 0, 0, 4, 270, 0, 0, 6, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
-		
+
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 			if (ac.hitAnybody()) life.end();
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}
 	}
-	
+
 	public static class LaserUp extends Laser{
-		
+
 		public LaserUp(float posX, float posY, Fighter owner) {
 			super(posX, posY, owner);
 			position.x += owner.getImage().getWidth()/2;
 			setup("sprites/entities/laserup.png", lifeTime, 0, laserSpeed);
 		}
-		
+
 	}
-	
+
 	public static class LaserDiagonalF extends Laser{
 
 		public LaserDiagonalF(float posX, float posY, Fighter owner) {
@@ -267,7 +367,7 @@ public abstract class Projectile extends Entity{
 		}
 
 	}
-	
+
 	public static class LaserDiagonalB extends Laser{
 
 		public LaserDiagonalB(float posX, float posY, Fighter owner) {
@@ -277,7 +377,7 @@ public abstract class Projectile extends Entity{
 		}
 
 	}
-	
+
 	void fixLaser(boolean dir){
 		if (dir) flip();
 		else position.x += owner.getImage().getWidth()/2;
@@ -291,21 +391,21 @@ public abstract class Projectile extends Entity{
 			super(posX, posY + 32, owner);
 			new SFX.ChargeLaserFire().play();
 			setup("sprites/entities/chargelaser.png", lifeTime, 4, 0);
-			ac = new ProjectileHitbox(owner, 1, 2, 8, Hitbox.SAMURAIANGLE, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 1, 2, 8, Hitbox.SAMURAI, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
-		
+
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
 			if (ac.hitAnybody()) life.end();
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			if (!p.trans) life.end();
 		}
 
 	}
-	
+
 	public static class SuperLaser extends Explosive{
 
 		private final int lifeTime = 60;
@@ -323,8 +423,13 @@ public abstract class Projectile extends Entity{
 			return new LaserExplosion(position.x, position.y, owner, this);
 		}
 
+		public boolean doesCollide(float x, float y){
+			if (super.doesCollide(x, y)) explode();
+			return super.doesCollide(x, y);
+		}
+
 	}
-	
+
 	private static class LaserExplosion extends Projectile{
 
 		private final int lifeTime = 4;
@@ -336,14 +441,14 @@ public abstract class Projectile extends Entity{
 			position.x = superlaser.position.x - displacement;
 			position.y = superlaser.position.y - displacement;
 			setup("sprites/entities/laserexplosion.png", lifeTime, 0, 0);
-			ac = new ProjectileHitbox(null, 6, 2, 20, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac2 = new ProjectileHitbox(null, 5, 1, 10, Hitbox.SAMURAIANGLE, 0, 0, 80, new SFX.HeavyHit(), this, lifeTime);
+			ac = new ProjectileHitbox(null, 6, 2, 20, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac2 = new ProjectileHitbox(null, 5, 1, 10, Hitbox.SAMURAI, 0, 0, 80, new SFX.HeavyHit(), this, lifeTime);
 			ac.setProperty(Hitbox.Property.ELECTRIC);
 			ac2.setProperty(Hitbox.Property.ELECTRIC);
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
 		}
-		
+
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}

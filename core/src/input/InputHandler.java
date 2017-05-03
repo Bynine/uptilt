@@ -6,6 +6,7 @@ import java.util.List;
 
 import main.UptiltEngine;
 import entities.Fighter;
+import entities.Frog;
 
 public abstract class InputHandler {
 
@@ -16,12 +17,13 @@ public abstract class InputHandler {
 	public static final int commandCharge		= 3; 
 	public static final int commandDodge		= 4;
 	public static final int commandGrab 		= 5;
-	public static final int commandTaunt 		= 6;
+	public static final int commandSelect 		= 6;
 	public static final int commandPause 		= 7;
 	public static final int commandStickUp 		=20;
 	public static final int commandStickLeft	=21;
 	public static final int commandStickRight	=22;
 	public static final int commandStickDown	=23;
+	public static final int commandTaunt 		=30;
 
 	Fighter fighter;
 	public InputHandler(Fighter fighter){
@@ -47,6 +49,7 @@ public abstract class InputHandler {
 		}
 		if (UptiltEngine.isPaused()) return;
 
+		if (command == commandSelect) UptiltEngine.debug(new Frog(0, 0, 0));
 		if (fighter.canMove()) wasCommandAccepted = handleCanMoveActions(command);
 		if (fighter.canAct()) wasCommandAccepted = handleCanActActions(command);
 		if (fighter.canAttack()) wasCommandAccepted = handleCanAttackActions(command);

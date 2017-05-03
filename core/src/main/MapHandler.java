@@ -54,16 +54,22 @@ public class MapHandler {
 			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), UptiltEngine.getDeltaTime()); 
 			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
 				if (en instanceof Fighter){
-					Fighter fi = (Fighter) en;
-					new SFX.Explode().play();
-					if (fi.getStocks() > 1) fi.respawn();
-					else {
-						fi.setStocks(0);
-						entityIter.remove();
-					}
+					if (kill ((Fighter) en)) entityIter.remove();
 				}
 				else entityIter.remove();
 			}
+		}
+	}
+	
+	private static boolean kill(Fighter fi){
+		new SFX.Die().play();
+		if (fi.getStocks() > 1) {
+			fi.respawn();
+			return false;
+		}
+		else {
+			fi.setStocks(0);
+			return true;
 		}
 	}
 
@@ -140,6 +146,11 @@ public class MapHandler {
 	public static float getRoomWind(){
 		if (activeRoom == null) return 0;
 		else return activeRoom.getWind();
+	}
+	
+	public static List<ActionCircle> getActionCircles(){
+		if (activeRoom == null) return new ArrayList<ActionCircle>();
+		else return activeRoom.getActionCircleList();
 	}
 
 }

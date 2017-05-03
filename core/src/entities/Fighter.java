@@ -36,6 +36,7 @@ public abstract class Fighter extends Hittable{
 	final Timer grabbingTimer = new Timer(0), dashTimer = new Timer(20);
 	private final Timer invincibleTimer = new Timer(0), dodgeTimer = new Timer(1);
 	private final Timer footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
+	private final Timer stunTimer = new Timer(0);
 	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0, prevPositionX = 0, prevPositionY = 0;
 
 	float fallSpeed = -7f, walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
@@ -70,7 +71,7 @@ public abstract class Fighter extends Hittable{
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
 		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer,
-				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, dodgeTimer, footStoolTimer, slowedTimer));
+				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, dodgeTimer, footStoolTimer, slowedTimer, stunTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 		randomAnimationDisplacement = (int) (8 * Math.random());
@@ -463,9 +464,9 @@ public abstract class Fighter extends Hittable{
 		if (!attackTimer.timeUp() && null != getActiveMove() && null != getActiveMove().move.getAnimation()){
 			setImage(getActiveMove().move.getAnimation().getKeyFrame(getActiveMove().move.getFrame()));
 		}
-		if (!caughtTimer.timeUp()) setImage(getHelplessFrame(deltaTime));
+		if (!caughtTimer.timeUp() || !stunTimer.timeUp()) setImage(getHitstunFrame(0));
 		if (!hitstunTimer.timeUp()) {
-			if (hitstunType == HitstunType.SUPER) setImage(getTumbleFrame(deltaTime));
+			if (hitstunType == HitstunType.SUPER || hitstunType == HitstunType.ULTRA) setImage(getTumbleFrame(deltaTime));
 			else setImage(getHitstunFrame(deltaTime));
 		}
 		if (!grabbingTimer.timeUp()) setImage(getGrabFrame(deltaTime));
@@ -510,15 +511,23 @@ public abstract class Fighter extends Hittable{
 		return false;
 	}
 
-	void bounceOffWall(){
-		if (inputHandler.isTeching()) setInvincible(20);
-		super.bounceOffWall();
+	void bounceOff(){
+		if (inputHandler.isTeching()) tech();
+		else super.bounceOff();
+	}
+	
+	private void tech(){
+		setInvincible(30);
+		new SFX.Tech().play();
+		hitstunTimer.end();
+		velocity.x = 0;
+		velocity.y = 0;
 	}
 
 	public void ground(){
 		if (hitstunTimer.getCounter() > 1 && velocity.y < 0){	
 			if (tumbling) {
-				if (inputHandler.isTeching()) setInvincible(20);
+				if (inputHandler.isTeching()) tech();
 				else state = State.FALLEN;
 			}
 			hitstunTimer.end();
@@ -642,6 +651,7 @@ public abstract class Fighter extends Hittable{
 			setActiveMove(null);
 			attackTimer.end();
 			hitstunType = ht;
+			stunTimer.end();
 		}
 		if (knockbackIntensity(knockback) > tumbleBK) tumbling = true;
 	}
@@ -677,6 +687,11 @@ public abstract class Fighter extends Hittable{
 		grabbingTimer.setEndTime(caughtTime);
 		grabbingTimer.restart();
 	}
+	
+	public void stun(int duration) {
+		stunTimer.setEndTime(duration);
+		stunTimer.restart();
+	}
 
 	public void respawn() {
 		stocks -= 1;
@@ -701,7 +716,7 @@ public abstract class Fighter extends Hittable{
 	public boolean canAct(){ 
 		return hitstunTimer.timeUp() && attackTimer.timeUp() && state != State.FALLEN && state != State.HELPLESS && canMove(); 
 	}
-	public boolean canMove(){ return caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
+	public boolean canMove(){ return stunTimer.timeUp() && caughtTimer.timeUp() && grabbingTimer.timeUp(); } 
 	public boolean isRunning() { return state == State.RUN || state == State.DASH; }
 	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0 || !invincibleTimer.timeUp(); }
 	public boolean isInHitstun() { return !hitstunTimer.timeUp(); }
@@ -732,10 +747,6 @@ public abstract class Fighter extends Hittable{
 		invincibleTimer.setEndTime(i);
 	}
 	public float getHitstunMod() { return hitstunMod; }
-	public static float knockbackIntensity(Vector2 knockback) { 
-		float intensity = (float) Math.sqrt(Math.pow(Math.abs(knockback.x), 2) + Math.pow(Math.abs(knockback.y), 2)); 
-		return intensity; 
-	}
 	private final float minDirect = 0.85f;
 	public boolean isHoldUp() 		{ return -stickY > minDirect; }
 	public boolean isHoldDown()		{ return stickY > minDirect; }

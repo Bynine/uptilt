@@ -29,6 +29,7 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		fighter.handleBlockHeld(blockHold());
 		
 		if (dodge() && techTimer.timeUp()) techTimer.restart();
+		techTimer.countUp();
 	}
 
 	private void inputToCommand(boolean input, int command){

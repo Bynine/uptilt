@@ -12,11 +12,14 @@ import entities.Fighter;
 import entities.Graphic;
 
 public class Hitbox extends ActionCircle{
-	private final float BKB, KBG, DAM, ANG;
-	private float heldCharge = 1;
-	private final Effect.Charge charge;
-	private final SFX sfx;
-	public static final int SAMURAIANGLE = 361;
+	public static final int SAMURAI = 361;
+	
+	protected float BKB, KBG;
+	protected float DAM;
+	protected float ANG;
+	protected float heldCharge = 1;
+	protected final Effect.Charge charge;
+	protected final SFX sfx;
 
 	/**
 	 * @param User (this)
@@ -72,7 +75,7 @@ public class Hitbox extends ActionCircle{
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
 		knockback.set(knockbackFormula(target) * staleness, knockbackFormula(target) * staleness);
-		if (ANG == SAMURAIANGLE) setSamuraiAngle(target, knockback);
+		if (ANG == SAMURAI) setSamuraiAngle(target, knockback);
 		else knockback.setAngle(ANG);
 		knockback.x *= applyReverseHitbox(target);
 		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
@@ -83,6 +86,9 @@ public class Hitbox extends ActionCircle{
 			hitstun *= meteorHitstunMod;
 		}
 		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun, hitstunType);
+		if (property == Property.STUN){
+			target.stun((int) (DAM * 6));
+		}
 		startHitlag(target);
 		MapHandler.addEntity(new Graphic.HitGraphic(area.x + area.radius/2, area.y + area.radius/2, hitlagFormula(knockbackFormula(target))));
 		sfx.play();
@@ -174,7 +180,7 @@ public class Hitbox extends ActionCircle{
 		else return 1;
 	}
 
-	public enum Property { NORMAL, ELECTRIC  }
+	public enum Property { NORMAL, ELECTRIC, STUN  }
 	public float getDamage() { return DAM; }
 	public float getAngle() { return ANG; }
 	public void setProperty(Property property) { this.property = property; }

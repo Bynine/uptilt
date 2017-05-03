@@ -118,7 +118,7 @@ public abstract class Effect extends Action{
 		GraphicEffect(Fighter user, int start, int end, Graphic g) {
 			super(start, end);
 			this.g = g;
-			g.setDuration(end-  start);
+			g.setDuration(end - start);
 		}
 		void finish() { /* */ }
 		void performAction() {

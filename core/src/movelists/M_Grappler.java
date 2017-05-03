@@ -136,8 +136,8 @@ public class M_Grappler extends MoveList {
 	public Move nAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/grappler/stand.png", 1, 1);
-		Hitbox early = new Hitbox(user, 6, 0.5f, 11, Hitbox.SAMURAIANGLE, 0, 0, 40, new SFX.MidHit());
-		Hitbox late  = new Hitbox(user, 4, 0.3f, 8,  Hitbox.SAMURAIANGLE, 0, 0, 30, new SFX.LightHit());
+		Hitbox early = new Hitbox(user, 6, 0.5f, 11, Hitbox.SAMURAI, 0, 0, 40, new SFX.MidHit());
+		Hitbox late  = new Hitbox(user, 4, 0.3f, 8,  Hitbox.SAMURAI, 0, 0, 30, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
 		m.eventList.addActionCircle(early, 6, 12);
 		m.eventList.addActionCircle(late, 13, 25);
@@ -220,7 +220,7 @@ public class M_Grappler extends MoveList {
 	public Move sSpecial() {
 		Move m = new Move(user, 48);
 		m.setAnimation("sprites/fighters/grappler/stand.png", 1, 1);
-		Hitbox early = new Hitbox(user, 6, 2.5f, 13, Hitbox.SAMURAIANGLE, 10, -4, 20, new SFX.HeavyHit());
+		Hitbox early = new Hitbox(user, 6, 2.5f, 13, Hitbox.SAMURAI, 10, -4, 20, new SFX.HeavyHit());
 		Hitbox late = new Hitbox(user, 3, 1, 9, 80, 12, -4, 14, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
 		if (user.isGrounded()) m.eventList.addVelocityChange(user, 10, Action.ChangeVelocity.noChange, 8);

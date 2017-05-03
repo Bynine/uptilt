@@ -34,8 +34,8 @@ public class Mook extends Fighter {
 		weight = 80;
 		jumpAcc = 0.52f;
 		airSpeed = 2f;
-		walkSpeed = 2.5f;
-		runSpeed = 5f;
+		walkSpeed = 2.1f;
+		runSpeed = 4.2f;
 		friction = 0.86f;
 		wallJumpStrengthX = 7f;
 		wallJumpStrengthY = 6.2f;
