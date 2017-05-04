@@ -24,67 +24,71 @@ public class InputHandlerKeyboard extends InputHandlerPlayer implements InputPro
 		return 0;
 	}
 	
-	boolean attack(){
+	public boolean attack(){
 		return Gdx.input.isKeyJustPressed(Keys.M);
 	}
 	
-	boolean special(){
+	public boolean special(){
 		return Gdx.input.isKeyJustPressed(Keys.N);
 	}
 	
 	private int chargeInput = Keys.K;
-	boolean charge(){
+	public boolean charge(){
 		return Gdx.input.isKeyJustPressed(chargeInput);
 	}
 	
-	boolean chargeHold(){
+	public boolean chargeHold(){
 		return Gdx.input.isKeyPressed(chargeInput);
 	}
 	
 	private int jumpInput = Keys.J;
-	boolean jump(){
+	public boolean jump(){
 		return Gdx.input.isKeyJustPressed(jumpInput);
 	}
 	
-	boolean jumpHold(){
+	public boolean jumpHold(){
 		return Gdx.input.isKeyPressed(jumpInput);
 	}
 	
-	boolean grab(){
+	public boolean grab(){
 		return Gdx.input.isKeyJustPressed(Keys.I);
 	}
 	
 	private int blockInput = Keys.O;
-	boolean dodge(){
+	public boolean dodge(){
 		return Gdx.input.isKeyJustPressed(blockInput);
 	}
 	
-	boolean blockHold(){
+	public boolean blockHold(){
 		return Gdx.input.isKeyPressed(blockInput);
 	}
 	
-	boolean taunt(){
+	public boolean taunt(){
 		return Gdx.input.isKeyJustPressed(Keys.L);
 	}
 	
-	boolean flickLeft(){
+	public boolean flickLeft(){
 		return Gdx.input.isKeyJustPressed(Keys.A);
 	}
 	
-	boolean flickRight(){
+	public boolean flickRight(){
 		return Gdx.input.isKeyJustPressed(Keys.D);
 	}
 	
-	boolean flickUp(){
+	public boolean flickUp(){
 		return Gdx.input.isKeyJustPressed(Keys.W);
 	}
 	
-	boolean flickDown(){
+	public boolean flickDown(){
 		return Gdx.input.isKeyJustPressed(Keys.S);
 	}
 	
-	boolean pause(){
+	public boolean pause(){
 		return Gdx.input.isKeyPressed(Keys.P);
+	}
+	
+	public boolean select(){
+		return Gdx.input.isKeyPressed(Keys.LEFT_BRACKET);
 	}
 	
 	/* NOT USED */

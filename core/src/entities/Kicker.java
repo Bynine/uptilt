@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Kicker extends Fighter {
 
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 6, PlayMode.LOOP);
-	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 2, 1, 12, PlayMode.LOOP);
+	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 4, 1, 12, PlayMode.LOOP);
 	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/run.png", 6, 1, 8, PlayMode.LOOP);
 	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/tumble.png", 4, 1, 8, PlayMode.LOOP);
 	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fjump.png")));
@@ -32,6 +32,7 @@ public class Kicker extends Fighter {
 
 	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
+		weight = 90;
 		runAcc = 2.4f;
 		runSpeed = 8.2f;
 		walkAcc = 0.9f;

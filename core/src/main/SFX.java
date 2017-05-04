@@ -11,6 +11,10 @@ public abstract class SFX {
 		if (null != url) Gdx.audio.newSound(Gdx.files.internal(url)).play(UptiltEngine.getVolume());
 	}
 	
+	public void play(float vol) {
+		if (null != url) Gdx.audio.newSound(Gdx.files.internal(url)).play(vol * UptiltEngine.getVolume());
+	}
+	
 	public void playDirectional(float pan){
 		if (null != url) {
 			Sound sfx = Gdx.audio.newSound(Gdx.files.internal(url));

@@ -24,7 +24,7 @@ public class EntityLoader {
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));
-			dummy.setStocks(999);
+			dummy.setLives(999);
 			return dummy;
 		}
 		}

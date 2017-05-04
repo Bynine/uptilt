@@ -30,7 +30,11 @@ public abstract class Room {
 	protected float r, g, b = 1;
 	protected float a = 0;
 	protected float wind = 0;
+	protected float gravity = 1;
 	Level superLevel;
+	
+	public static final float LOWGRAV = 0.66f;
+	public static final float HIGRAV  = 1.3f;
 
 	public Room(Level superLevel){
 		clearOut();
@@ -106,5 +110,6 @@ public abstract class Room {
 	public float getG(){ return g; }
 	public float getA(){ return a; }
 	public float getWind() { return wind; }
+	public float getGravity() { return gravity; }
 
 }

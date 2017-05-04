@@ -33,7 +33,7 @@ public class EnemySpawner {
 		Iterator<Fighter> spawnIter = spawnedEntities.iterator();
 		while (spawnIter.hasNext()){
 			Fighter spawn = spawnIter.next();
-			if (spawn.getStocks() == 0) spawnIter.remove();
+			if (spawn.getLives() == 0) spawnIter.remove();
 		}
 	}
 

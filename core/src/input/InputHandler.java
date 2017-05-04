@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import main.UptiltEngine;
 import entities.Fighter;
-import entities.Frog;
 
 public abstract class InputHandler {
 
@@ -42,14 +40,7 @@ public abstract class InputHandler {
 
 	protected void handleCommand(int command){
 		boolean wasCommandAccepted = false;
-		if (command == commandPause) {
-			UptiltEngine.pauseGame(); 
-			wasCommandAccepted = true; 
-			return;
-		}
-		if (UptiltEngine.isPaused()) return;
 
-		if (command == commandSelect) UptiltEngine.debug(new Frog(0, 0, 0));
 		if (fighter.canMove()) wasCommandAccepted = handleCanMoveActions(command);
 		if (fighter.canAct()) wasCommandAccepted = handleCanActActions(command);
 		if (fighter.canAttack()) wasCommandAccepted = handleCanAttackActions(command);

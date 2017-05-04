@@ -414,7 +414,8 @@ public class M_Frog extends M_Kicker {
 	}
 
 	private final int rollLength = 32;
-	private final float rollSpeed = -7.5f;
+	private final float rollHeight = 4.2f;
+	private final float rollSpeed = -8f;
 	private final int rollInvinc = 24;
 	public Move rollForward(){
 		Move m = new Move(user, rollLength);
@@ -422,7 +423,7 @@ public class M_Frog extends M_Kicker {
 		user.flip();
 		m.setAnimation("sprites/fighters/frog/airdodgeb.png", 1, 1);
 		m.eventList.addConstantVelocity(user, 1, 27, rollSpeed, Action.ChangeVelocity.noChange);
-		m.eventList.addVelocityChange(user, 1, Action.ChangeVelocity.noChange, 4);
+		m.eventList.addVelocityChange(user, 1, Action.ChangeVelocity.noChange, rollHeight);
 		m.eventList.addInvincible(user, 1, rollInvinc);
 		return m;
 	}
@@ -432,7 +433,7 @@ public class M_Frog extends M_Kicker {
 		m.dontTurn();
 		m.setAnimation("sprites/fighters/frog/airdodgeb.png", 1, 1);
 		m.eventList.addConstantVelocity(user, 1, 27, rollSpeed, Action.ChangeVelocity.noChange);
-		m.eventList.addVelocityChange(user, 1, Action.ChangeVelocity.noChange, 4);
+		m.eventList.addVelocityChange(user, 1, Action.ChangeVelocity.noChange, rollHeight);
 		m.eventList.addInvincible(user, 1, rollInvinc);
 		return m;
 	}

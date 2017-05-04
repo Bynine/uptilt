@@ -52,7 +52,7 @@ public class MapHandler {
 			Entity en = entityIter.next();
 			boolean shouldUpdate = UptiltEngine.outOfHitlag() || en instanceof Graphic;
 			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), UptiltEngine.getDeltaTime()); 
-			if ( en.isOOB(mapWidth, mapHeight) || en.toRemove() ) {
+			if ( en.toRemove(mapWidth, mapHeight) ) {
 				if (en instanceof Fighter){
 					if (kill ((Fighter) en)) entityIter.remove();
 				}
@@ -63,12 +63,12 @@ public class MapHandler {
 	
 	private static boolean kill(Fighter fi){
 		new SFX.Die().play();
-		if (fi.getStocks() > 1) {
+		if (fi.getLives() > 1) {
 			fi.respawn();
 			return false;
 		}
 		else {
-			fi.setStocks(0);
+			fi.setLives(0);
 			return true;
 		}
 	}
@@ -146,6 +146,11 @@ public class MapHandler {
 	public static float getRoomWind(){
 		if (activeRoom == null) return 0;
 		else return activeRoom.getWind();
+	}
+	
+	public static float getRoomGravity(){
+		if (activeRoom == null) return 1;
+		else return activeRoom.getGravity();
 	}
 	
 	public static List<ActionCircle> getActionCircles(){

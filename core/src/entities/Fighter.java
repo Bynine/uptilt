@@ -61,7 +61,7 @@ public abstract class Fighter extends Hittable{
 	private float initialHitAngle = 0;
 	private final int randomAnimationDisplacement;
 	final Vector2 spawnPoint;
-	private int team = 0, stocks = 1;
+	private int team = 0, lives = 1;
 	MoveList moveList = new M_Mook(this);
 	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
 
@@ -542,8 +542,8 @@ public abstract class Fighter extends Hittable{
 	}
 
 	void handleGravity(){
-		if (state == State.WALLSLIDE) velocity.y = wallSlideSpeed;
-		else velocity.y += gravity;
+		if (state == State.WALLSLIDE) velocity.y = wallSlideSpeed * MapHandler.getRoomGravity();
+		else super.handleGravity();
 	}
 
 	void handleDirection(){
@@ -582,7 +582,8 @@ public abstract class Fighter extends Hittable{
 
 	void limitSpeeds(){
 		boolean notAMeteor = initialHitAngle > 0 && initialHitAngle < 180;
-		if ((hitstunTimer.timeUp() || notAMeteor) && velocity.y < fallSpeed) velocity.y = fallSpeed;
+		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
+		if ((hitstunTimer.timeUp() || notAMeteor) && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
 	}
 
 	private void addSpeed(float speed, float acc){ 
@@ -694,7 +695,7 @@ public abstract class Fighter extends Hittable{
 	}
 
 	public void respawn() {
-		stocks -= 1;
+		lives -= 1;
 		position.set(spawnPoint);
 		percentage = 0;
 		velocity.x = 0;
@@ -738,8 +739,8 @@ public abstract class Fighter extends Hittable{
 	public int getTeam() { return team; }
 	public State getState() { return state; } 
 	protected TextureRegion getFrame(Animation anim, float deltaTime) { return anim.getKeyFrame(deltaTime + randomAnimationDisplacement); }
-	public int getStocks() { return stocks; }
-	public void setStocks(int i) { stocks = i; }
+	public int getLives() { return lives; }
+	public void setLives(int i) { lives = i; }
 	public Color getColor() { return new Color(1, 1, 1, 1); }
 	public List<IDMove> getMoveQueue() { return staleMoveQueue; }
 	public void setInvincible(int i) { 

@@ -2,6 +2,7 @@ package main;
 
 import input.InputHandlerController;
 import input.InputHandlerKeyboard;
+import input.InputHandlerPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,12 +27,14 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static FPSLogger fpsLogger = new FPSLogger();
 	private static Round round;
 	private static boolean paused = false;
+	private static GameState gameState = GameState.GAME;
+	private static InputHandlerPlayer primaryInputHandler = null;
 
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
-	public static boolean 	debugToggle 	= false;
+	public static boolean 	debugToggle 	= true;
 	private static int 		roomChoice 		= 0;
 
 	public void create () {
@@ -39,6 +42,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		beginFighter(player1, 0);
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
+		DebugMenu.begin();
 
 		if (p2Toggle){
 			Fighter player2 = new Frog(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
@@ -49,33 +53,36 @@ public class UptiltEngine extends ApplicationAdapter {
 		round = new Round();
 	}
 	
-	public static void debug(Fighter newPlayer1){
-		playerList.clear();
-		Fighter player1 = newPlayer1;
-		beginFighter(player1, 0);
-		GraphicsHandler.begin();
-		MapHandler.begin(roomChoice);
-		round = new Round();
-	}
-	
 	private static void beginFighter(Fighter player, int cont){
 		playerList.add(player);
 		InputHandlerController ch = new InputHandlerController(player);
 		if (!ch.setupController(cont)) startWithKeyboard(player);
-		else player.setInputHandler(ch);
+		else {
+			if (primaryInputHandler == null) primaryInputHandler = ch;
+			player.setInputHandler(ch);
+		}
 	}
 
 	private static void startWithKeyboard(Fighter player){
 		InputHandlerKeyboard kh = new InputHandlerKeyboard(player);
 		player.setInputHandler(kh);
+		if (primaryInputHandler == null) primaryInputHandler = kh;
 	}
 
 	public void render () {
 		deltaTime++;
 		updateTimers();
-		if (roundToggle) round.update(deltaTime);
 		if (fpsLogToggle) fpsLogger.log();
 
+		switch(gameState){
+		case GAME:	updateGame(); break;
+		case DEBUG: DebugMenu.update(); break;
+		case MENU:	break;
+		}
+	}
+	
+	private void updateGame(){
+		if (roundToggle) round.update(deltaTime);
 		MapHandler.updateInputs();
 		if (!paused){
 			MapHandler.activeRoom.update(deltaTime);
@@ -107,11 +114,37 @@ public class UptiltEngine extends ApplicationAdapter {
 		MapHandler.updateRoomMap(room);
 		GraphicsHandler.updateRoomGraphics(getPlayers().get(0));
 	}
+	
+	public static void startDebugMenu(){
+		gameState = GameState.DEBUG;
+	}
+	
+	public static void startNewGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
+		System.out.println("began new game");
+		gameState = GameState.GAME;
+		playerList.clear();
+		paused = false;
+		int i = 0;
+		for (Fighter player: newPlayers) {
+			beginFighter(player, i);
+			i++;
+		}
+		GraphicsHandler.begin();
+		MapHandler.begin(roomChoice);
+		round = new Round();
+		debugToggle = debug;
+	}
+	
+	public enum GameState{
+		GAME, DEBUG, MENU
+	}
 
 	public static float getVolume(){ return volume; }
 	public static int getDeltaTime(){ return deltaTime; }
 	public static boolean isPaused() { return paused; }
 	public static List<Fighter> getPlayers(){ return playerList; }
 	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
+	public static GameState getGameState() { return gameState; }
+	public static InputHandlerPlayer getPrimaryInputHandler() { return primaryInputHandler; }
 
 }

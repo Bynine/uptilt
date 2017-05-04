@@ -109,13 +109,13 @@ public abstract class Entity {
 		if (Math.abs(velocity.x) < lowerLimit) velocity.x = 0;
 		if (Math.abs(velocity.y) < lowerLimit) velocity.y = 0;
 	}
-	
+
 	void handleWind(){
 		velocity.x += MapHandler.getRoomWind();
 	}
 
 	void handleGravity(){
-		velocity.y += gravity;
+		velocity.y += gravity * MapHandler.getRoomGravity();
 	}
 
 	void handleFriction(){
@@ -152,21 +152,21 @@ public abstract class Entity {
 			velocity.x = 0;
 		}
 	}
-	
+
 	void bounceOffWall(){
 		velocity.x *= bounce;
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y + image.getHeight()));
 		bounceOff();
 	}
-	
+
 	void bounceOffCeiling(){
 		velocity.y *= bounce;
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + image.getHeight()/2));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + image.getHeight()/2));
 		bounceOff();
 	}
-	
+
 	void bounceOff(){
 		UptiltEngine.causeHitlag((int)(knockbackIntensity(velocity) / 4));
 		if (knockbackIntensity(velocity) > 14) new SFX.MeatyHit().play();
@@ -221,14 +221,6 @@ public abstract class Entity {
 	public int direct(){
 		if (direction == Direction.RIGHT) return 1;
 		else return -1;
-	}
-
-	public boolean isOOB(int mapWidth, int mapHeight) {
-		int OOBGrace = 2;
-		boolean highNotHitstun = (mapHeight + image.getHeight()*OOBGrace) < position.y && !hitstunTimer.timeUp();
-		if (position.x < (0 - image.getWidth()*OOBGrace) || (mapWidth + image.getWidth()*OOBGrace) < position.x) return true;
-		if (position.y < (0 - image.getHeight()*OOBGrace) || highNotHitstun) return true;
-		return false;
 	}
 
 	public boolean isTouching(Entity en, int decrement){
@@ -286,8 +278,16 @@ public abstract class Entity {
 	}
 
 	public void setRemove() { toRemove = true; }
-	public boolean toRemove() { return toRemove; } 
-
+	public boolean toRemove(int mapWidth, int mapHeight) { 
+		return toRemove || isOOB(mapWidth, mapHeight); 
+	} 
+	private boolean isOOB(int mapWidth, int mapHeight) {
+		int OOBGrace = 2;
+		boolean highNotHitstun = (mapHeight + image.getHeight()*OOBGrace) < position.y && !hitstunTimer.timeUp();
+		if (position.x < (0 - image.getWidth()*OOBGrace) || (mapWidth + image.getWidth()*OOBGrace) < position.x) return true;
+		if (position.y < (0 - image.getHeight()*OOBGrace) || highNotHitstun) return true;
+		return false;
+	}
 	public Vector2 getPosition() { return position; }
 	public Vector2 getVelocity() { return velocity; }
 	public Direction getDirection() { return direction; }

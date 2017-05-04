@@ -1,5 +1,6 @@
 package input;
 
+import main.UptiltEngine;
 import timers.Timer;
 import entities.Fighter;
 
@@ -24,6 +25,8 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		inputToCommand(flickRight(), commandStickRight);
 		inputToCommand(flickUp(), commandStickUp);
 		inputToCommand(flickDown(), commandStickDown);
+		if (pause()) UptiltEngine.pauseGame(); 
+		if (select()) UptiltEngine.startDebugMenu();
 		
 		fighter.handleJumpHeld(jumpHold());
 		fighter.handleBlockHeld(blockHold());
@@ -44,21 +47,22 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		return !techTimer.timeUp();
 	}
 
-	abstract boolean attack();
-	abstract boolean special();
-	abstract boolean charge();
-	abstract boolean jump();
-	abstract boolean grab();
-	abstract boolean dodge();
-	abstract boolean taunt();
-	abstract boolean flickLeft();
-	abstract boolean flickRight();
-	abstract boolean flickUp();
-	abstract boolean flickDown();
-	abstract boolean pause();
+	public abstract boolean attack();
+	public abstract boolean special();
+	public abstract boolean charge();
+	public abstract boolean jump();
+	public abstract boolean grab();
+	public abstract boolean dodge();
+	public abstract boolean taunt();
+	public abstract boolean flickLeft();
+	public abstract boolean flickRight();
+	public abstract boolean flickUp();
+	public abstract boolean flickDown();
+	public abstract boolean pause();
+	public abstract boolean select();
 
-	abstract boolean chargeHold();
-	abstract boolean jumpHold();
-	abstract boolean blockHold();
+	public abstract boolean chargeHold();
+	public abstract boolean jumpHold();
+	public abstract boolean blockHold();
 
 }

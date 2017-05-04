@@ -24,7 +24,7 @@ public class Round {
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
 	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);
-	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliensHard));
+	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliensEasy));
 	boolean restarted = false;
 
 	public Round(){
@@ -35,7 +35,7 @@ public class Round {
 		for (EnemySpawner fs: fSList) fs.update(deltaTime);
 		boolean shouldRestart = true;
 		for (Fighter player: (UptiltEngine.getPlayers() ) ){
-			if (player.getStocks() > 0) shouldRestart = false;
+			if (player.getLives() > 0) shouldRestart = false;
 		}
 		if (shouldRestart) restart();
 	}
@@ -47,7 +47,7 @@ public class Round {
 
 	private void setup(){
 		for (Fighter player: (UptiltEngine.getPlayers() ) ){
-			player.setStocks(3);
+			player.setLives(3);
 		}
 		for (EnemySpawner fs: fSList) fs.restart();
 	}

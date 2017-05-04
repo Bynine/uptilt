@@ -27,7 +27,7 @@ public class GraphicsHandler {
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final OrthographicCamera parallaxCam = new OrthographicCamera();
-	private static final int camAdjustmentSpeed = 8;
+	private static final int camAdjustmentSpeed = 4;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
@@ -35,8 +35,8 @@ public class GraphicsHandler {
 
 	public static final int SCREENWIDTH  = (int) ((48 * GlobalRepo.TILE));
 	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
-	private static final float ZOOM2X = 1/2f;
-	@SuppressWarnings("unused") private static final float ZOOM1X = 1/1f;
+	public static final float ZOOM2X = 1/2f;
+	public static final float ZOOM1X = 1/1f;
 	static float ZOOM = ZOOM2X;
 
 	public static void begin() {
@@ -53,7 +53,7 @@ public class GraphicsHandler {
 	}
 
 	public static java.util.function.Predicate<? super Fighter> isDead() {
-		return p -> p.getStocks() <= 0;
+		return p -> p.getLives() <= 0;
 	}
 
 	static void updateCamera(){
@@ -111,7 +111,7 @@ public class GraphicsHandler {
 		float lineHeight = 6;
 		batch.begin();
 		for (Fighter player: UptiltEngine.getPlayers()){
-			font.draw(batch, "stocks: " + player.getStocks(), 
+			font.draw(batch, "lives: " + player.getLives(), 
 					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			lineHeight *= -1/2;
 		}
@@ -173,9 +173,9 @@ public class GraphicsHandler {
 		Fighter fi = (Fighter) e;
 		float darken = fi.getPercentage()*0.0075f;
 		font.setColor(1, 1 - darken, 1 - (darken*1.1f), 1);
-		float xPos = fi.getPosition().x - 8 + fi.getImage().getWidth()/2;
+		float xPos = fi.getPosition().x + fi.getImage().getWidth()/2;
 		float yPos = fi.getPosition().y + fi.getImage().getHeight() + font.getLineHeight();
-		font.draw(batch, (int)fi.getPercentage() + "%", xPos, yPos);
+		font.draw(batch, "" + (int)(fi.getPercentage()), xPos, yPos);
 	}
 
 	private static void drawState(Entity e) {
