@@ -1,9 +1,11 @@
 package input;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import timers.Timer;
+
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
@@ -14,13 +16,17 @@ import entities.Fighter;
 
 public class InputHandlerController extends InputHandlerPlayer implements ControllerListener {
 
-	Controller controller;
-	final int lastSize = 2;
-	private float currShoulder, prevShoulder, currX, prevX, currY, prevY = 0;
-	final List<Float> lastXPositions = new ArrayList<Float>(lastSize), lastYPositions = new ArrayList<Float>(lastSize);
+	Controller control;
+	private float currShoulder, prevShoulder;
+	
 	private final float depressed = 0.1f;
 	public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
 	public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
+	public static final int AXIS_RIGHT_Y = 2; //-1 is up | +1 is down
+	public static final int AXIS_RIGHT_X = 3; //-1 is left | +1 is right
+	StickDir leftX = new StickDir(AXIS_LEFT_X), leftY = new StickDir(AXIS_LEFT_Y);
+	StickDir rightX = new StickDir(AXIS_RIGHT_X), rightY = new StickDir(AXIS_RIGHT_Y);
+	private final List<StickDir> stickDirs = new ArrayList<StickDir>(Arrays.asList(leftX, leftY, rightX, rightY));
 	public static final int AXIS_SHOULDER = 4;
 	int prevButton = commandNone;
 	Timer pauseSelectBuffer = new Timer(10);
@@ -28,49 +34,37 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	public InputHandlerController(Fighter player) {
 		super(player);
 		this.fighter = player;
-		for (int i = 0; i < lastSize; ++i) {
-			lastXPositions.add((float) 0);
-			lastYPositions.add((float) 0);
-		}
 	}
 
 	public boolean setupController(int index){
 		if (Controllers.getControllers().size <= index) return false;
 		Controllers.addListener(this);
-		controller = Controllers.getControllers().get(index);
+		control = Controllers.getControllers().get(index);
 		return true;
 	}
 
 	private final float pushed = 0.85f;
 	public void update() {
 		pauseSelectBuffer.countUp();
-		currShoulder = controller.getAxis(AXIS_SHOULDER);
+		currShoulder = control.getAxis(AXIS_SHOULDER);
 		super.update();
 		prevShoulder = currShoulder;
-
-		lastXPositions.add(controller.getAxis(AXIS_LEFT_X));
-		prevX = lastXPositions.remove(0);
-		currX = lastXPositions.get(lastSize - 1);
-		if (Math.abs(currX) < pushed) currX = 0;
-
-		lastYPositions.add(controller.getAxis(AXIS_LEFT_Y));
-		prevY = lastYPositions.remove(0);
-		currY = lastYPositions.get(lastSize - 1);
-		if (Math.abs(currY) < pushed) currY = 0; // mmm, curry
+		
+		for (StickDir sd: stickDirs) sd.update();
 	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {
-		if (!controller.getButton(buttonCode)) return false;
+		if (!control.getButton(buttonCode)) return false;
 		handleCommand(buttonCode);
 		return true;
 	}
 
 	public float getXInput() {
-		return controller.getAxis(AXIS_LEFT_X);
+		return control.getAxis(AXIS_LEFT_X);
 	}
 
 	public float getYInput() {
-		return controller.getAxis(AXIS_LEFT_Y);
+		return control.getAxis(AXIS_LEFT_Y);
 	}
 
 	public boolean dodge(){
@@ -82,43 +76,59 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	}
 
 	public boolean taunt(){
-		return controller.getPov(0) != PovDirection.center;
+		return control.getPov(0) != PovDirection.center;
 	}
 
 	public boolean chargeHold(){
-		return controller.getButton(commandCharge);
+		return control.getButton(commandCharge);
 	}
 
 	public boolean jumpHold(){
-		return controller.getButton(commandJump);
+		return control.getButton(commandJump);
 	}
 
 	private final float flick = 0.80f;
 
 	public boolean flickLeft(){
-		return Math.abs(currX - prevX) > flick && Math.signum(currX) == -1;
+		return leftX.flick(-1);
 	}
 
 	public boolean flickRight(){
-		return Math.abs(currX - prevX) > flick && Math.signum(currX) == 1;
+		return leftX.flick(1);
 	}
 
 	public boolean flickUp(){
-		return Math.abs(currY - prevY) > flick && Math.signum(currY) == -1;
+		return leftY.flick(-1);
 	}
 
 	public boolean flickDown(){
-		return Math.abs(currY - prevY) > flick && Math.signum(currY) == 1;
+		return leftY.flick(1);
+	}
+	
+	public boolean flickCLeft(){
+		return rightX.flick(-1);
+	}
+
+	public boolean flickCRight(){
+		return rightX.flick(1);
+	}
+
+	public boolean flickCUp(){
+		return rightY.flick(-1);
+	}
+
+	public boolean flickCDown(){
+		return rightY.flick(1);
 	}
 	
 	public boolean pause(){ 
-		boolean paused = pauseSelectBuffer.timeUp() && controller.getButton(commandPause);
+		boolean paused = pauseSelectBuffer.timeUp() && control.getButton(commandPause);
 		if (paused) pauseSelectBuffer.restart();
 		return paused;
 	}
 	
 	public boolean select(){ 
-		boolean selected = pauseSelectBuffer.timeUp() && controller.getButton(commandSelect);
+		boolean selected = pauseSelectBuffer.timeUp() && control.getButton(commandSelect);
 		if (selected) pauseSelectBuffer.restart();
 		return selected;
 	}
@@ -141,5 +151,28 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	public boolean xSliderMoved(Controller controller, int sliderCode, boolean value) { return false; }
 	public boolean ySliderMoved(Controller controller, int sliderCode, boolean value) { return false; }
 	public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) { return false; }
+	
+	private class StickDir{
+		static final int lastSize = 2;
+		final List<Float> lastPositions = new ArrayList<Float>(lastSize);
+		private float curr = 0, prev = 0;
+		final int axis;
+		
+		StickDir(int axis){
+			this.axis = axis;
+			for (int i = 0; i < lastSize; ++i) lastPositions.add((float) 0);
+		}
+		
+		void update(){
+			lastPositions.add(control.getAxis(axis));
+			prev = lastPositions.remove(0);
+			curr = lastPositions.get(lastSize - 1);
+			if (Math.abs(curr) < pushed) curr = 0;
+		}
+		
+		boolean flick(int flickTo){
+			return Math.abs(curr - prev) > flick && Math.signum(curr) == flickTo;
+		}
+	}
 
 }

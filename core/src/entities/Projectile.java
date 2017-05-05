@@ -88,6 +88,7 @@ public abstract class Projectile extends Entity{
 		reverse();
 		if (null != owner) owner = reflector;
 		life.restart();
+		velX *= 1.6f;
 	}
 
 
@@ -150,9 +151,11 @@ public abstract class Projectile extends Entity{
 	public static class Rocket extends Explosive{
 
 		private final int lifeTime = 60;
+		private final int ownerDirect;
 
 		public Rocket(float posX, float posY, Fighter owner) {
 			super(posX, posY + 24, owner);
+			ownerDirect = owner.direct();
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
 			setup("sprites/entities/rocket.png", lifeTime, 6, 0);
 			ac = new ProjectileHitbox(owner, 0, 0, 10, Hitbox.SAMURAI, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
@@ -173,24 +176,27 @@ public abstract class Projectile extends Entity{
 		}
 
 		protected Projectile getExplosion() {
-			return new RocketExplosion(owner, this);
+			return new RocketExplosion(owner, this, ownerDirect);
 		}
 	}
 
 	private static class RocketExplosion extends Projectile{
 
-		private final int lifeTime = 4;
+		private final int lifeTime = 12;
 		private final int displacement = 40;
 
-		public RocketExplosion(Fighter owner, Projectile rocket) {
+		public RocketExplosion(Fighter owner, Projectile rocket, int ownerDirect) {
 			super(0, 0, owner);
 			new SFX.Explode().play();
+			int facingOffset = 40 * ownerDirect;
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
 			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
-			ac = 		 new ProjectileHitbox(null, 11.0f, 4.5f, 40, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac2 = new ProjectileHitbox(null,  8.0f, 3.5f, 30, Hitbox.SAMURAI, 0, 0, 60, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac3 = new ProjectileHitbox(null,  5.0f, 1.5f, 0, 10, 0, 0, 120, new SFX.LightHit(), this, lifeTime);
+			ac = 		 new ProjectileHitbox(null, 11.0f, 4.5f, 20, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac2 = new ProjectileHitbox(null,  8.0f, 3.5f, 12, Hitbox.SAMURAI, facingOffset, 0, 60, new SFX.HeavyHit(), this, lifeTime);
+			Hitbox ac3 = new ProjectileHitbox(null,  5.0f, 1.5f, 0, 10, facingOffset*2, 0, 120, new SFX.LightHit(), this, lifeTime);
+			ac.setRefresh(2);
+			ac2.setRefresh(4);
 			ac.setHitstunType(HitstunType.SUPER);
 			new ActionCircleGroup(Arrays.asList(ac, ac2, ac3));
 			MapHandler.addActionCircle(ac);
@@ -282,7 +288,7 @@ public abstract class Projectile extends Entity{
 
 	private static class GrenadeExplosion extends Projectile{
 
-		private final int lifeTime = 4;
+		private final int lifeTime = 12;
 		private final int displacement = 20;
 
 		public GrenadeExplosion(Fighter owner, Projectile grenade) {
@@ -291,9 +297,10 @@ public abstract class Projectile extends Entity{
 			position.x = grenade.position.x - displacement;
 			position.y = grenade.position.y - displacement;
 			setup("sprites/entities/grenadeexplosion.png", lifeTime, 0, 0);
-			ac =  new ProjectileHitbox(null, 8, 5, 32, 71, 0, 0, 30, new SFX.HeavyHit(), this, lifeTime);
+			ac =  new ProjectileHitbox(null, 8, 5, 8, 71, 0, 0, 36, new SFX.HeavyHit(), this, lifeTime);
+			ac.setRefresh(1);
 			Hitbox 
-			ac2 = new ProjectileHitbox(null, 7, 4, 24, Hitbox.SAMURAI, 0, 0, 50, new SFX.HeavyHit(), this, lifeTime);
+			ac2 = new ProjectileHitbox(null, 7, 4, 24, Hitbox.SAMURAI, 0, 0, 48, new SFX.HeavyHit(), this, lifeTime);
 			new ActionCircleGroup(Arrays.asList(ac, ac2));
 			MapHandler.addActionCircle(ac);
 			MapHandler.addActionCircle(ac2);
@@ -392,7 +399,7 @@ public abstract class Projectile extends Entity{
 			super(posX, posY + 32, owner);
 			new SFX.ChargeLaserFire().play();
 			setup("sprites/entities/chargelaser.png", lifeTime, 4, 0);
-			ac = new ProjectileHitbox(owner, 1, 2, 8, Hitbox.SAMURAI, 0, 0, 12, new SFX.LightHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 2.4f, 1.8f, 8, Hitbox.SAMURAI, 0, 0, 12, new SFX.MidHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
 		}
 

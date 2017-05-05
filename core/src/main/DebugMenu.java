@@ -42,6 +42,9 @@ class DebugMenu {
 	private static MenuOption<Boolean> debug = new MenuOption<Boolean>(Arrays.asList(
 			false, true
 			));
+//	private static ArrayList<MenuOption<?>> options = new ArrayList<MenuOption<?>>(Arrays.asList(
+//			choices, characters, stages, players, debug
+//			));
 
 	private static BitmapFont font = new BitmapFont();
 	private static SpriteBatch batch;

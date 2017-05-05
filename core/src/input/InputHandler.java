@@ -21,7 +21,11 @@ public abstract class InputHandler {
 	public static final int commandStickLeft	=21;
 	public static final int commandStickRight	=22;
 	public static final int commandStickDown	=23;
-	public static final int commandTaunt 		=30;
+	public static final int commandCStickUp 	=30;
+	public static final int commandCStickLeft	=31;
+	public static final int commandCStickRight	=32;
+	public static final int commandCStickDown	=33;
+	public static final int commandTaunt 		=40;
 
 	Fighter fighter;
 	public InputHandler(Fighter fighter){
@@ -80,6 +84,10 @@ public abstract class InputHandler {
 		case commandCharge: 		return fighter.tryCharge();
 		case commandTaunt:			return fighter.tryTaunt();
 		case commandDodge:			return fighter.tryDodge();
+		case commandCStickRight:	return fighter.tryCStickForward();
+		case commandCStickLeft:		return fighter.tryCStickBack();
+		case commandCStickUp:		return fighter.tryCStickUp();
+		case commandCStickDown:		return fighter.tryCStickDown();
 		}
 		return false;
 	}

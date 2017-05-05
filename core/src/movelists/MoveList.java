@@ -2,14 +2,13 @@ package movelists;
 
 import moves.IDMove;
 import moves.Move;
+import entities.Entity.Direction;
 import entities.Fighter;
 
 public abstract class MoveList {
-	
-	public static final int noStaleMove = -1;
-	public static final int noMove = -2;
+
 	final Fighter user;
-	
+
 	MoveList(Fighter user){
 		this.user = user;
 	}
@@ -68,7 +67,7 @@ public abstract class MoveList {
 		user.flip();
 		return airGrab();
 	}
-	
+
 	/* guard */
 	public abstract Move rollForward();
 	public abstract Move rollBack();
@@ -83,81 +82,144 @@ public abstract class MoveList {
 
 	/* Move Selection */
 
+	public static final int noMove = -2;
+	public static final int noStaleMove = -1;
+	private static final int IDslide = 0;
+	private static final int IDuweak = 1;
+	private static final int IDdweak = 2;
+	private static final int IDsweak = 3;
+	private static final int IDnweak = 4;
+	private static final int IDuspecial = 10;
+	private static final int IDdspecial = 11;
+	private static final int IDsspecial = 12;
+	private static final int IDnspecial = 13;
+	private static final int IDuthrow = 20;
+	private static final int IDdthrow = 21;
+	private static final int IDfthrow = 22;
+	private static final int IDbthrow = 23;
+	private static final int IDuairthrow = 24;
+	private static final int IDdairthrow = 25;
+	private static final int IDfairthrow = 26;
+	private static final int IDbairthrow = 27;
+	private static final int IDucharge = 40;
+	private static final int IDdcharge = 41;
+	private static final int IDscharge = 42;
+	private static final int IDuair = 50;
+	private static final int IDdair = 51;
+	private static final int IDfair = 52;
+	private static final int IDbair = 53;
+	private static final int IDnair = 54;
+
 	public IDMove selectNormalMove(){
 		if (user.isGrounded()) {
-			if (user.isRunning()) return new IDMove(slide(), 0);
-			else if (user.isHoldUp()) return new IDMove(uWeak(), 1);
-			else if (user.isHoldDown()) return new IDMove(dWeak(), 2);
-			else if (user.isHoldForward()) return new IDMove(sWeak(), 3);
-			else return new IDMove(nWeak(), 4);
+			if (user.isRunning()) return new IDMove(slide(), IDslide);
+			else if (user.isHoldUp()) return new IDMove(uWeak(), IDuweak);
+			else if (user.isHoldDown()) return new IDMove(dWeak(), IDdweak);
+			else if (user.isHoldForward()) return new IDMove(sWeak(), IDsweak);
+			else return new IDMove(nWeak(), IDnweak);
 		}
 		else return selectAerial();
 	}
 
 	public IDMove selectSpecialMove(){
-		if (user.isHoldUp()) return new IDMove(uSpecial(), 10);
-		else if (user.isHoldDown()) return new IDMove(dSpecial(), 11);
-		else if (user.isHoldForward()) return new IDMove(sSpecial(), 12);
+		if (user.isHoldUp()) return new IDMove(uSpecial(), IDuspecial);
+		else if (user.isHoldDown()) return new IDMove(dSpecial(), IDdspecial);
+		else if (user.isHoldForward()) return new IDMove(sSpecial(), IDsspecial);
 		else if (user.isHoldBack()) {
 			user.flip();
-			return new IDMove(sSpecial(), 12);
+			return new IDMove(sSpecial(), IDsspecial);
 		}
-		else return new IDMove(nSpecial(), 13);
+		else return new IDMove(nSpecial(), IDnspecial);
 	}
 
 	public IDMove selectThrow(){
 		if (user.isGrounded()){
-			if (user.isHoldUp()) return new IDMove(uThrow(), 20);
-			else if (user.isHoldDown()) return new IDMove(dThrow(), 21);
-			else if (user.isHoldForward()) return new IDMove(fThrow(), 22);
-			else if (user.isHoldBack()) return new IDMove(bThrow(), 23);
+			if (user.isHoldUp()) return new IDMove(uThrow(), IDuthrow);
+			else if (user.isHoldDown()) return new IDMove(dThrow(), IDdthrow);
+			else if (user.isHoldForward()) return new IDMove(fThrow(), IDfthrow);
+			else if (user.isHoldBack()) return new IDMove(bThrow(), IDbthrow);
 		}
 		else{
-			if (user.isHoldUp()) return new IDMove(uAirThrow(), 24);
-			else if (user.isHoldDown()) return new IDMove(dAirThrow(), 25);
-			else if (user.isHoldForward()) return new IDMove(fAirThrow(), 26);
-			else if (user.isHoldBack()) return new IDMove(bAirThrow(), 27);
+			if (user.isHoldUp()) return new IDMove(uAirThrow(), IDuairthrow);
+			else if (user.isHoldDown()) return new IDMove(dAirThrow(), IDdairthrow);
+			else if (user.isHoldForward()) return new IDMove(fAirThrow(), IDfairthrow);
+			else if (user.isHoldBack()) return new IDMove(bAirThrow(), IDbairthrow);
 		}
 		return null;
 	}
 
 	public IDMove selectGrab(){
 		if (!user.isGrounded()){
-			if (user.isHoldBack()) return new IDMove(airBackGrab(), 30);
-			else return new IDMove(airGrab(), 31);
+			if (user.isHoldBack()) return new IDMove(airBackGrab(), noStaleMove);
+			else return new IDMove(airGrab(), noStaleMove);
 		}
-		else if (user.isRunning()) return new IDMove(dashGrab(), 32);
-		return new IDMove(grab(), 33);
+		else if (user.isRunning()) return new IDMove(dashGrab(), noStaleMove);
+		return new IDMove(grab(), noStaleMove);
 	}
 
 	public IDMove selectCharge() {
 		if (user.isGrounded()){
-			if (user.isHoldUp()) return new IDMove(uCharge(), 40);
-			else if (user.isHoldDown()) return new IDMove(dCharge(), 41);
+			if (user.isHoldUp()) return new IDMove(uCharge(), IDucharge);
+			else if (user.isHoldDown()) return new IDMove(dCharge(), IDdcharge);
 			else if (user.isHoldBack()) {
 				user.flip();
-				return new IDMove(sCharge(), 42);
+				return new IDMove(sCharge(), IDscharge);
 			}
-			else return new IDMove(sCharge(), 42);
+			else return new IDMove(sCharge(), IDscharge);
 		}
 		else return selectAerial();
 	}
+
+	public IDMove selectCStickUp() {
+		return selectCStickMove(new IDMove(uAir(), IDuair), new IDMove(uCharge(), IDucharge));
+	}
+
+	public IDMove selectCStickDown() {
+		return selectCStickMove(new IDMove(dAir(), IDdair), new IDMove(dCharge(), IDdcharge));
+	}
+
+	public IDMove selectCStickForward() {
+		if (user.isGrounded()) return cStickCharge(user.getDirection() == Direction.LEFT);
+		else{
+			if (user.getDirection() == Direction.LEFT) return new IDMove(bAir(), IDbair);
+			else return new IDMove(fAir(), IDfair);
+		}
+	}
+
+	public IDMove selectCStickBack() {
+		if (user.isGrounded()) return cStickCharge(user.getDirection() == Direction.RIGHT);
+		else{
+			if (user.getDirection() == Direction.LEFT) return new IDMove(fAir(), IDfair);
+			else return new IDMove(bAir(), IDbair);
+		}
+	}
 	
+	private IDMove cStickCharge(boolean dir){
+		IDMove im = new IDMove(sCharge(), IDscharge);
+		if (dir) user.flip();
+		return im;
+	}
+
 	public IDMove selectBlock() {
 		if (!user.isGrounded() && (user.isHoldUp() || user.isHoldDown() || user.isHoldBack() || user.isHoldForward())) return new IDMove(airDodge(), noStaleMove);
 		else return new IDMove(null, noMove);
 	}
-	
+
 	public IDMove selectTaunt() {
 		return new IDMove(taunt(), noStaleMove);
 	}
 
 	private IDMove selectAerial(){
-		if (user.isHoldUp()) return new IDMove(uAir(), 50);
-		else if (user.isHoldDown()) return new IDMove(dAir(), 51);
-		else if (user.isHoldForward()) return new IDMove(fAir(), 52);
-		else if (user.isHoldBack()) return new IDMove(bAir(), 53);
-		else return new IDMove(nAir(), 54);
+		if (user.isHoldUp()) return new IDMove(uAir(), IDuair);
+		else if (user.isHoldDown()) return new IDMove(dAir(), IDdair);
+		else if (user.isHoldForward()) return new IDMove(fAir(), IDfair);
+		else if (user.isHoldBack()) return new IDMove(bAir(), IDbair);
+		else return new IDMove(nAir(), IDnair);
+	}
+
+	private IDMove selectCStickMove(IDMove aerial, IDMove charge){
+		if (user.isGrounded()) return charge;
+		else return aerial;
 	}
 
 }

@@ -37,7 +37,7 @@ public class ProjectileHitbox extends Hitbox {
 		proj.reverse();
 	}
 	
-	private final float reflectMultiplier = 1.5f;
+	private final float reflectMultiplier = 1.6f;
 	void touchOtherActionCircles(){
 		for (ActionCircle ac: MapHandler.getActionCircles()){
 			if (Intersector.overlaps(this.area, ac.area) && ac.doesReflect() && !ac.user.equals(user) ){
@@ -45,6 +45,7 @@ public class ProjectileHitbox extends Hitbox {
 				user = proj.getUser();
 				DAM *= reflectMultiplier;
 				KBG *= reflectMultiplier;
+				BKB *= reflectMultiplier;
 			}
 		}
 	}

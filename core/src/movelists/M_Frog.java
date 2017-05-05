@@ -53,8 +53,8 @@ public class M_Frog extends M_Kicker {
 	public Move sWeak() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/frog/sweak.png", 1, 1);
-		Hitbox inner = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAI, 20, 4, 14, new SFX.MidHit());
-		Hitbox outer = new Hitbox(user, 2, 2.4f, 10, Hitbox.SAMURAI, 34, 4, 12, new SFX.MidHit());
+		Hitbox inner = new Hitbox(user, 2.1f, 2.4f, 10, Hitbox.SAMURAI, 16, 4, 18, new SFX.MidHit());
+		Hitbox outer = new Hitbox(user, 2.1f, 2.4f, 10, Hitbox.SAMURAI, 34, 4, 12, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(inner, outer));
 		m.eventList.addActionCircle(inner, 6, 9);
 		m.eventList.addActionCircle(outer, 6, 9);
@@ -155,28 +155,28 @@ public class M_Frog extends M_Kicker {
 	public Move dAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/frog/dair.png", 3, 10);
-		Hitbox early1 = new Hitbox(user, 1.5f, 2.4f, 12, 270, 0, 0, 15, new SFX.MeatyHit());
-		Hitbox early2 = new Hitbox(user, 1.5f, 2.6f, 13, 270, 0, -24, 19, new SFX.MeatyHit());
-		Hitbox late1 = new Hitbox(user, 1, 2f, 9, 270, 0, 0, 12, new SFX.MidHit());
-		Hitbox late2 = new Hitbox(user, 1, 2f, 10, 270, 0, -24, 16, new SFX.MidHit());
+		Hitbox early1 = new Hitbox(user, 2.5f, 3.6f, 12, 270, 0,   0, 16, new SFX.MeatyHit());
+		Hitbox early2 = new Hitbox(user, 2.5f, 3.6f, 13, 270, 0, -24, 20, new SFX.MeatyHit());
+		Hitbox late1 =  new Hitbox(user, 1.0f, 2.0f,  9, 270, 0,   0, 12, new SFX.MidHit());
+		Hitbox late2 =  new Hitbox(user, 1.0f, 2.0f, 10, 270, 0, -24, 16, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
-		m.eventList.addActionCircle(early1, 11, 12);
-		m.eventList.addActionCircle(early2, 11, 12);
-		m.eventList.addActionCircle(late1, 13, 17);
-		m.eventList.addActionCircle(late2, 13, 17);
+		m.eventList.addActionCircle(early1, 11, 13);
+		m.eventList.addActionCircle(early2, 11, 13);
+		m.eventList.addActionCircle(late1, 14, 17);
+		m.eventList.addActionCircle(late2, 14, 17);
 		return m;
 	}
 
 	public Move fAir() {
 		Move m = new Move(user, 36);
 		m.setAnimation("sprites/fighters/frog/fair.png", 1, 1);
-		Hitbox early = new Hitbox(user, 5, 2.4f, 14, 30, 18, -2, 20, new SFX.MeatyHit());
-		Hitbox late = new Hitbox(user, 2, 1, 5, 100, 24, -2, 16, new SFX.LightHit());
+		Hitbox early = new Hitbox(user, 5.0f, 2.6f, 14, 30, 18, -2, 20, new SFX.MeatyHit());
+		Hitbox late =  new Hitbox(user, 2.0f, 1.0f,  5, 80, 24, -2, 16, new SFX.LightHit());
 		early.setProperty(Hitbox.Property.ELECTRIC);
 		early.setHitstunType(HitstunType.SUPER);
 		new ActionCircleGroup(Arrays.asList(early, late));
-		m.eventList.addActionCircle(early, 3, 4);
-		m.eventList.addActionCircle(late, 5, 18);
+		m.eventList.addActionCircle(early, 3, 6);
+		m.eventList.addActionCircle(late, 7, 18);
 		return m;
 	}
 

@@ -308,6 +308,26 @@ public abstract class Fighter extends Hittable{
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		startAttack(new IDMove(moveList.dodge(), MoveList.noStaleMove));
 	}
+	
+	public boolean tryCStickUp(){
+		startAttack(moveList.selectCStickUp()); 
+		return true; 
+	}
+	
+	public boolean tryCStickDown(){
+		startAttack(moveList.selectCStickDown()); 
+		return true; 
+	}
+	
+	public boolean tryCStickForward(){
+		startAttack(moveList.selectCStickForward()); 
+		return true; 
+	}
+	
+	public boolean tryCStickBack(){
+		startAttack(moveList.selectCStickBack()); 
+		return true; 
+	}
 
 	public boolean tryGrab(){
 		startAttack(moveList.selectGrab()); 
@@ -548,11 +568,11 @@ public abstract class Fighter extends Hittable{
 
 	void handleDirection(){
 		float minTurn = 0.2f;
-		int minFrameTurn = 3;
-		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || !isGrounded() || cantTurnStates.contains(state)) return;
+		int minFrameTurn = 4;
+		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || cantTurnStates.contains(state)) return;
 		if (null != getActiveMove()){
 			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !getActiveMove().move.isNoTurn();
-			if (!canAct() && !startAttackTurn) return;
+			if (!canAct() && !startAttackTurn || (!isGrounded() && !startAttackTurn)) return;
 		}
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
 		boolean turnRight = stickX > minTurn && (prevStickX < minTurn)  && getDirection() == Direction.LEFT;

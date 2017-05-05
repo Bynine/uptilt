@@ -91,6 +91,22 @@ public class InputHandlerKeyboard extends InputHandlerPlayer implements InputPro
 		return Gdx.input.isKeyPressed(Keys.LEFT_BRACKET);
 	}
 	
+	public boolean flickCLeft(){
+		return false;
+	}
+	
+	public boolean flickCRight(){
+		return false;
+	}
+	
+	public boolean flickCUp(){
+		return false;
+	}
+	
+	public boolean flickCDown(){
+		return false;
+	}
+	
 	/* NOT USED */
 
 	@Override public boolean keyDown(int keycode) { return false; }

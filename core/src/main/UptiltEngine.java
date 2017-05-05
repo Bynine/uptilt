@@ -38,14 +38,13 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static int 		roomChoice 		= 0;
 
 	public void create () {
-		Fighter player1 = new Kicker(0, 0, 0);
-		beginFighter(player1, 0);
+		beginFighter(new Kicker(0, 0, 0), 0);
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
 		DebugMenu.begin();
 
 		if (p2Toggle){
-			Fighter player2 = new Frog(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
+			Fighter player2 = new Kicker(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
 			beginFighter(player2, 1);
 			MapHandler.addEntity(player2);
 		}

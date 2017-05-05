@@ -25,6 +25,10 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		inputToCommand(flickRight(), commandStickRight);
 		inputToCommand(flickUp(), commandStickUp);
 		inputToCommand(flickDown(), commandStickDown);
+		inputToCommand(flickCLeft(), commandCStickLeft);
+		inputToCommand(flickCRight(), commandCStickRight);
+		inputToCommand(flickCUp(), commandCStickUp);
+		inputToCommand(flickCDown(), commandCStickDown);
 		if (pause()) UptiltEngine.pauseGame(); 
 		if (select()) UptiltEngine.startDebugMenu();
 		
@@ -58,6 +62,10 @@ public abstract class InputHandlerPlayer extends InputHandler {
 	public abstract boolean flickRight();
 	public abstract boolean flickUp();
 	public abstract boolean flickDown();
+	public abstract boolean flickCLeft();
+	public abstract boolean flickCRight();
+	public abstract boolean flickCUp();
+	public abstract boolean flickCDown();
 	public abstract boolean pause();
 	public abstract boolean select();
 
