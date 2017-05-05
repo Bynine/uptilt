@@ -132,7 +132,7 @@ public abstract class Projectile extends Entity{
 			super(posX, posY + 30, owner);
 			if (owner.direction == Entity.Direction.RIGHT) position.x += owner.getImage().getWidth();
 			setup("sprites/entities/ripwheel.png", lifeTime, 12, 0);
-			ac = new ProjectileHitbox(owner, 1, 0, 15, 0, 0, 0, 12, new SFX.SharpHit(), this, lifeTime);
+			ac = new ProjectileHitbox(owner, 1, 0, 20, 0, 0, 0, 12, new SFX.SharpHit(), this, lifeTime);
 			ac.setProperty(Property.STUN);
 			MapHandler.addActionCircle(ac);
 		}
@@ -160,13 +160,13 @@ public abstract class Projectile extends Entity{
 			setup("sprites/entities/rocket.png", lifeTime, 6, 0);
 			ac = new ProjectileHitbox(owner, 0, 0, 10, Hitbox.SAMURAI, 0, 0, 16, new SFX.LightHit(), this, lifeTime);
 			MapHandler.addActionCircle(ac);
-			velX = owner.direct() * 3;
+			velX = owner.direct() * 10;
 			if (owner.isHoldUp()) velX = 1;
 		}
 
 		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 			super.update(rectangleList, entityList, deltaTime);
-			if (Math.abs(velX) < 10) velX *= 1.06f;
+			velX *= 0.985f;
 			if (deltaTime % 10 == 0) MapHandler.addEntity(new Graphic.SmokeTrail(this, 8));
 		}
 
@@ -222,7 +222,7 @@ public abstract class Projectile extends Entity{
 			float additionalSpeed = 0;
 			if (Math.signum(owner.getStickX()) == owner.direct()) additionalSpeed = (owner.getStickX() * 4);
 			velocity.x = owner.direct() * 6 + additionalSpeed;
-			velocity.y = 7 - owner.getStickY() * 3;
+			velocity.y = 6 - owner.getStickY() * 4;
 			airFriction = 0.993f;
 			friction = 0.97f;
 			gravity = -0.42f;

@@ -56,25 +56,27 @@ public class M_Speedy extends MoveList {
 		return m;
 	}
 	
+	protected int slideSpeed = 11;
+	protected int slideDur = 60;
 	public Move slide() {
-		Move m = new Move(user, 40);
+		Move m = new Move(user, slideDur);
 		m.setContinueOnLanding();
-		m.setAnimation("sprites/fighters/speedy/fair.png", 2, 7);
-		Hitbox h1 = new Hitbox(user, 5, 2, 7, 74, 20, 0, 24, new SFX.MidHit());
-		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 4);
-		m.eventList.addConstantVelocity(user, 10, 30, 14, -user.getGravity());
-		m.eventList.addActionCircle(h1, 10, 30);
+		m.setAnimation("sprites/fighters/speedy/crouch.png", 1, 1);
+		Hitbox h1 = new Hitbox(user, 5.0f, 2.1f, 10, 74, 20, 0, 24, new SFX.MidHit());
+		m.eventList.addConstantVelocity(user, 0, 21, slideSpeed, Action.ChangeVelocity.noChange);
+		m.eventList.addActionCircle(h1, 4, 21);
 		return m;
 	}
 	
-	int nDisp = 24;
 	public Move nAir() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/speedy/nair.png", 5, 4);
-		Hitbox h1 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp, -nDisp, 12, new SFX.MidHit());
-		Hitbox h2 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp, -nDisp, 12, new SFX.MidHit());
-		Hitbox h3 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp,  nDisp, 12, new SFX.MidHit());
-		Hitbox h4 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp,  nDisp, 12, new SFX.MidHit());
+		int nDisp = 20;
+		int nSize = 10;
+		Hitbox h1 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp, -nDisp, nSize, new SFX.MidHit());
+		Hitbox h2 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp, -nDisp, nSize, new SFX.MidHit());
+		Hitbox h3 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI, -nDisp,  nDisp, nSize, new SFX.MidHit());
+		Hitbox h4 = new Hitbox(user, 2, 2, 6, Hitbox.SAMURAI,  nDisp,  nDisp, nSize, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(h1, h2, h3, h4));
 		m.eventList.addActionCircle(h1, 9, 12);
 		m.eventList.addActionCircle(h2, 9, 12);
@@ -134,18 +136,18 @@ public class M_Speedy extends MoveList {
 		return m;
 	}
 	
+	protected int sChargeSpeed = 10;
 	public Move sCharge() {
 		Move m = new Move(user, 40);
 		m.setContinueOnLanding();
-		m.setAnimation("sprites/fighters/speedy/fair.png", 2, 2);
+		m.setAnimation("sprites/fighters/speedy/fair.png", 2, 7);
 		Effect.Charge c = new Charge(6, 36, 0.01f, user, m);
-		Hitbox rotate = 	new Hitbox(user, 6.5f, 0, 1, 30, 32, 0, 18, new SFX.LightHit(), c);
-		rotate.setRefresh(3);
-		Hitbox finisher = 	new Hitbox(user, 4, 1.5f, 7, 35, 20, 0, 24, new SFX.MidHit(), c);
+		Hitbox h1 = new Hitbox(user, 5, 2, 7, 74, 20, 0, 24, new SFX.MidHit(), c);
 		m.eventList.addCharge(user, c);
-		m.eventList.addVelocityChangeCharge(user, 10, 6, Action.ChangeVelocity.noChange, c);
-		m.eventList.addActionCircle(rotate, 10, 25);
-		m.eventList.addActionCircle(finisher, 26, 30);
+		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 4);
+		m.eventList.addConstantVelocity(user, 4, 9, 0, -user.getGravity());
+		m.eventList.addConstantVelocity(user, 10, 30, sChargeSpeed, -user.getGravity());
+		m.eventList.addActionCircle(h1, 10, 30);
 		return m;
 	}
 	

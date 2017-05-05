@@ -14,6 +14,8 @@ public class Rocketmin extends Gunmin {
 		airAcc = 0.17f;
 		weight = 94;
 		friction = 0.97f;
+		
+		powerMod = 1.5f;
 	}
 	
 	public Color getColor() { return new Color(0.6f, 0.4f, 0.4f, 1); }

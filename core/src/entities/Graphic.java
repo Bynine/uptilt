@@ -128,5 +128,17 @@ public abstract class Graphic extends Entity{
 			if (duration.timeUp()) setRemove();
 		}
 	}
+	
+	public static class DoubleJumpRing extends Graphic {
+		private TextureRegion tex = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/doublejump.png")));
+		public DoubleJumpRing(float posX, float posY){
+			super(posX, posY, 12);
+			image = new Sprite(tex);
+			updatePosition();
+		}
+		void updatePosition(){
+			if (duration.timeUp()) setRemove();
+		}
+	}
 
 }

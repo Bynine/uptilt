@@ -24,7 +24,7 @@ public abstract class ActionCircle {
 	final Circle area;
 	final Timer duration = new DurationTimer(5);
 	final Timer refreshTimer = new DurationTimer(6);
-	boolean initialHit = false, remove = false, doesRefresh = false, reflects = false;
+	boolean initialHit = false, remove = false, doesRefresh = false, reflects = false, reverse = true;
 	float movesAheadMod = 1;
 	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
 	private Set<Fighter> s;
@@ -105,5 +105,6 @@ public abstract class ActionCircle {
 	public void setInitialHit(boolean initialHit) { this.initialHit = initialHit; }
 	public void setReflects() { reflects = true; }
 	public void setMovesAheadMod(float mod) { movesAheadMod = mod; }
+	public void setNoReverse() { reverse = false; }
 
 }

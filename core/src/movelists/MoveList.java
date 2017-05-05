@@ -121,6 +121,7 @@ public abstract class MoveList {
 		else return selectAerial();
 	}
 
+	public static int[] specialRange = {10, 19};
 	public IDMove selectSpecialMove(){
 		if (user.isHoldUp()) return new IDMove(uSpecial(), IDuspecial);
 		else if (user.isHoldDown()) return new IDMove(dSpecial(), IDdspecial);

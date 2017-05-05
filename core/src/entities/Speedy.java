@@ -21,30 +21,31 @@ public class Speedy extends Fighter {
 	private Animation walk = GlobalRepo.makeAnimation("sprites/fighters/speedy/run.png", 3, 1, 8, PlayMode.LOOP);
 	private Animation tumble = GlobalRepo.makeAnimation("sprites/fighters/speedy/dair.png", 2, 1, 6, PlayMode.LOOP_RANDOM);
 	private Animation helpless = GlobalRepo.makeAnimation("sprites/fighters/speedy/fair.png", 2, 1, 6, PlayMode.LOOP_RANDOM);
-	private Animation wallSlide = GlobalRepo.makeAnimation("sprites/fighters/speedy/wallslide.png", 3, 1, 18, PlayMode.LOOP);
+	protected Animation wallSlide = GlobalRepo.makeAnimation("sprites/fighters/speedy/wallslide.png", 3, 1, 20, PlayMode.LOOP);
 
 	public Speedy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		runAcc = 3f;
-		runSpeed = 9.5f;
-		walkAcc = 1.4f;
-		walkSpeed = 6.3f;
-		airAcc = 0.4f;
-		airSpeed = 6f;
+		runAcc = 2.5f;
+		runSpeed = 7.5f;
+		walkAcc = 1.1f;
+		walkSpeed = 4.3f;
+		airAcc = 0.3f;
+		airSpeed = 5f;
 		friction = 0.82f;
-		gravity = -0.52f;
-		jumpAcc = 0.92f;
-		dashStrength = 4f;
-		doubleJumpStrength = 9.2f;
-		fallSpeed = -8f;
-		weight = 75;
-		wallSlideSpeed = 4;
+		gravity = -0.50f;
+		jumpAcc = 0.91f;
+		dashStrength = 2f;
+		doubleJumpStrength = 9.1f;
+		fallSpeed = -7.8f;
+		weight = 72;
+		wallSlideSpeed = 3;
 		moveList = new M_Speedy(this);
+		powerMod = 0.8f;
 		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 	
 	protected boolean isWallSliding() {
-		if (inGroundedState() || velocity.y > 4 || !(canAct() || state == State.HELPLESS)) return false;
+		if (inGroundedState() || velocity.y > wallSlideSpeed || !(canAct() || state == State.HELPLESS)) return false;
 		boolean canWS = false;
 		if (prevStickX < -unregisteredInputMax) {
 			canWS = doesCollide(position.x - wallSlideDistance, position.y);

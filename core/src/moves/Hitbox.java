@@ -71,7 +71,12 @@ public class Hitbox extends ActionCircle{
 
 		refreshTimer.restart();
 		float staleness = 1;
-		if (null != user) staleness = getStaleness(user);
+		if (null != user) {
+			staleness = getStaleness(user);
+			DAM *= user.getPowerMod();
+			BKB *= user.getPowerMod();
+			KBG *= user.getPowerMod();
+		}
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
 		knockback.set(knockbackFormula(target) * staleness, knockbackFormula(target) * staleness);
@@ -176,8 +181,11 @@ public class Hitbox extends ActionCircle{
 			if (area.x - area.radius/2 > target.getPosition().x) return -1;
 			else return 1;
 		}
-		else if (user.getPosition().x > target.getPosition().x) return -1;
-		else return 1;
+		else if (reverse){
+			if (user.getPosition().x > target.getPosition().x) return -1;
+			else return 1;
+		}
+		else return user.direct();
 	}
 
 	public enum Property { NORMAL, ELECTRIC, STUN  }

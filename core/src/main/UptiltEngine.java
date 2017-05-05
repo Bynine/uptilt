@@ -27,21 +27,23 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static FPSLogger fpsLogger = new FPSLogger();
 	private static Round round;
 	private static boolean paused = false;
-	private static GameState gameState = GameState.GAME;
+	private static GameState gameState = GameState.MENU;
 	private static InputHandlerPlayer primaryInputHandler = null;
 
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
-	public static boolean 	debugToggle 	= true;
+	public static boolean 	debugToggle 	= false;
 	private static int 		roomChoice 		= 0;
 
 	public void create () {
 		beginFighter(new Kicker(0, 0, 0), 0);
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
+		Menu.begin();
 		DebugMenu.begin();
+		MainMenu.begin();
 
 		if (p2Toggle){
 			Fighter player2 = new Kicker(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
@@ -74,9 +76,9 @@ public class UptiltEngine extends ApplicationAdapter {
 		if (fpsLogToggle) fpsLogger.log();
 
 		switch(gameState){
-		case GAME:	updateGame(); break;
-		case DEBUG: DebugMenu.update(); break;
-		case MENU:	break;
+		case GAME:	updateGame();		break;
+		case DEBUG: DebugMenu.update();	break;
+		case MENU:	MainMenu.update();	break;
 		}
 	}
 	
@@ -118,8 +120,13 @@ public class UptiltEngine extends ApplicationAdapter {
 		gameState = GameState.DEBUG;
 	}
 	
-	public static void startNewGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
-		System.out.println("began new game");
+	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
+		startNewGame(newPlayers);
+		MapHandler.begin(roomChoice);
+		debugToggle = debug;
+	}
+	
+	public static void startNewGame(List<Fighter> newPlayers){
 		gameState = GameState.GAME;
 		playerList.clear();
 		paused = false;
@@ -131,7 +138,6 @@ public class UptiltEngine extends ApplicationAdapter {
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
 		round = new Round();
-		debugToggle = debug;
 	}
 	
 	public enum GameState{

@@ -46,6 +46,9 @@ public abstract class Fighter extends Hittable{
 	float wallJumpStrengthY = 7.2f;
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
+	
+	static final int SPECIALMETERMAX = 16;
+	float specialMeter = SPECIALMETERMAX;
 
 	Vector2 footStoolKB = new Vector2(0, 0);
 	int footStoolDuration = 30;
@@ -70,8 +73,9 @@ public abstract class Fighter extends Hittable{
 		this.team = team;
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
-		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, caughtTimer,
-				grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer, dodgeTimer, footStoolTimer, slowedTimer, stunTimer));
+		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, 
+				caughtTimer, grabbingTimer, dashTimer, knockIntoTimer, invincibleTimer,
+				dodgeTimer, footStoolTimer, slowedTimer, stunTimer));
 		image = new Sprite(defaultTexture);
 		state = State.STAND;
 		randomAnimationDisplacement = (int) (8 * Math.random());
@@ -405,6 +409,7 @@ public abstract class Fighter extends Hittable{
 
 	private void doubleJump(){
 		getVelocity().y = doubleJumpStrength;
+		MapHandler.addEntity(new Graphic.DoubleJumpRing(position.x, getCenter().y));
 		if (prevStickX < -unregisteredInputMax && velocity.x > 0) velocity.x = 0; 
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
 		velocity.x += 1 * stickX;
@@ -540,6 +545,7 @@ public abstract class Fighter extends Hittable{
 		setInvincible(30);
 		new SFX.Tech().play();
 		hitstunTimer.end();
+		tumbling = false;
 		velocity.x = 0;
 		velocity.y = 0;
 	}
@@ -568,12 +574,13 @@ public abstract class Fighter extends Hittable{
 
 	void handleDirection(){
 		float minTurn = 0.2f;
-		int minFrameTurn = 4;
+		int minFrameBReverse = 6;
 		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || cantTurnStates.contains(state)) return;
-		if (null != getActiveMove()){
-			boolean startAttackTurn = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameTurn && !getActiveMove().move.isNoTurn();
-			if (!canAct() && !startAttackTurn || (!isGrounded() && !startAttackTurn)) return;
+		if (null != getActiveMove() && getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1]){
+			boolean bReverse = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameBReverse && !getActiveMove().move.isNoTurn();
+			if (!canAct() && !bReverse) return;
 		}
+		else if (!isGrounded()) return;
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
 		boolean turnRight = stickX > minTurn && (prevStickX < minTurn)  && getDirection() == Direction.LEFT;
 		if (turnLeft || turnRight) flip();
@@ -767,12 +774,11 @@ public abstract class Fighter extends Hittable{
 		invincibleTimer.restart();
 		invincibleTimer.setEndTime(i);
 	}
-	public float getHitstunMod() { return hitstunMod; }
 	private final float minDirect = 0.85f;
 	public boolean isHoldUp() 		{ return -stickY > minDirect; }
 	public boolean isHoldDown()		{ return stickY > minDirect; }
 	public boolean isHoldForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
-	public boolean isHoldBack() 		{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
+	public boolean isHoldBack() 	{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 
 	abstract TextureRegion getStandFrame(float deltaTime);
 	abstract TextureRegion getWalkFrame(float deltaTime);

@@ -19,6 +19,10 @@ public abstract class Effect extends Action{
 	
 	public int getStart(){ return start; }
 	public int getEnd() { return end; }
+	public void moveForward(){
+		start += 1;
+		end += 1;
+	}
 	abstract void finish();
 	
 	public static class ConstantVelocity extends Effect{
@@ -86,7 +90,11 @@ public abstract class Effect extends Action{
 		private void hold(){
 			this.end += 1;
 			List<Integer> actionStartTimes = move.eventList.actionStartTimes;
+			List<Effect> effectList = move.eventList.effectList;
 			for (int i = 0; i < actionStartTimes.size(); ++i) actionStartTimes.set(i, actionStartTimes.get(i) + 1);
+			for (Effect eff: effectList){
+				if (eff != this) eff.moveForward();
+			}
 			move.addFrame();
 			user.attackTimer.countDown();
 		}	

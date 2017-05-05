@@ -17,14 +17,15 @@ public class Round {
 	Enemy rockets = new Enemy(Rocketmin.class, Brain.GunminBrain.class);
 	Enemy heavies = new Enemy(Heavy.class, Brain.MookBrain.class);
 	Enemy speedies = new Enemy(Speedy.class, Brain.SpeedyBrain.class);
+	Enemy hypers = new Enemy(HyperSpeedy.class, Brain.SpeedyBrain.class);
 	Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
 	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
 	EnemySpawner esAliensEasy = new EnemySpawner(Arrays.asList(mooks, guns), 16, 2, 120, true);
-	EnemySpawner esAliensHard = new EnemySpawner(Arrays.asList(mooks, alloys, guns, rockets, speedies), 16, 4, 80, true);
+	EnemySpawner esAliensHard = new EnemySpawner(Arrays.asList(mooks, alloys, guns, rockets, speedies, hypers), 16, 4, 80, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
 	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);
-	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliensEasy));
+	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliensHard));
 	boolean restarted = false;
 
 	public Round(){
