@@ -27,18 +27,18 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static FPSLogger fpsLogger = new FPSLogger();
 	private static Round round;
 	private static boolean paused = false;
-	private static GameState gameState = GameState.MENU;
+	private static GameState gameState = GameState.GAME;
 	private static InputHandlerPlayer primaryInputHandler = null;
 
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
-	public static boolean 	debugToggle 	= false;
+	public static boolean 	debugToggle 	= true;
 	private static int 		roomChoice 		= 0;
 
 	public void create () {
-		beginFighter(new Kicker(0, 0, 0), 0);
+		beginFighter(new Frog(0, 0, 0), 0);
 		GraphicsHandler.begin();
 		MapHandler.begin(roomChoice);
 		Menu.begin();

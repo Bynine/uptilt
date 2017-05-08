@@ -147,7 +147,7 @@ public abstract class Brain{
 
 		public MookBrain(InputHandlerCPU body) {
 			super(body);
-			aggressiveness = 0.3f;
+			aggressiveness = 0.05f;
 		}
 
 		void update(InputPackage pack){
@@ -178,7 +178,7 @@ public abstract class Brain{
 
 		public GunminBrain(InputHandlerCPU body) {
 			super(body);
-			aggressiveness = 0.1f;
+			aggressiveness = 0.05f;
 		}
 
 		void update(InputPackage pack){
@@ -219,7 +219,7 @@ public abstract class Brain{
 
 		public SpeedyBrain(InputHandlerCPU body) {
 			super(body);
-			aggressiveness = 0.6f;
+			aggressiveness = 0.2f;
 			waitToUseUpSpecial.setEndTime(15);
 		}
 
@@ -234,6 +234,7 @@ public abstract class Brain{
 				if (Math.abs(pack.distanceXFromPlayer) < 30 && Math.random() < 0.02) crouchBeforeAttacking();
 				if (Math.abs(pack.distanceXFromPlayer) < 70 && Math.random() < 0.02 && pack.isGrounded) performJump(performJump);
 				if (Math.random() < 0.7) {
+					if (Math.random() < 0.06 && Math.abs(pack.distanceXFromPlayer) < 600) attackPlayerDistant(pack);
 					if (pack.isRunning && Math.abs(pack.distanceXFromPlayer) < 100) attackPlayer(pack, InputHandler.commandAttack);
 					else if (Math.abs(pack.distanceXFromPlayer) < 30) attackPlayer(pack, InputHandler.commandAttack);
 				}
@@ -267,6 +268,12 @@ public abstract class Brain{
 				}
 				else if (waitToUseUpSpecial.timeUp()) body.handleCommand(InputHandler.commandSpecial);
 			}
+		}
+		
+		private void attackPlayerDistant(InputPackage pack){
+			facePlayer(pack);
+			body.xInput = 0;
+			body.handleCommand(InputHandler.commandAttack);
 		}
 
 	}

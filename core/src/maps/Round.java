@@ -21,10 +21,11 @@ public class Round {
 	Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
 	Enemy kickers = new Enemy(Kicker.class, Brain.KickerBrain.class);
 	EnemySpawner esAliensEasy = new EnemySpawner(Arrays.asList(mooks, guns), 16, 2, 120, true);
-	EnemySpawner esAliensHard = new EnemySpawner(Arrays.asList(mooks, alloys, guns, rockets, speedies, hypers), 16, 4, 80, true);
+	EnemySpawner esAliensHard = new EnemySpawner(Arrays.asList(mooks, mooks, alloys, guns, guns, rockets, speedies, hypers), 16, 4, 80, true);
+	EnemySpawner esAliensSwarm= new EnemySpawner(Arrays.asList(mooks, guns), 16, 32, 80, true);
 	EnemySpawner esClones = new EnemySpawner(Arrays.asList(kickers), 3, 1, 100, true);
 	EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
-	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks), 100, 1, 10, true);
+	EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks, alloys), 100, 2, 10, true);
 	List<EnemySpawner> fSList = new ArrayList<EnemySpawner>(Arrays.asList(esAliensHard));
 	boolean restarted = false;
 

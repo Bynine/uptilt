@@ -39,6 +39,8 @@ public class Speedy extends Fighter {
 		fallSpeed = -7.8f;
 		weight = 72;
 		wallSlideSpeed = 3;
+		wallJumpStrengthX = 1.2f;
+		wallJumpStrengthY = 8.2f;
 		moveList = new M_Speedy(this);
 		powerMod = 0.8f;
 		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;

@@ -79,10 +79,10 @@ abstract class Menu {
 		}
 
 		void moveCursor(int mov){
-			if (cursor + mov > -1 && cursor + mov < choices.size()) {
-				new SFX.LightHit().play(0.3f);
-				cursor += mov;
-			}
+			if (cursor + mov > -1 && cursor + mov < choices.size())	cursor += mov;
+			else if (cursor + mov >= choices.size())				cursor = 0;
+			else if (cursor + mov <= -1)							cursor = choices.size() - 1;
+			new SFX.LightHit().play(0.3f);
 		}
 	}
 	

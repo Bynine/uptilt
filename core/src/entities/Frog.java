@@ -4,7 +4,6 @@ import main.GlobalRepo;
 import movelists.M_Frog;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,9 +12,9 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Frog extends Fighter {
 	
-	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/frog/stand.png", 7, 1, 6, PlayMode.LOOP);
+	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/frog/stand.png", 2, 1, 30, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/frog/walk.png", 2, 1, 12, PlayMode.LOOP);
-	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/frog/run.png", 11, 1, 4, PlayMode.LOOP);
+	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/frog/run.png", 6, 1, 8, PlayMode.LOOP);
 	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/frog/tumble.png", 4, 1, 8, PlayMode.LOOP);
 	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/frog/fjump.png")));
 	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/frog/njump.png")));
@@ -34,10 +33,12 @@ public class Frog extends Fighter {
 	public Frog(float posX, float posY, int team) {
 		super(posX, posY, team);
 		weight = 130;
-		runAcc = 2.2f;
-		runSpeed = 8.9f;
+		runAcc = 2.4f;
+		runSpeed = 9.1f;
 		airSpeed = 4f;
 		airAcc = 0.31f;
+		walkAcc = 1.4f;
+		walkSpeed = 4f;
 		gravity = -0.48f;
 		jumpAcc = 1.1f;
 		doubleJumpStrength = 10;
@@ -55,8 +56,6 @@ public class Frog extends Fighter {
 	public Rectangle getNormalHurtBox(){
 		return GlobalRepo.makeHurtBoxDynamic(this, 0.9f, 0.9f);
 	}
-	
-	public Color getColor() { return new Color(0.4f, 1.0f, 0.5f, 1); }
 	
 	TextureRegion getJumpFrame(float deltaTime){
 		if (Math.abs(velocity.x) > 1 && Math.signum(velocity.x) != direct()) return bJumpImage; 

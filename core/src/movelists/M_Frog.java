@@ -2,6 +2,7 @@ package movelists;
 
 import java.util.Arrays;
 
+import main.GlobalRepo;
 import main.SFX;
 import moves.Action;
 import moves.ActionCircleGroup;
@@ -22,54 +23,65 @@ public class M_Frog extends M_Kicker {
 	}
 
 	public Move nWeak() {
-		Move m = new Move(user, 10);
+		Move m = new Move(user, 15);
+		m.setHurtBox(GlobalRepo.makeHurtBox(user, 40, 60));
 		m.setAnimation("sprites/fighters/frog/nweak.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 1.5f, 0.5f, 4, 74, 18, 6, 17, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 3, 7);
+		Hitbox h1 = new Hitbox(user, 3.4f, 0.8f, 7, 64, 28, 6, 16, new SFX.MidHit());
+		m.eventList.addActionCircle(h1, 4, 11);
 		return m;
 	}
 
 	public Move uWeak() {
 		Move m = new Move(user, 27);
-		m.setAnimation("sprites/fighters/frog/uweak.png", 3, 9);
-		Hitbox knee = new Hitbox(user, 4.2f, 0, 3, 95, 14, -4, 18, new SFX.LightHit());
-		Hitbox kick = new Hitbox(user, 3, 2, 7, 85, 18, 34, 14, new SFX.MidHit());
-		m.eventList.addActionCircle(knee, 5, 8);
-		m.eventList.addActionCircle(kick, 18, 20);
+		m.setAnimation("sprites/fighters/frog/uweak.png", 3, 10);
+		Hitbox sweep = new Hitbox(user, 4.0f, 0.0f, 5, 85, 16,  4, 17, new SFX.LightHit());
+		Hitbox punch = new Hitbox(user, 3.0f, 3.0f, 8, 85, 16, 34, 15, new SFX.MidHit());
+		Hitbox stale = new Hitbox(user, 2.0f, 1.0f, 4, 85, 16, 34, 12, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(punch, stale));
+		m.eventList.addActionCircle(sweep, 9, 16);
+		m.eventList.addActionCircle(punch, 9, 16);
+		m.eventList.addActionCircle(stale,17, 23);
 		return m;
 	}
 
 	public Move dWeak() {
-		Move m = new Move(user, 17);
+		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/frog/dweak.png", 1, 1);
-		Hitbox inner = new Hitbox(user, 3, 0.8f, 6, 76, 15, -5, 15, new SFX.LightHit());
-		Hitbox outer = new Hitbox(user, 3, 0.8f, 7, 84, 30, -4, 12, new SFX.LightHit());
-		new ActionCircleGroup(Arrays.asList(inner, outer));
-		m.eventList.addActionCircle(inner, 6, 9);
-		m.eventList.addActionCircle(outer, 6, 9);
+		Hitbox innerE = new Hitbox(user, 5.1f, 0.8f, 11, 72, 15, -5, 15, new SFX.MidHit());
+		Hitbox outerE = new Hitbox(user, 5.1f, 0.8f, 11, 81, 34, -4, 14, new SFX.MidHit());
+		Hitbox innerL = new Hitbox(user, 3.8f, 0.6f,  7, 72, 15, -5, 15, new SFX.LightHit());
+		Hitbox outerL = new Hitbox(user, 3.8f, 0.6f,  7, 81, 34, -4, 14, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(innerE, outerE, innerL, outerL));
+		m.eventList.addActionCircle(innerE, 10, 15);
+		m.eventList.addActionCircle(outerE, 10, 15);
+		m.eventList.addActionCircle(innerL, 16, 20);
+		m.eventList.addActionCircle(outerL, 16, 20);
 		return m;
 	}
 
 	public Move sWeak() {
-		Move m = new Move(user, 20);
-		m.setAnimation("sprites/fighters/frog/sweak.png", 1, 1);
-		Hitbox inner = new Hitbox(user, 2.1f, 2.4f, 10, Hitbox.SAMURAI, 16, 4, 18, new SFX.MidHit());
-		Hitbox outer = new Hitbox(user, 2.1f, 2.4f, 10, Hitbox.SAMURAI, 34, 4, 12, new SFX.MidHit());
-		new ActionCircleGroup(Arrays.asList(inner, outer));
-		m.eventList.addActionCircle(inner, 6, 9);
-		m.eventList.addActionCircle(outer, 6, 9);
+		Move m = new Move(user, 24);
+		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 40, 60));
+		m.setAnimation("sprites/fighters/frog/sweak.png", 2, 12);
+		Hitbox vnner = new Hitbox(user, 3.0f, 2.3f, 10, Hitbox.SAMURAI,  0, 2, 16, new SFX.MidHit());
+		Hitbox inner = new Hitbox(user, 3.1f, 2.4f, 10, Hitbox.SAMURAI, 16, 2, 12, new SFX.MidHit());
+		Hitbox outer = new Hitbox(user, 3.2f, 2.5f, 11, Hitbox.SAMURAI, 34, 2, 12, new SFX.MidHit());
+		new ActionCircleGroup(Arrays.asList(vnner, inner, outer));
+		m.eventList.addActionCircle(vnner, 11, 18);
+		m.eventList.addActionCircle(inner, 11, 18);
+		m.eventList.addActionCircle(outer, 11, 18);
 		return m;
 	}
 
 	public Move slide() { 
-		Move m = new Move(user, 30);
-		m.setAnimation("sprites/fighters/frog/scharge.png", 6, 3);
-		Hitbox early = new Hitbox(user, 4, 4, 10, 40, 24, 4, 18, new SFX.HeavyHit());
-		Hitbox late = new Hitbox(user,  2, 2, 7, 110, 24, 4, 14, new SFX.LightHit());
+		Move m = new Move(user, 40);
+		m.setAnimation("sprites/fighters/frog/nweak.png", 1, 1);
+		Hitbox early = new Hitbox(user, 6.0f, 3.2f, 14, 40, 24, 4, 24, new SFX.HeavyHit());
+		Hitbox late =  new Hitbox(user, 4.0f, 1.7f, 9, 110, 22, 4, 20, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
 		m.eventList.addConstantVelocity(user, 4, 24, 8, Action.ChangeVelocity.noChange);
-		m.eventList.addActionCircle(early, 3, 10);
-		m.eventList.addActionCircle(late, 11, 20);
+		m.eventList.addActionCircle(early, 3, 16);
+		m.eventList.addActionCircle(late, 17, 30);
 		return m;
 	}
 
@@ -78,11 +90,12 @@ public class M_Frog extends M_Kicker {
 	public Move sCharge() {
 		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/frog/scharge.png", 6, 5);
-		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
-		int bkb = 6, kbg = 4, dam = 20, ang = 40;
+		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 50));
+		Effect.Charge c = new Charge(3, 33, 0.025f, user, m);
+		int bkb = 6, kbg = 4, dam = 21, ang = Hitbox.SAMURAI;
 		Hitbox h1 = new Hitbox(user, bkb, kbg, dam, ang, 10, 4, 16, new SFX.MeatyHit(), c);
-		Hitbox h2 = new Hitbox(user, bkb, kbg, dam, ang, 26, 4, 8, new SFX.MeatyHit(), c);
-		Hitbox h3 = new Hitbox(user, bkb, kbg, dam, ang, 36, 4, 8, new SFX.MeatyHit(), c);
+		Hitbox h2 = new Hitbox(user, bkb, kbg, dam, ang, 24, 4, 16, new SFX.MeatyHit(), c);
+		Hitbox h3 = new Hitbox(user, bkb, kbg, dam, ang, 33, 4, 16, new SFX.MeatyHit(), c);
 		new ActionCircleGroup(Arrays.asList(h1, h2, h3));
 		m.eventList.addCharge(user, c);
 		m.eventList.addActionCircle(h1, 12, 18);
@@ -94,27 +107,23 @@ public class M_Frog extends M_Kicker {
 
 	public Move uCharge() {
 		Move m = new Move(user, 40);
-		m.setAnimation("sprites/fighters/frog/ucharge.png", 5, 8);
-		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
-		Hitbox h1 = new Hitbox(user, 7, 	4, 18, 90, 26,-12, 18, new SFX.HeavyHit(), 	 c);
-		Hitbox h2 = new Hitbox(user, 6, 	4, 16, 87, 22, 21, 16, new SFX.HeavyHit(), 	 c);
-		Hitbox h3 = new Hitbox(user, 5, 	3, 14, 84,  0, 26, 16, new SFX.MidHit(), 	 c);
-		Hitbox h4 = new Hitbox(user, 4, 	2, 13, 70,-22, 21, 16, new SFX.MidHit(), 	 c);
-		Hitbox h5 = new Hitbox(user, 3, 	1, 10, 30,-26,-16, 16, new SFX.LightHit(),	 c);
-		new ActionCircleGroup(Arrays.asList(h1, h2, h3, h4, h5));
+		m.setAnimation("sprites/fighters/frog/uweak.png", 3, 13);
+		Effect.Charge c = new Charge(3, 33, 0.025f, user, m);
+		Hitbox sweep = new Hitbox(user, 4.0f, 4.0f, 10, 85, 16,  4, 17, new SFX.MidHit(), c);
+		Hitbox punch = new Hitbox(user, 5.0f, 5.0f, 16, 85, 16, 34, 15, new SFX.MeatyHit(), c);
+		Hitbox stale = new Hitbox(user, 4.0f, 2.0f, 10, 85, 16, 34, 12, new SFX.MidHit(), c);
+		new ActionCircleGroup(Arrays.asList(punch, stale));
 		m.eventList.addCharge(user, c);
-		m.eventList.addActionCircle(h1, 8, 10);
-		m.eventList.addActionCircle(h2, 11, 12);
-		m.eventList.addActionCircle(h3, 13, 14);
-		m.eventList.addActionCircle(h4, 15, 16);
-		m.eventList.addActionCircle(h5, 16, 18);
+		m.eventList.addActionCircle(sweep, 13, 16);
+		m.eventList.addActionCircle(punch, 13, 16);
+		m.eventList.addActionCircle(stale, 17, 23);
 		return m;
 	}
 
 	public Move dCharge() {
 		Move m = new Move(user, 42);
 		m.setAnimation("sprites/fighters/frog/dcharge.png", 4, 8);
-		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
+		Effect.Charge c = new Charge(3, 33, 0.025f, user, m);
 		m.eventList.addCharge(user, c);
 		Hitbox front1 = new Hitbox(user, 4.0f, 4.0f, 13, 40, 16, 16, 14, new SFX.HeavyHit(),  c);
 		Hitbox front2 = new Hitbox(user, 4.0f, 3.0f, 13, 40, 36, 16, 10, new SFX.HeavyHit(),  c);
@@ -132,10 +141,10 @@ public class M_Frog extends M_Kicker {
 	public Move nAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/frog/nair.png", 1, 1);
-		Hitbox earlyBody = new Hitbox(user, 4, 1.5f, 11, 75, -10, 0, 20, new SFX.MidHit());
-		Hitbox earlyFoot = new Hitbox(user, 4, 1.4f, 12, 90, 24, -6, 12, new SFX.MidHit());
-		Hitbox lateBody = new Hitbox(user, 2, 1.1f, 8, 80, -10, 0, 16, new SFX.LightHit());
-		Hitbox lateFoot = new Hitbox(user, 2, 1.1f, 9, 90, 24, -6, 8, new SFX.LightHit());
+		Hitbox earlyBody =	new Hitbox(user, 4.0f, 1.5f, 11, 75, -10, 0, 20, new SFX.MidHit());
+		Hitbox earlyFoot =	new Hitbox(user, 4.0f, 1.4f, 12, 90,  24, -6, 12, new SFX.MidHit());
+		Hitbox lateBody =	new Hitbox(user, 2.0f, 1.1f,  8, 80, -10, 0, 16, new SFX.LightHit());
+		Hitbox lateFoot =	new Hitbox(user, 2.0f, 1.1f,  9, 90,  24, -6, 8, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(earlyBody, earlyFoot, lateBody, lateFoot));
 		m.eventList.addActionCircle(earlyBody, 3, 6);
 		m.eventList.addActionCircle(earlyFoot, 3, 6);
@@ -155,43 +164,46 @@ public class M_Frog extends M_Kicker {
 	public Move dAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/frog/dair.png", 3, 10);
-		Hitbox early1 = new Hitbox(user, 2.5f, 3.6f, 12, 270, 0,   0, 16, new SFX.MeatyHit());
-		Hitbox early2 = new Hitbox(user, 2.5f, 3.6f, 13, 270, 0, -24, 20, new SFX.MeatyHit());
-		Hitbox late1 =  new Hitbox(user, 1.0f, 2.0f,  9, 270, 0,   0, 12, new SFX.MidHit());
-		Hitbox late2 =  new Hitbox(user, 1.0f, 2.0f, 10, 270, 0, -24, 16, new SFX.MidHit());
+		Hitbox early1 = new Hitbox(user, 2.5f, 3.6f, 16, 270, 0,   2, 24, new SFX.MeatyHit());
+		Hitbox early2 = new Hitbox(user, 2.5f, 3.6f, 16, 270, 0, -28, 20, new SFX.MeatyHit());
+		Hitbox late1 =  new Hitbox(user, 1.0f, 2.0f, 10, 270, 0,   2, 20, new SFX.MidHit());
+		Hitbox late2 =  new Hitbox(user, 1.0f, 2.0f, 10, 270, 0, -28, 16, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
-		m.eventList.addActionCircle(early1, 11, 13);
-		m.eventList.addActionCircle(early2, 11, 13);
-		m.eventList.addActionCircle(late1, 14, 17);
-		m.eventList.addActionCircle(late2, 14, 17);
+		early1.setHitstunType(HitstunType.SUPER);
+		early2.setHitstunType(HitstunType.SUPER);
+		m.eventList.addActionCircle(early1, 11, 15);
+		m.eventList.addActionCircle(early2, 11, 15);
+		m.eventList.addActionCircle(late1, 16, 24);
+		m.eventList.addActionCircle(late2, 16, 24);
 		return m;
 	}
 
 	public Move fAir() {
-		Move m = new Move(user, 36);
-		m.setAnimation("sprites/fighters/frog/fair.png", 1, 1);
-		Hitbox early = new Hitbox(user, 5.0f, 2.6f, 14, 30, 18, -2, 20, new SFX.MeatyHit());
-		Hitbox late =  new Hitbox(user, 2.0f, 1.0f,  5, 80, 24, -2, 16, new SFX.LightHit());
+		Move m = new Move(user, 30);
+		m.setAnimation("sprites/fighters/frog/fair.png", 2, 13);
+		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 50));
+		Hitbox early = new Hitbox(user, 4.0f, 3.7f, 18, 30, 14, -2, 24, new SFX.MeatyHit());
+		Hitbox late =  new Hitbox(user, 2.0f, 1.0f,  4,  0, 24, -2, 16, new SFX.LightHit());
 		early.setProperty(Hitbox.Property.ELECTRIC);
-		early.setHitstunType(HitstunType.SUPER);
 		new ActionCircleGroup(Arrays.asList(early, late));
-		m.eventList.addActionCircle(early, 3, 6);
-		m.eventList.addActionCircle(late, 7, 18);
+		m.eventList.addActionCircle(early, 12, 17);
+		m.eventList.addActionCircle(late, 18, 24);
 		return m;
 	}
 
 	public Move bAir() {
 		Move m = new Move(user, 30);
-		m.setAnimation("sprites/fighters/frog/bair.png", 1, 1);
-		Hitbox early1 = new Hitbox(user, 3, 2.5f, 12, 	40, -24, 4, 16, new SFX.MidHit());
-		Hitbox early2 = new Hitbox(user, 3, 2.5f, 12, 	40,  -8, 4, 20, new SFX.MidHit());
-		Hitbox late1 =  new Hitbox(user, 2, 1, 8, 		75, -22, 2, 12, new SFX.LightHit());
-		Hitbox late2 =  new Hitbox(user, 2, 1, 8, 		75, -6, 2, 14, new SFX.LightHit());
+		m.setAnimation("sprites/fighters/frog/bair.png", 3, 10);
+		m.setHurtBox(GlobalRepo.makeHurtBoxOuter(user, 40, 30));
+		Hitbox early1 = new Hitbox(user, 3.2f, 2.8f, 14, 50, -24, 4, 18, new SFX.MidHit());
+		Hitbox early2 = new Hitbox(user, 3.2f, 2.8f, 14, 50,  -8, 4, 22, new SFX.MidHit());
+		Hitbox late1 =  new Hitbox(user, 2.8f, 1.4f, 10, 75, -22, 2, 12, new SFX.LightHit());
+		Hitbox late2 =  new Hitbox(user, 2.8f, 1.4f, 10, 75,  -6, 2, 14, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
-		m.eventList.addActionCircle(early1, 6, 11);
-		m.eventList.addActionCircle(early2, 6, 11);
-		m.eventList.addActionCircle(late1, 12, 24);
-		m.eventList.addActionCircle(late2, 12, 24);
+		m.eventList.addActionCircle(early1, 10, 20);
+		m.eventList.addActionCircle(early2, 10, 20);
+		m.eventList.addActionCircle(late1,  20, 28);
+		m.eventList.addActionCircle(late2,  20, 28);
 		return m;
 	}
 
@@ -236,14 +248,14 @@ public class M_Frog extends M_Kicker {
 	public Move sSpecial() {
 		Move m = new Move(user, 48);
 		m.setAnimation("sprites/fighters/frog/sspecial.png", 4, 12);
-		Hitbox earlyfoot = new Hitbox(user, 6, 3, 20, Hitbox.SAMURAI, 24, -8, 12, new SFX.HeavyHit());
-		Hitbox earlybody = new Hitbox(user, 6, 2, 16, Hitbox.SAMURAI, 10, -4, 20, new SFX.HeavyHit());
-		Hitbox latebody = new Hitbox(user, 	3, 1, 12, 80, 12, -4, 14, new SFX.MidHit());
+		Hitbox earlyfoot = new Hitbox(user, 7.4f, 3.2f, 20, Hitbox.SAMURAI, 24, -8, 12, new SFX.HeavyHit());
+		Hitbox earlybody = new Hitbox(user, 7.4f, 3.2f, 16, Hitbox.SAMURAI, 10, -4, 20, new SFX.HeavyHit());
+		Hitbox latebody = new Hitbox(user, 	4.2f, 1.1f, 12, 80, 12, -4, 14, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(earlyfoot, earlybody, latebody));
 		
 		if (user.isGrounded()) m.eventList.addVelocityChange(user, 10, Action.ChangeVelocity.noChange, 8);
 		else m.eventList.addVelocityChange(user, 12, Action.ChangeVelocity.noChange, 6);
-		m.eventList.addConstantVelocity(user, 12, 14, 14, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 12, 16, 14, Action.ChangeVelocity.noChange);
 		
 		m.eventList.addActionCircle(earlyfoot, 13, 16);
 		m.eventList.addActionCircle(earlybody, 13, 24);
@@ -253,13 +265,13 @@ public class M_Frog extends M_Kicker {
 
 	public Move nSpecial() {
 		Move m = new Move(user, 75);
-		m.setAnimation("sprites/fighters/frog/taunt.png", 7, 9);
+		m.setAnimation("sprites/fighters/frog/fair.png", 2, 50);
 		m.setContinueOnLanding();
-		Hitbox inner = new Hitbox(user, 15, 5, 32, Hitbox.SAMURAI, 15, 0, 30, new SFX.HeavyHit());
-		Hitbox middl = new Hitbox(user,  9, 5, 24, Hitbox.SAMURAI, 30, 0, 60, new SFX.HeavyHit());
-		Hitbox outer = new Hitbox(user,  7, 2, 16, Hitbox.SAMURAI, 45, 0, 90, new SFX.MidHit());
+		Hitbox inner = new Hitbox(user, 15.0f, 6.0f, 32, Hitbox.SAMURAI, 15, 0, 30, new SFX.HeavyHit());
+		Hitbox middl = new Hitbox(user, 11.0f, 4.5f, 24, Hitbox.SAMURAI, 30, 0, 60, new SFX.HeavyHit());
+		Hitbox outer = new Hitbox(user,  7.0f, 2.0f, 16, Hitbox.SAMURAI, 45, 0, 90, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(inner, middl, outer));
-		m.eventList.addArmor(m, 25, 50, 6);
+		m.eventList.addArmor(m, 25, 50, 10);
 		m.eventList.addArmor(m, 51, 60, 999);
 		m.eventList.addSound(new SFX.Explode(), 50);
 		m.eventList.addActionCircle(inner, 50, 56);
@@ -272,9 +284,9 @@ public class M_Frog extends M_Kicker {
 
 	public Move fThrow(){
 		Move m = new Move(user, 18);
-		m.setAnimation("sprites/fighters/frog/sweak.png", 1, 1);
+		m.setAnimation("sprites/fighters/frog/sweak.png", 2, 9);
 		m.dontTurn();
-		Hitbox h1 = new Hitbox(user, 5, 1.1f, 14, 30, 8, 0, 30, new SFX.MeatyHit());
+		Hitbox h1 = new Hitbox(user, 5.3f, 1.5f, 18, 30, 8, 0, 30, new SFX.MeatyHit());
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
 		return m;
@@ -284,8 +296,8 @@ public class M_Frog extends M_Kicker {
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/frog/bthrow.png", 3, 8);
 		m.dontTurn();
-		Hitbox thro = new Hitbox(user, 5.5f, 0, 2, 160, 8, 0, 30, new SFX.LightHit());
-		Hitbox kick = new Hitbox(user, 5, 1.1f, 12, 30, -24, 0, 30, new SFX.MeatyHit());
+		Hitbox thro = new Hitbox(user, 5.5f, 0.0f, 2, 160, 8, 0, 30, new SFX.LightHit());
+		Hitbox kick = new Hitbox(user, 5.2f, 1.5f, 15, 30, -24, 0, 30, new SFX.MeatyHit());
 		kick.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(thro, 0, 4);
 		m.eventList.addActionCircle(kick, 8, 16);
@@ -296,18 +308,18 @@ public class M_Frog extends M_Kicker {
 		Move m = new Move(user, 14);
 		m.dontTurn();
 		m.setAnimation("sprites/fighters/frog/uthrow.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 6, 1.4f, 12, 90, 8, 0, 30, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 6, 1.4f, 16, 90, 8, 0, 30, new SFX.MidHit());
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
 		return m;
 	}
 
 	public Move dThrow(){
-		Move m = new Move(user, 10);
+		Move m = new Move(user, 12);
 		m.setAnimation("sprites/fighters/frog/dthrow.png", 1, 1);
 		m.dontTurn();
-		Hitbox down = new Hitbox(user, 3, 0, 4, 270, 8, 0, 30, new SFX.LightHit());
-		Hitbox up = new Hitbox(user, 3, 1.2f, 8, 82, 8, -8, 30, new SFX.MidHit());
+		Hitbox down =	new Hitbox(user, 3, 0, 4, 290, 8,   0, 30, new SFX.LightHit());
+		Hitbox up =		new Hitbox(user, 4, 0.4f, 8, 64, 16, -8, 30, new SFX.MeatyHit());
 		m.eventList.addActionCircle(down, 0, 1);
 		m.eventList.addActionCircle(up, 4, 8);
 		return m;
@@ -315,8 +327,8 @@ public class M_Frog extends M_Kicker {
 
 	public Move fAirThrow(){
 		Move m = new Move(user, 18);
-		m.setAnimation("sprites/fighters/frog/fair.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 4, 2.8f, 14, 30, 16, 0, 30, new SFX.MidHit());
+		m.setAnimation("sprites/fighters/frog/fair.png", 2, 9);
+		Hitbox h1 = new Hitbox(user, 4.8f, 4.8f, 21, 30, 16, 0, 30, new SFX.MeatyHit());
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
 		return m;
@@ -334,21 +346,22 @@ public class M_Frog extends M_Kicker {
 	}
 
 	public Move uAirThrow(){
-		Move m = new Move(user, 8);
+		Move m = new Move(user, 14);
 		m.setAnimation("sprites/fighters/frog/uairthrow.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 7, 0.1f, 13, 90, 8, 0, 30, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 5, 2.7f, 13, 80, 8, 0, 30, new SFX.MeatyHit());
+		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
-		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 6);
+		m.eventList.addConstantVelocity(user, 0, 10, 0, 0);
 		return m;
 	}
 
 	public Move dAirThrow(){
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/frog/dair.png", 3, 8);
-		Hitbox down = new Hitbox(user, 3, 3, 15, 280, 8, 0, 30, new SFX.HeavyHit());
+		Hitbox down = new Hitbox(user, 4.0f, 4.0f, 18, 270, 8, 0, 30, new SFX.MeatyHit());
 		down.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(down, 0, 4);
-		m.eventList.addVelocityChange(user, 0, -4, 6);
+		m.eventList.addVelocityChange(user, 0, 0, 6);
 		return m;
 	}
 
@@ -365,7 +378,7 @@ public class M_Frog extends M_Kicker {
 	public Move dashGrab() {
 		Move m = new Move(user, 32);
 		m.setAnimation("sprites/fighters/frog/dashgrab.png", 1, 1);
-		m.eventList.addVelocityChange(user, 4, 6, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 4, 8, 10, Action.ChangeVelocity.noChange);
 		Grabbox g1 = new Grabbox(user, 18, 12, 14);
 		m.eventList.addActionCircle(g1, 5, 10);
 		return m;
@@ -396,10 +409,10 @@ public class M_Frog extends M_Kicker {
 	}
 
 	public Move dodge(){
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 30);
 		m.dontTurn();
 		m.setAnimation("sprites/fighters/frog/dodge.png", 1, 1);
-		m.eventList.addInvincible(user, 1, 20);
+		m.eventList.addInvincible(user, 1, 24);
 		return m;
 	}
 

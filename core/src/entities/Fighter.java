@@ -349,7 +349,7 @@ public abstract class Fighter extends Hittable{
 		return true;
 	}
 
-	private final int staleMoveQueueSize = 5;
+	public static final int staleMoveQueueSize = 5;
 	private void startAttack(IDMove im){
 		if (im.id == MoveList.noMove) return;
 		Move m = im.move;
@@ -576,9 +576,11 @@ public abstract class Fighter extends Hittable{
 		float minTurn = 0.2f;
 		int minFrameBReverse = 6;
 		if (Math.abs(stickX) < unregisteredInputMax || !canMove() || cantTurnStates.contains(state)) return;
-		if (null != getActiveMove() && getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1]){
-			boolean bReverse = !attackTimer.timeUp() && attackTimer.getCounter() < minFrameBReverse && !getActiveMove().move.isNoTurn();
-			if (!canAct() && !bReverse) return;
+		if (null != getActiveMove()){
+			boolean bReverse = 
+					!attackTimer.timeUp() && attackTimer.getCounter() < minFrameBReverse && !getActiveMove().move.isNoTurn()
+					&& getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1];
+			if (!bReverse) return;
 		}
 		else if (!isGrounded()) return;
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;

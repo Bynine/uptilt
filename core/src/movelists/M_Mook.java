@@ -19,14 +19,14 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move nWeak() {
-		Move m = new Move(user, 18);
-		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 9);
+		Move m = new Move(user, 22);
+		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 11);
 		Hitbox h1 = new Hitbox(user, 0, 1, 4, Hitbox.SAMURAI, 16, 2, 12, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 8, 9);
 		return m;
 	}
 	
-	private final int uWeakLength = 24;
+	private final int uWeakLength = 32;
 	public Move uWeak() {
 		Move m = new Move(user, uWeakLength);
 		m.setAnimation("sprites/fighters/mook/uweak.png", 2, uWeakLength/2);
@@ -36,7 +36,7 @@ public class M_Mook extends MoveList {
 		return m;
 	}
 	
-	private final int sWeakLength = 24;
+	private final int sWeakLength = 32;
 	public Move sWeak() {
 		Move m = new Move(user, sWeakLength);
 		m.setAnimation("sprites/fighters/mook/sweak.png", 2, sWeakLength/2);
@@ -45,7 +45,7 @@ public class M_Mook extends MoveList {
 		return m;
 	}
 	
-	private final int dWeakLength = 28;
+	private final int dWeakLength = 40;
 	public Move dWeak() {
 		Move m = new Move(user, dWeakLength);
 		m.setAnimation("sprites/fighters/mook/dweak.png", 2, dWeakLength/2);
@@ -79,7 +79,7 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move fAir() {
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/mook/sweak.png", 2, 12);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.6f, 10, Hitbox.SAMURAI, 24, 0, 16, new SFX.MidHit());
 		m.eventList.addActionCircle(h1, 9, 12);
@@ -87,32 +87,32 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move bAir() {
-		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/bair.png", 3, 8);
+		Move m = new Move(user, 30);
+		m.setAnimation("sprites/fighters/mook/bair.png", 3, 10);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, Hitbox.SAMURAI, -20, 0, 20, new SFX.MidHit());
-		m.eventList.addActionCircle(h1, 9, 14);
+		m.eventList.addActionCircle(h1, 11, 15);
 		return m;
 	}
 	
 	public Move uAir() {
-		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/uair.png", 3, 8);
+		Move m = new Move(user, 30);
+		m.setAnimation("sprites/fighters/mook/uair.png", 3, 10);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, 90, 4, 16, 20, new SFX.MidHit());
-		m.eventList.addActionCircle(h1, 9, 14);
+		m.eventList.addActionCircle(h1, 11, 15);
 		return m;
 	}
 	
 	public Move dAir() {
-		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/mook/dair.png", 3, 8);
+		Move m = new Move(user, 30);
+		m.setAnimation("sprites/fighters/mook/dair.png", 3, 10);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.1f, 9, 270, 0, -20, 20, new SFX.MidHit());
-		m.eventList.addActionCircle(h1, 9, 14);
+		m.eventList.addActionCircle(h1, 11, 15);
 		return m;
 	}
 	
 	int spinFrames = 14;
 	public Move sCharge() {
-		int sChargeFrameSpeed = 8;
+		int sChargeFrameSpeed = 11;
 		Move m = new Move(user, spinFrames * sChargeFrameSpeed);
 		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/mook/scharge.png", spinFrames, sChargeFrameSpeed);
@@ -142,7 +142,7 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move dCharge() {
-		int dChargeFrameSpeed = 8;
+		int dChargeFrameSpeed = 11;
 		Move m = new Move(user, spinFrames * dChargeFrameSpeed);
 		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/mook/dcharge.png", spinFrames, dChargeFrameSpeed);
@@ -177,22 +177,22 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move rollForward() {
-		Move m = new Move(user, 36);
+		Move m = new Move(user, 48);
 		user.flip();
-		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
+		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 12);
 		m.eventList.addConstantVelocity(user, 2, 20, -3, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move rollBack() {
-		Move m = new Move(user, 36);
-		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 9);
+		Move m = new Move(user, 48);
+		m.setAnimation("sprites/fighters/mook/sgetup.png", 4, 12);
 		m.eventList.addConstantVelocity(user, 2, 20, -3, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move dodge() {
-		Move m = new Move(user, 25);
+		Move m = new Move(user, 32);
 		m.setAnimation("sprites/fighters/mook/ngetup.png", 1, 1);
 		return m;
 	}
@@ -202,13 +202,13 @@ public class M_Mook extends MoveList {
 	}
 
 	public Move land() {
-		Move m = new Move(user, 7);
+		Move m = new Move(user, 10);
 		m.setAnimation("sprites/fighters/mook/crouch.png", 1, 1);
 		return m;
 	}
 
 	public Move skid() {
-		return new Move(user, 8);
+		return new Move(user, 16);
 	}
 
 	public Move taunt() {

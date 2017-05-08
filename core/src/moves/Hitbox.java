@@ -84,7 +84,7 @@ public class Hitbox extends ActionCircle{
 		else knockback.setAngle(ANG);
 		knockback.x *= applyReverseHitbox(target);
 		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
-		int hitstun = hitstunFormula( target, knockbackFormula(target) );
+		int hitstun = hitstunFormula( target, knockbackFormula(target) * staleness );
 		boolean groundedMeteor = target.isGrounded() && ((downAngle + meteorAngleSize) > knockback.angle() && knockback.angle() > (downAngle - meteorAngleSize));
 		if (groundedMeteor){
 			knockback.y *= meteorGroundMod;
@@ -105,9 +105,13 @@ public class Hitbox extends ActionCircle{
 		IDMove currMove = user.getActiveMove();
 		if (null == currMove) return 1;
 		float staleness = 1/staleMod;
+		boolean spam = false;
+		if (user.getMoveQueue().size() >= Fighter.staleMoveQueueSize) spam = true;
 		for (IDMove im: user.getMoveQueue()){
 			if (im.id == currMove.id) staleness *= staleMod;
+			if (im.id != currMove.id) spam = false;
 		}
+		if (spam) staleness = 0.25f;
 		return staleness;
 	}
 

@@ -16,10 +16,11 @@ class DebugMenu extends Menu{
 
 	private static MenuOption<PlayerType> characters = new MenuOption<PlayerType>(Arrays.asList(
 			new PlayerType(Kicker.class, "Wasp"), new PlayerType(Frog.class, "Frog"),
-			new PlayerType(Grappler.class, "Teddy"), new PlayerType(Dog.class, "Dog"),
+			new PlayerType(Grappler.class, "Teddy"), new PlayerType(Owl.class, "Owl"),
 			new PlayerType(Mook.class, "Mook"), new PlayerType(AlloyMook.class, "AlloyMook"),
 			new PlayerType(Gunmin.class, "Gunmin"), new PlayerType(Rocketmin.class, "Rocketmin"),
-			new PlayerType(Speedy.class, "Speedy"), new PlayerType(Dummy.class, "Dummy")
+			new PlayerType(Speedy.class, "Speedy"), new PlayerType(HyperSpeedy.class, "HyperSpeedy"),
+			new PlayerType(Dog.class, "Dog"), new PlayerType(Dummy.class, "Dummy")
 			));
 	private static MenuOption<Integer> stages = new MenuOption<Integer>(Arrays.asList(
 			0, 1, 2, 3, 4

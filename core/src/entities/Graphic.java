@@ -131,6 +131,7 @@ public abstract class Graphic extends Entity{
 	
 	public static class DoubleJumpRing extends Graphic {
 		private TextureRegion tex = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/doublejump.png")));
+		private TextureRegion small = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/doublejumpsmall.png")));
 		public DoubleJumpRing(float posX, float posY){
 			super(posX, posY, 12);
 			image = new Sprite(tex);
@@ -138,6 +139,7 @@ public abstract class Graphic extends Entity{
 		}
 		void updatePosition(){
 			if (duration.timeUp()) setRemove();
+			if (duration.getCounter() > dur/2) setSmall(small);
 		}
 	}
 

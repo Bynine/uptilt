@@ -30,36 +30,36 @@ public class M_Gunmin extends MoveList {
 	}
 	
 	public Move uWeak() {
-		Move m = new Move(user, 32);
+		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
-		m.eventList.addProjectile(user, Projectile.LaserDiagonalF.class, 10);
-		m.eventList.addProjectile(user, Projectile.LaserUp.class, 20);
-		m.eventList.addProjectile(user, Projectile.LaserDiagonalB.class, 30);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalF.class, 12);
+		m.eventList.addProjectile(user, Projectile.LaserUp.class, 24);
+		m.eventList.addProjectile(user, Projectile.LaserDiagonalB.class, 36);
 		return m;
 	}
 	
 	public Move sWeak() {
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
-		m.eventList.addProjectile(user, Projectile.Laser.class, 12);
+		m.eventList.addProjectile(user, Projectile.Laser.class, 18);
 		return m;
 	}
 	
 	public Move dWeak() {
 		Move m = new Move(user, 60);
 		m.setAnimation("sprites/fighters/laser/crouchfire.png", 1, 1);
-		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -3, 0);
-		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
+		m.eventList.addGraphic(user, 0, 45, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 45, -3, 0);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 45);
 		return m;
 	}
 	
 	public Move slide() {
-		Move m = new Move(user, 45);
+		Move m = new Move(user, 60);
 		m.setAnimation("sprites/fighters/laser/fire.png", 1, 1);
-		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -3, 1);
-		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
+		m.eventList.addGraphic(user, 0, 45, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 45, -4, 1);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 45);
 		return m;
 	}
 	
@@ -77,9 +77,9 @@ public class M_Gunmin extends MoveList {
 	}
 	
 	public Move fAir() {
-		Move m = new Move(user, 24);
+		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
-		m.eventList.addProjectile(user, Projectile.Laser.class, 12);
+		m.eventList.addProjectile(user, Projectile.Laser.class, 18);
 		return m;
 	}
 	
@@ -101,12 +101,12 @@ public class M_Gunmin extends MoveList {
 	}
 	
 	public Move dAir() {
-		Move m = new Move(user, 45);
+		Move m = new Move(user, 50);
 		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/laser/airfire.png", 1, 1);
-		m.eventList.addGraphic(user, 2, 42, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
-		m.eventList.addVelocityChange(user, 42, -2, 0);
-		m.eventList.addProjectile(user, getChargeLaserClass(), 42);
+		m.eventList.addGraphic(user, 0, 45, new Graphic.LaserCharge(user, user.getPosition().x,  user.getPosition().y));
+		m.eventList.addVelocityChange(user, 45, -2, 2);
+		m.eventList.addProjectile(user, getChargeLaserClass(), 45);
 		return m;
 	}
 	
@@ -119,7 +119,7 @@ public class M_Gunmin extends MoveList {
 	}
 	
 	public Move rollForward() {
-		Move m = new Move(user, 48);
+		Move m = new Move(user, 54);
 		user.flip();
 		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
 		m.eventList.addConstantVelocity(user, 2, 34, -2, Action.ChangeVelocity.noChange);
@@ -127,14 +127,14 @@ public class M_Gunmin extends MoveList {
 	}
 	
 	public Move rollBack() {
-		Move m = new Move(user, 48);
+		Move m = new Move(user, 54);
 		m.setAnimation("sprites/fighters/laser/sgetup.png", 2, 12);
 		m.eventList.addConstantVelocity(user, 2, 34, -2, Action.ChangeVelocity.noChange);
 		return m;
 	}
 	
 	public Move dodge() {
-		Move m = new Move(user, 30);
+		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/laser/ngetup.png", 1, 1);
 		return m;
 	}
@@ -144,11 +144,11 @@ public class M_Gunmin extends MoveList {
 	}
 
 	public Move land() {
-		return new Move(user, 6);
+		return new Move(user, 8);
 	}
 
 	public Move skid() {
-		return new Move(user, 8);
+		return new Move(user, 20);
 	}
 
 	public Move taunt() {

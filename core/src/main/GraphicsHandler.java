@@ -211,7 +211,7 @@ public class GraphicsHandler {
 			if (ac.toRemove()) debugRenderer.setColor(0.9f, 1, 1, 0.5f);
 			debugRenderer.circle(c.x, c.y, c.radius);
 		}
-		debugRenderer.setColor(0, 1, 0, 0.2f);
+		debugRenderer.setColor(0, 1, 0, 0.4f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
 			if (e instanceof Fighter) {

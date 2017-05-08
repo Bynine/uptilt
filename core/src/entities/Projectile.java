@@ -252,8 +252,8 @@ public abstract class Projectile extends Entity{
 			if (doesCollide(position.x + velocity.x, position.y)) velocity.x *= horizontalBounceMod;
 		}
 
+		protected double verticalBounceMod = -0.6;
 		void checkFloor(){
-			double verticalBounceMod = -0.6;
 			if (doesCollide(position.x, position.y + velocity.y)) velocity.y *= verticalBounceMod;
 		}
 
@@ -284,6 +284,17 @@ public abstract class Projectile extends Entity{
 			super.update(rectangleList, entityList, deltaTime);
 		}
 
+	}
+	
+	public static class DownwardGrenade extends Grenade{
+
+		public DownwardGrenade(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+			velocity.x = 1;
+			velocity.y = -6;
+			verticalBounceMod = -0.1;
+		}
+		
 	}
 
 	private static class GrenadeExplosion extends Projectile{
@@ -460,6 +471,49 @@ public abstract class Projectile extends Entity{
 		void touchOtherProjectile(Projectile p){
 			/* nothing */
 		}
+	}
+	
+	public static class AcidSpit extends Projectile{
+
+		final int lifeTime = 120;
+		float gravity = -0.16f;
+
+		public AcidSpit(float posX, float posY, Fighter owner) {
+			super(posX, posY + 16, owner);
+			new SFX.LaserFire().play();
+			set();
+		}
+		
+		protected void set(){
+			setup("sprites/entities/acid.png", lifeTime, 7, 4);
+			ac = new ProjectileHitbox(owner, 0.1f, 0.1f, 16, 70, 0, 0, 8, new SFX.MidHit(), this, lifeTime);
+			MapHandler.addActionCircle(ac);
+		}
+
+		public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+			super.update(rectangleList, entityList, deltaTime);
+			velY += gravity;
+			if (ac.hitAnybody()) life.end();
+		}
+
+		void touchOtherProjectile(Projectile p){
+			if (!p.trans) life.end();
+		}
+	}
+	
+	public static class HyperAcidSpit extends AcidSpit{
+
+		public HyperAcidSpit(float posX, float posY, Fighter owner) {
+			super(posX, posY, owner);
+		}
+		
+		protected void set(){
+			gravity = -0.12f;
+			setup("sprites/entities/hyperacid.png", lifeTime, 11, 2);
+			ac = new ProjectileHitbox(owner, 0.5f, 0.5f, 24, 70, 0, 0, 10, new SFX.MidHit(), this, lifeTime);
+			MapHandler.addActionCircle(ac);
+		}
+
 	}
 
 }
