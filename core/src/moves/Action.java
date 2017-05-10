@@ -100,4 +100,19 @@ public abstract class Action {
 
 	}
 	
+	public static class UseSpecial extends Action {
+		final Fighter user;
+		final float drain;
+		
+		public UseSpecial(Fighter user, float drain){
+			this.user = user;
+			this.drain = drain;
+		}
+
+		void performAction() {
+			if (user.getSpecialMeter() <= 0) user.endAttack();
+			else user.changeSpecial(drain);
+		}
+	}
+	
 }

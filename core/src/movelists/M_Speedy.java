@@ -67,7 +67,7 @@ public class M_Speedy extends MoveList {
 		m.setContinueOnLanding();
 		m.setStopsInAir();
 		m.setAnimation("sprites/fighters/speedy/crouch.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 5.0f, 2.1f, 10, 74, 20, 0, 24, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 4.0f, 2.1f, 10, 74, 0, 0, 21, new SFX.MidHit());
 		m.eventList.addConstantVelocity(user, 0, 21, slideSpeed, Action.ChangeVelocity.noChange);
 		m.eventList.addActionCircle(h1, 4, 21);
 		return m;

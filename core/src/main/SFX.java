@@ -4,28 +4,35 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public abstract class SFX {
-	
+
 	String url = null;
-	
+
 	public void play() {
 		if (null != url) Gdx.audio.newSound(Gdx.files.internal(url)).play(UptiltEngine.getVolume());
 	}
-	
+
 	public void play(float vol) {
 		if (null != url) Gdx.audio.newSound(Gdx.files.internal(url)).play(vol * UptiltEngine.getVolume());
 	}
-	
+
 	public void playDirectional(float pan){
 		if (null != url) {
 			Sound sfx = Gdx.audio.newSound(Gdx.files.internal(url));
 			sfx.setPan(sfx.play(), pan, UptiltEngine.getVolume());
 		}
 	}
-	
+
 	protected void setSFX(String url){
 		this.url = "sfx" + url;
 	}
 	
+	public static SFX proportionalHit(float dam){ 
+		if (dam < 11) return new LightHit();
+		else if (dam < 14) return new MidHit(); 
+		else if (dam < 20) return new MeatyHit();
+		else return new HeavyHit();
+	}
+
 	public static class None extends SFX{ }
 	public static class LightHit extends SFX{ public LightHit(){ setSFX("/melee/softhit.wav"); } }
 	public static class MidHit extends SFX{ public MidHit(){ setSFX("/melee/smack.wav"); } }
@@ -40,5 +47,6 @@ public abstract class SFX {
 	public static class FootStool extends SFX{ public FootStool(){ setSFX("/footstool.wav"); } }
 	public static class Ground extends SFX{ public Ground(){ setSFX("/land.mp3"); } }
 	public static class Tech extends SFX{ public Tech(){ setSFX("/tada.mp3"); } }
-	
+
+
 }

@@ -15,37 +15,38 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 
 import entities.Fighter;
+import entities.Hittable;
 import entities.Hittable.HitstunType;
 
 public abstract class ActionCircle {
 
-	Fighter user;
+	Hittable user;
 	final float dispX, dispY;
 	final Circle area;
 	final Timer duration = new DurationTimer(5);
 	final Timer refreshTimer = new DurationTimer(6);
 	boolean initialHit = false, remove = false, doesRefresh = false, reflects = false, reverse = true;
 	float movesAheadMod = 1;
-	final List<Fighter> hitFighterList = new ArrayList<Fighter>();
-	private Set<Fighter> s;
+	final List<Hittable> hitFighterList = new ArrayList<Hittable>();
+	private Set<Hittable> s;
 	Property property = Property.NORMAL;
 	Fighter.HitstunType hitstunType = HitstunType.NORMAL;
 	ActionCircleGroup group = null;
 
-	public ActionCircle(Fighter user, float dispX, float dispY, int size){
+	public ActionCircle(Hittable user, float dispX, float dispY, int size){
 		this.user = user;
 		this.dispX = dispX;
 		this.dispY = dispY;
 		area = new Circle(getX(), getY(), size);
 	}
 
-	public abstract void hitTarget(Fighter target);
+	public abstract void hitTarget(Hittable en);
 	public abstract Color getColor();
 
 	public void checkGroup(){ 
 		if (null != group) for (ActionCircle ac: group.connectedCircles) {
 			hitFighterList.addAll(ac.hitFighterList);
-			s = new HashSet<Fighter>(hitFighterList);
+			s = new HashSet<Hittable>(hitFighterList);
 			hitFighterList.clear();
 			hitFighterList.addAll(s);
 			if (ac.isInitialHit() || ac.remove) remove = true;
@@ -91,9 +92,20 @@ public abstract class ActionCircle {
 	
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
-	boolean didHitTarget(Fighter target){ 
-		return user.getTeam() != target.getTeam() && !remove && !user.attackTimer.timeUp() 
-				&& !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()) && !hitFighterList.contains(target); 
+	boolean didHitTarget(Hittable target){ 
+		boolean teamCheck = true;
+		boolean attackTimeUp = true;
+		if (null != user) {
+			teamCheck = user.getTeam() != target.getTeam();
+			if (user instanceof Fighter) attackTimeUp = !((Fighter)user).attackTimer.timeUp();
+		}
+		return 
+					teamCheck
+				&& !remove 
+				&& attackTimeUp
+				&& !target.isInvincible() 
+				&& Intersector.overlaps(area, target.getHurtBox()) 
+				&& !hitFighterList.contains(target); 
 	}
 	public boolean isInitialHit() { return initialHit; }
 	public boolean hitAnybody() { return hitFighterList.size() >= 1; }

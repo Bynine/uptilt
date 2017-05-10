@@ -19,10 +19,10 @@ public class M_Mook extends MoveList {
 	}
 	
 	public Move nWeak() {
-		Move m = new Move(user, 22);
-		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 11);
-		Hitbox h1 = new Hitbox(user, 0, 1, 4, Hitbox.SAMURAI, 16, 2, 12, new SFX.LightHit());
-		m.eventList.addActionCircle(h1, 8, 9);
+		Move m = new Move(user, 24);
+		m.setAnimation("sprites/fighters/mook/nweak.png", 2, 12);
+		Hitbox h1 = new Hitbox(user, 0.5f, 1.0f, 4, Hitbox.SAMURAI, 16, 2, 12, new SFX.LightHit());
+		m.eventList.addActionCircle(h1, 12, 14);
 		return m;
 	}
 	
@@ -30,7 +30,7 @@ public class M_Mook extends MoveList {
 	public Move uWeak() {
 		Move m = new Move(user, uWeakLength);
 		m.setAnimation("sprites/fighters/mook/uweak.png", 2, uWeakLength/2);
-		Hitbox h1 = new Hitbox(user, 2, 1.8f, 7, 80, 4, 16, 18, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2.0f, 1.8f, 7, 80, 4, 16, 18, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, uWeakLength/2, (uWeakLength/2) + 3);
 		m.eventList.addVelocityChange(user, uWeakLength/2, 0, 2);
 		return m;
@@ -40,7 +40,7 @@ public class M_Mook extends MoveList {
 	public Move sWeak() {
 		Move m = new Move(user, sWeakLength);
 		m.setAnimation("sprites/fighters/mook/sweak.png", 2, sWeakLength/2);
-		Hitbox h1 = new Hitbox(user, 1, 2.1f, 6, Hitbox.SAMURAI, 26, 4, 12, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 1.0f, 2.1f, 6, Hitbox.SAMURAI, 26, 4, 12, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, sWeakLength/2, (sWeakLength/2) + 3);
 		return m;
 	}
@@ -49,7 +49,7 @@ public class M_Mook extends MoveList {
 	public Move dWeak() {
 		Move m = new Move(user, dWeakLength);
 		m.setAnimation("sprites/fighters/mook/dweak.png", 2, dWeakLength/2);
-		Hitbox h1 = new Hitbox(user, 3, 1f, 5, Hitbox.SAMURAI, 20, 0, 12, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 2.1f, 1.0f, 5, Hitbox.SAMURAI, 20, 0, 12, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, dWeakLength/2, (dWeakLength/2) + 3);
 		return m;
 	}
@@ -73,16 +73,16 @@ public class M_Mook extends MoveList {
 	public Move nAir() {
 		Move m = new Move(user, 32);
 		m.setAnimation("sprites/fighters/mook/nair.png", 4, 2);
-		Hitbox h1 = new Hitbox(user, 1, 2, 6, Hitbox.SAMURAI, 0, 0, 24, new SFX.LightHit());
+		Hitbox h1 = new Hitbox(user, 1.6f, 1.6f, 6, Hitbox.SAMURAI, 0, 0, 24, new SFX.LightHit());
 		m.eventList.addActionCircle(h1, 8, 24);
 		return m;
 	}
 	
 	public Move fAir() {
 		Move m = new Move(user, 40);
-		m.setAnimation("sprites/fighters/mook/sweak.png", 2, 12);
+		m.setAnimation("sprites/fighters/mook/sweak.png", 2, 16);
 		Hitbox h1 = new Hitbox(user, 1.5f, 2.6f, 10, Hitbox.SAMURAI, 24, 0, 16, new SFX.MidHit());
-		m.eventList.addActionCircle(h1, 9, 12);
+		m.eventList.addActionCircle(h1, 16, 19);
 		return m;
 	}
 	

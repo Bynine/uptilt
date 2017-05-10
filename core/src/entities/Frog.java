@@ -32,7 +32,7 @@ public class Frog extends Fighter {
 
 	public Frog(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 130;
+		weight = 114;
 		runAcc = 2.4f;
 		runSpeed = 9.1f;
 		airSpeed = 4f;
@@ -51,6 +51,11 @@ public class Frog extends Fighter {
 		footStoolKB.set(0, -1);
 		footStoolDuration = 40;
 		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconfrog.png")));
+	}
+	
+	protected void dealDamage(float DAM){
+		float specialMod = 1/30f;
+		if (!activeMoveIsSpecial()) changeSpecial(specialMod * DAM);
 	}
 	
 	public Rectangle getNormalHurtBox(){

@@ -83,9 +83,10 @@ public abstract class Brain{
 		if (pack.distanceYFromPlayer < -20 && Math.random() < 0.5) body.yInput = 1;
 	}
 
+	float runTendency = 0.01f;
 	void headTowardPlayer(Timer changeDirection, InputPackage pack){
 		body.xInput = setInput(-pack.distanceXFromPlayer);
-		if (Math.random() < 0.3 && Math.abs(pack.distanceXFromPlayer) > 300) { // run toward
+		if (Math.random() < runTendency && Math.abs(pack.distanceXFromPlayer) > 300) { // run toward
 			if (pack.distanceXFromPlayer > 0) body.handleCommand(InputHandler.commandStickRight);
 			else body.handleCommand(InputHandler.commandStickLeft);
 		}
@@ -220,6 +221,7 @@ public abstract class Brain{
 		public SpeedyBrain(InputHandlerCPU body) {
 			super(body);
 			aggressiveness = 0.2f;
+			runTendency *= 3;
 			waitToUseUpSpecial.setEndTime(15);
 		}
 

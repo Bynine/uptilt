@@ -21,6 +21,7 @@ public class EntityLoader {
 		case "mook": return makeNewEnemy(Mook.class, Brain.MookBrain.class, x, y);
 		case "gunmin": return makeNewEnemy(Gunmin.class, Brain.GunminBrain.class, x, y);
 		case "speedy": return makeNewEnemy(Speedy.class, Brain.SpeedyBrain.class, x, y);
+		case "trash": return new TrashCan(x, y);
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));

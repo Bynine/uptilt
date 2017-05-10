@@ -34,7 +34,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
-	public static boolean 	debugToggle 	= true;
+	public static boolean 	debugToggle 	= false;
 	private static int 		roomChoice 		= 0;
 
 	public void create () {

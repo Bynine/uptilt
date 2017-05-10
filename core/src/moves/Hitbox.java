@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import entities.Entity.State;
 import entities.Fighter;
 import entities.Graphic;
+import entities.Hittable;
 
 public class Hitbox extends ActionCircle{
 	public static final int SAMURAI = 361;
@@ -31,7 +32,7 @@ public class Hitbox extends ActionCircle{
 	 * @param VDisplacement
 	 * @param Size
 	 */
-	public Hitbox(Fighter user, float BKB, float KBG, float DAM, float ANG, float dispX, float dispY, int size, SFX sfx){
+	public Hitbox(Hittable user, float BKB, float KBG, float DAM, float ANG, float dispX, float dispY, int size, SFX sfx){
 		super(user, dispX, dispY, size);
 		this.BKB = BKB;
 		this.KBG = KBG;
@@ -52,7 +53,7 @@ public class Hitbox extends ActionCircle{
 	 * @param Size
 	 * @param Charge
 	 */
-	public Hitbox(Fighter user, float BKB, float KBG, float DAM, float ANG, float dispX, float dispY, int size, SFX sfx, Effect.Charge charge){
+	public Hitbox(Hittable user, float BKB, float KBG, float DAM, float ANG, float dispX, float dispY, int size, SFX sfx, Effect.Charge charge){
 		super(user, dispX, dispY, size);
 		this.BKB = BKB;
 		this.KBG = KBG;
@@ -66,13 +67,13 @@ public class Hitbox extends ActionCircle{
 	private final int downAngle = 270;
 	private final float meteorHitstunMod = 1.25f;
 	private final float meteorGroundMod = -0.75f;
-	public void hitTarget(Fighter target){
+	public void hitTarget(Hittable target){
 		if (!didHitTarget(target)) return;
 
 		refreshTimer.restart();
 		float staleness = 1;
 		if (null != user) {
-			staleness = getStaleness(user);
+			if (user instanceof Fighter) staleness = getStaleness((Fighter)user);
 			DAM *= user.getPowerMod();
 			BKB *= user.getPowerMod();
 			KBG *= user.getPowerMod();
@@ -90,7 +91,7 @@ public class Hitbox extends ActionCircle{
 			knockback.y *= meteorGroundMod;
 			hitstun *= meteorHitstunMod;
 		}
-		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun, hitstunType);
+		target.takeDamagingKnockback(knockback, heldCharge * DAM * staleness, hitstun, hitstunType, user);
 		if (property == Property.STUN){
 			target.stun((int) (DAM * 6));
 		}
@@ -115,7 +116,7 @@ public class Hitbox extends ActionCircle{
 		return staleness;
 	}
 
-	private Vector2 recoilFormula(Vector2 knockback, Fighter target) {
+	private Vector2 recoilFormula(Vector2 knockback, Hittable target) {
 		float recoil = -knockback.x/4;
 		recoil *= (target.getWeight()/100);
 		Vector2 recoilVector = new Vector2(recoil, 0);
@@ -128,12 +129,12 @@ public class Hitbox extends ActionCircle{
 
 	private final float minSamuraiKnockback = 4;
 	private final float samuraiKnockbackAngle = 45;
-	protected void setSamuraiAngle(Fighter target, Vector2 knockback){
+	protected void setSamuraiAngle(Hittable target, Vector2 knockback){
 		if (knockbackFormula(target) < minSamuraiKnockback && target.isGrounded()) knockback.setAngle(0);
 		else knockback.setAngle(samuraiKnockbackAngle);
 	}
 
-	void startHitlag(Fighter target){
+	void startHitlag(Hittable target){
 		if (!UptiltEngine.getPlayers().contains(target) && !UptiltEngine.getPlayers().contains(user)) return;
 		float hit = knockbackFormula(target);
 		if (target.getArmor() > 0) hit += target.getArmor() * 2;
@@ -152,7 +153,7 @@ public class Hitbox extends ActionCircle{
 	}
 
 	private static final float hitstunRatio = 4f;
-	public int hitstunFormula(Fighter target, float knockback){
+	public int hitstunFormula(Hittable target, float knockback){
 		if (BKB + KBG == 0) return 0;
 		return  2 + (int) (knockback * hitstunRatio * target.getHitstunMod());
 	}
@@ -161,11 +162,13 @@ public class Hitbox extends ActionCircle{
 	private final float kbgMod = 0.032f;
 	private final float weightMod = 0.01f;
 	private final float minKnockback = 0.25f;
-	public float knockbackFormula(Fighter target){
+	public float knockbackFormula(Hittable target){
 		if (BKB + KBG == 0) return 0;
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
 		knockback -= target.getArmor();
-		if (target.getState() == State.CROUCH) knockback *= crouchCancelMod;
+		if (target instanceof Fighter){
+			if (( (Fighter) target ).getState() == State.CROUCH)  knockback *= crouchCancelMod;
+		}
 		if (knockback < minKnockback) return 0;
 		else return knockback;
 	}
@@ -180,7 +183,7 @@ public class Hitbox extends ActionCircle{
 		}
 	}
 
-	protected float applyReverseHitbox(Fighter target){
+	protected float applyReverseHitbox(Hittable target){
 		if (null == user) {
 			if (area.x - area.radius/2 > target.getPosition().x) return -1;
 			else return 1;

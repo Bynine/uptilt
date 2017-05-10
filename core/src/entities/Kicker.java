@@ -32,7 +32,7 @@ public class Kicker extends Fighter {
 
 	public Kicker(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 90;
+		weight = 87;
 		runAcc = 2.3f;
 		runSpeed = 7.8f;
 		walkAcc = 0.9f;

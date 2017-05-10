@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import entities.Entity;
 import entities.Fighter;
 import entities.Graphic;
+import entities.Hittable;
 
 public class MapHandler {
 
@@ -75,7 +76,7 @@ public class MapHandler {
 
 	static void updateActionCircleInteractions(){
 		for (Entity en: activeRoom.getEntityList()){
-			if (en instanceof Fighter) {
+			if (en instanceof Hittable) {
 				fighterHitboxInteract(en);
 				removeGrabboxes();
 			}
@@ -100,8 +101,7 @@ public class MapHandler {
 	}
 
 	private static void fighterHitboxInteract(Entity en){
-		Fighter fi = (Fighter) en;
-		for (ActionCircle ac: activeRoom.getActionCircleList()) ac.hitTarget(fi);
+		for (ActionCircle ac: activeRoom.getActionCircleList()) ac.hitTarget((Hittable) en);
 	}
 
 	public static void updateRoomMap(Room room) {

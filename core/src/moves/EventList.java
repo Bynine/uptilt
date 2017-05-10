@@ -63,6 +63,11 @@ public class EventList {
 		actionStartTimes.add(start);
 	}
 	
+	public void addUseSpecial(Fighter user, int start, float drain) {
+		actionList.add(new Action.UseSpecial(user, drain));
+		actionStartTimes.add(start);
+	}
+	
 	/* effects */
 
 	public void addConstantVelocity(Fighter user, int start, int end, float velX, float velY) {

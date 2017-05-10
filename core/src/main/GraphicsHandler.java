@@ -19,8 +19,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+
 import entities.Entity;
 import entities.Fighter;
+import entities.Hittable;
 
 public class GraphicsHandler {
 
@@ -113,6 +115,8 @@ public class GraphicsHandler {
 		for (Fighter player: UptiltEngine.getPlayers()){
 			font.draw(batch, "lives: " + player.getLives(), 
 					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
+			font.draw(batch, "special: " + player.getSpecialMeter(), 
+					cam.position.x - SCREENWIDTH * (stockLocationMod/2), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			lineHeight *= -1/2;
 		}
 		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
@@ -214,7 +218,7 @@ public class GraphicsHandler {
 		debugRenderer.setColor(0, 1, 0, 0.4f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
 			Rectangle r = e.getHurtBox();
-			if (e instanceof Fighter) {
+			if (e instanceof Hittable) {
 				debugRenderer.rect(r.x, r.y, r.width, r.height);
 			}
 		}

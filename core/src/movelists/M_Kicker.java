@@ -94,15 +94,15 @@ public class M_Kicker extends MoveList{
 	/* CHARGE ATTACKS */
 
 	public Move sCharge() {
-		Move m = new Move(user, 30);
-		m.setAnimation("sprites/fighters/kicker/scharge.png", 5, 6);
+		Move m = new Move(user, 36);
+		m.setAnimation("sprites/fighters/kicker/scharge.png", 6, 6);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 60));
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
-		Hitbox h1 = new Hitbox(user, 		5.0f, 3.0f, 14, 60, 06, 4, 12, new SFX.HeavyHit(), c);
-		Hitbox h2 = new Hitbox(user, 		5.5f, 3.3f, 15, 52, 18, 4, 12,  new SFX.HeavyHit(), c);
-		Hitbox tipper1 = new Hitbox(user, 	6.0f, 3.6f, 18, 44, 30, 4, 12,  new SFX.HomeRun(),  c);
-		Hitbox tipper2 = new Hitbox(user, 	6.5f, 3.9f, 19, 38, 42, 4, 12, new SFX.HomeRun(),  c);
-		Hitbox back = new Hitbox(user, 		3.2f, 0.4f, 11, 80,-36,24, 10, new SFX.MidHit(), c);
+		Hitbox h1 = 	new Hitbox(user, 5.0f, 3.0f, 14, 60, 00, 4, 10, new SFX.HeavyHit(), c);
+		Hitbox h2 = 	new Hitbox(user, 5.5f, 3.3f, 15, 52, 12, 4, 10, new SFX.HeavyHit(), c);
+		Hitbox tipper1= new Hitbox(user, 6.0f, 3.6f, 18, 44, 24, 4, 11, new SFX.HomeRun(),  c);
+		Hitbox tipper2= new Hitbox(user, 6.5f, 3.9f, 19, 38, 32, 4, 13, new SFX.HomeRun(),  c);
+		Hitbox back = 	new Hitbox(user, 3.2f, 0.4f, 11, 80,-36,24, 10, new SFX.MidHit(), c);
 		h1.setReflects();
 		h2.setReflects();
 		tipper1.setReflects();
@@ -206,8 +206,8 @@ public class M_Kicker extends MoveList{
 	public Move fAir() {
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/kicker/fair.png", 3, 10);
-		Hitbox early1 = new Hitbox(user, 3.4f, 2.7f, 13, 	40, 24, 0, 17, new SFX.HeavyHit());
-		Hitbox early2 = new Hitbox(user, 3.4f, 2.7f, 13, 	40,  8, 0, 21, new SFX.HeavyHit());
+		Hitbox early1 = new Hitbox(user, 3.4f, 2.7f, 13, 	48, 24, 0, 17, new SFX.HeavyHit());
+		Hitbox early2 = new Hitbox(user, 3.4f, 2.7f, 13, 	48,  8, 0, 21, new SFX.HeavyHit());
 		Hitbox late1 =  new Hitbox(user, 2.1f, 1.0f,  8, 	75, 22, 0, 15, new SFX.LightHit());
 		Hitbox late2 =  new Hitbox(user, 2.1f, 1.0f,  8, 	75, 6,  0, 19, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));

@@ -3,6 +3,7 @@ package moves;
 import com.badlogic.gdx.graphics.Color;
 
 import entities.Fighter;
+import entities.Hittable;
 
 public class Grabbox extends ActionCircle {
 
@@ -11,15 +12,15 @@ public class Grabbox extends ActionCircle {
 	}
 
 	@Override
-	public void hitTarget(Fighter target) {
+	public void hitTarget(Hittable target) {
 		if (!didHitTarget(target)) return;
 		
-		target.getGrabbed(user, target, caughtTimeFormula(target));
+		target.getGrabbed((Fighter)user, target, caughtTimeFormula(target));
 		remove = true;
 	}
 	
 	private final int minGrabTime = 20;
-	private int caughtTimeFormula(Fighter target){
+	private int caughtTimeFormula(Hittable target){
 		return (int) (minGrabTime + target.getPercentage());
 	}
 

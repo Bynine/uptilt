@@ -41,7 +41,7 @@ public class ProjectileHitbox extends Hitbox {
 	void touchOtherActionCircles(){
 		for (ActionCircle ac: MapHandler.getActionCircles()){
 			if (Intersector.overlaps(this.area, ac.area) && ac.doesReflect() && !ac.user.equals(user) ){
-				proj.reflect(ac.user);
+				proj.reflect((Fighter)ac.user);
 				user = proj.getUser();
 				DAM *= reflectMultiplier;
 				KBG *= reflectMultiplier;
