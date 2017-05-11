@@ -101,7 +101,7 @@ public class Hitbox extends ActionCircle{
 		hitFighterList.add(target);
 	}
 	
-	float staleMod = 0.9f;
+	float staleMod = 0.94f;
 	private float getStaleness(Fighter user) {
 		IDMove currMove = user.getActiveMove();
 		if (null == currMove) return 1;

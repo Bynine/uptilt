@@ -22,10 +22,6 @@ public class TrashCan extends Throwable {
 		airFriction = 0.986f;
 		weight = 130;
 	}
-	
-	public float getPercentage(){
-		return staticPercent;
-	}
 
 	TextureRegion getStandFrame(float deltaTime) {
 		return normImage;

@@ -6,11 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
-public class Room_Standard extends Room {
+public class Room_Standard extends Stage {
 
-	public Room_Standard(Level superLevel){
-		super(superLevel);
-		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/song of storm crow.mp3"));
+	public Room_Standard(){
+		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/alienattack.mp3"));
 		setup();
 	}
 

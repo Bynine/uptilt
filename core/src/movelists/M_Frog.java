@@ -16,7 +16,7 @@ import entities.Hittable.HitstunType;
 //import entities.Projectile; HAHAHAHAHAHA
 import entities.Entity.Direction;
 
-public class M_Frog extends M_Kicker {
+public class M_Frog extends M_Wasp {
 
 	public M_Frog(Fighter user) {
 		super(user);

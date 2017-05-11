@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -44,6 +45,8 @@ public abstract class Fighter extends Hittable{
 	float wallJumpStrengthY = 7.2f;
 	float wallSlideSpeed = -1f;
 	float doubleJumpStrength = 8.5f;
+	
+	private ShaderProgram palette = null;
 	
 	static final int SPECIALMETERMAX = 16;
 	float specialMeter = SPECIALMETERMAX;
@@ -663,6 +666,8 @@ public abstract class Fighter extends Hittable{
 	public Color getColor() { return new Color(1, 1, 1, 1); }
 	public List<IDMove> getMoveQueue() { return staleMoveQueue; }
 	public float getSpecialMeter() { return specialMeter; }
+	public ShaderProgram getPalette() { return palette; }
+	public void setPalette(ShaderProgram pal) { palette = pal; }
 	
 	public void setInvincible(int i) { 
 		invincibleTimer.restart();

@@ -87,6 +87,7 @@ public class GraphicsHandler {
 		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE * 3;
 	}
 
+	static float stockLocationMod = 1/4.3f;
 	static void updateGraphics(){
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		batch.setProjectionMatrix(cam.combined);
@@ -109,16 +110,16 @@ public class GraphicsHandler {
 		batch.end();
 		font.setColor(1, 1, 1, 1);
 
-		float stockLocationMod = 1/4.5f;
-		float lineHeight = 6;
+		float lineHeight = 8;
 		batch.begin();
 		for (Fighter player: UptiltEngine.getPlayers()){
 			font.draw(batch, "lives: " + player.getLives(), 
 					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			font.draw(batch, "special: " + player.getSpecialMeter(), 
-					cam.position.x - SCREENWIDTH * (stockLocationMod/2), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
+					cam.position.x - SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			lineHeight *= -1/2;
 		}
+		font.draw(batch, "aliens: " + UptiltEngine.numEnemies(), cam.position.x + SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod);
 		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
 		batch.end();
 
@@ -141,9 +142,11 @@ public class GraphicsHandler {
 				batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
 			else if (fi.isCharging()) 
 				batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
+			if (null != fi.getPalette()) batch.setShader(fi.getPalette());
 		}
 		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		batch.setColor(1, 1, 1, 1);
+		batch.setShader(null);
 	}
 
 	private static boolean isOffScreen(Entity e){

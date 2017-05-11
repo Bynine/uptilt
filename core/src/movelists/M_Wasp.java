@@ -17,9 +17,9 @@ import entities.Fighter;
 import entities.Hittable.HitstunType;
 import entities.Projectile;
 
-public class M_Kicker extends MoveList{
+public class M_Wasp extends MoveList{
 	
-	public M_Kicker(Fighter user) {
+	public M_Wasp(Fighter user) {
 		super(user);
 	}
 
@@ -124,7 +124,7 @@ public class M_Kicker extends MoveList{
 		m.setAnimation("sprites/fighters/kicker/ucharge.png", 5, 7);
 		m.setHurtBox(GlobalRepo.makeHurtBox(user, 30, 50));
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);
-		Hitbox h1 = new Hitbox(user, 5.5f, 4.8f, 17, 90, 26,-12, 18, new SFX.HeavyHit(), 	 c);
+		Hitbox h1 = new Hitbox(user, 5.5f, 4.8f, 17, 90, 22,-22, 26, new SFX.HeavyHit(), 	 c);
 		Hitbox h2 = new Hitbox(user, 5.0f, 4.0f, 15, 87, 22, 21, 16, new SFX.HeavyHit(), 	 c);
 		Hitbox h3 = new Hitbox(user, 4.5f, 3.0f, 13, 84,  0, 26, 16, new SFX.MidHit(), 	 c);
 		Hitbox h4 = new Hitbox(user, 3.5f, 2.0f, 11, 70,-22, 21, 16, new SFX.MidHit(), 	 c);
@@ -244,6 +244,7 @@ public class M_Kicker extends MoveList{
 		Hitbox h1 = new Hitbox(user, 5, 2, 10, 90, 0, 0, 24, new SFX.MidHit());
 		h1.setMovesAheadMod(2);
 		m.eventList.addConstantVelocity(user, 0, start, ConstantVelocity.noChange, 0);
+		m.eventList.addUseSpecial(user, 11, -1);
 		m.eventList.addConstantAngledVelocity(user, start, end, 12);
 		m.eventList.addActionCircle(h1, start, end);
 		m.eventList.addVelocityChange(user, end, 0, 0);
@@ -256,6 +257,7 @@ public class M_Kicker extends MoveList{
 		m.setAnimation("sprites/fighters/kicker/dspecial.png", 1, 1);
 		m.setContinueOnLanding();
 		m.eventList.addArmor(m, 4, 28, 4);
+		m.eventList.addUseSpecial(user, 11, -4);
 		m.eventList.addVelocityChange(user, 16, -7, Action.ChangeVelocity.noChange);
 		m.eventList.addProjectile(user, Projectile.Rocket.class, 12);
 		return m;
@@ -265,6 +267,7 @@ public class M_Kicker extends MoveList{
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/kicker/grab.png", 1, 1);
 		m.setContinueOnLanding();
+		m.eventList.addUseSpecial(user, 9, -2);
 		m.eventList.addProjectile(user, Projectile.Grenade.class, 10);
 		return m;
 	}
@@ -274,6 +277,7 @@ public class M_Kicker extends MoveList{
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 24, 60));
 		m.setAnimation("sprites/fighters/kicker/nspecial.png", 1, 1);
 		m.setContinueOnLanding();
+		m.eventList.addUseSpecial(user, 5, -1);
 		m.eventList.addProjectile(user, Projectile.Stunner.class, 6);
 		return m;
 	}
@@ -376,6 +380,7 @@ public class M_Kicker extends MoveList{
 		down.setNoReverse();
 		m.eventList.addActionCircle(down, 0, 4);
 		m.eventList.addConstantVelocity(user, 0, 20, 0, 0);
+		m.eventList.addUseSpecial(user, 19, -1);
 		m.eventList.addProjectile(user, Projectile.DownwardGrenade.class, 20);
 		m.eventList.addVelocityChange(user, 21, -3, 3);
 		return m;

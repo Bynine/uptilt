@@ -20,6 +20,7 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	private float currShoulder, prevShoulder;
 	
 	private final float depressed = 0.1f;
+	float xInput = 0, yInput = 0;
 	public static final int AXIS_LEFT_Y = 0; //-1 is up | +1 is down
 	public static final int AXIS_LEFT_X = 1; //-1 is left | +1 is right
 	public static final int AXIS_RIGHT_Y = 2; //-1 is up | +1 is down
@@ -38,8 +39,10 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 
 	public boolean setupController(int index){
 		if (Controllers.getControllers().size <= index) return false;
-		Controllers.addListener(this);
 		control = Controllers.getControllers().get(index);
+		if (!(control.getName().toLowerCase().contains("xbox") &&
+                control.getName().contains("360"))) return false;
+		Controllers.addListener(this);
 		return true;
 	}
 
@@ -50,7 +53,12 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 		super.update();
 		prevShoulder = currShoulder;
 		
-		for (StickDir sd: stickDirs) sd.update();
+		xInput = control.getAxis(AXIS_LEFT_X);
+		yInput = control.getAxis(AXIS_LEFT_Y);
+		
+		for (StickDir sd: stickDirs) {
+			sd.update();
+		}
 	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {
@@ -60,11 +68,11 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	}
 
 	public float getXInput() {
-		return control.getAxis(AXIS_LEFT_X);
+		return xInput;
 	}
 
 	public float getYInput() {
-		return control.getAxis(AXIS_LEFT_Y);
+		return yInput;
 	}
 
 	public boolean dodge(){

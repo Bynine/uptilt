@@ -1,4 +1,4 @@
-package maps;
+package challenges;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,12 +7,13 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 
 import input.InputHandlerCPU;
+import main.GlobalRepo;
 import main.MapHandler;
 import entities.Fighter;
 
 public class EnemySpawner {
 	final List<Enemy> enemyList = new ArrayList<Enemy>();
-	final int initAmount;
+	private final int initAmount;
 	int amount, capacity;
 	float frequency;
 	final List<Fighter> spawnedEntities = new ArrayList<Fighter>();
@@ -25,6 +26,15 @@ public class EnemySpawner {
 		this.capacity = capacity;
 		this.frequency = frequency;
 		this.random = random;
+	}
+	
+	EnemySpawner(EnemySpawner es){
+		this.enemyList.addAll(es.enemyList);
+		this.amount = es.amount;
+		initAmount = es.amount;
+		this.capacity = es.capacity;
+		this.frequency = es.frequency;
+		this.random = es.random;
 	}
 
 	void update(float deltaTime){
@@ -54,7 +64,7 @@ public class EnemySpawner {
 
 	Enemy getEnemy(){
 		Enemy en = null;
-		if (random) en = enemyList.get( (int) (Math.random() * enemyList.size()) );
+		if (random) en = GlobalRepo.getRandomElementFromList(enemyList);
 		else{
 			en = enemyList.get(0);
 			rotate(enemyList);
@@ -62,16 +72,20 @@ public class EnemySpawner {
 		return en;
 	}
 
-	public <T> List<T> rotate(List<T> aL) {  // remove last element, add it to front of the ArrayList
-		if (aL.size() == 0) return aL;
+	public <T> List<T> rotate(List<T> lst) {  // remove last element, add it to front of the ArrayList
+		if (lst.size() == 0) return lst;
 		T element = null;
-		element = aL.remove( aL.size() - 1 );
-		aL.add(0, element);
-		return aL;
+		element = lst.remove( lst.size() - 1 );
+		lst.add(0, element);
+		return lst;
 	}
 
 	public void restart() {
 		amount = initAmount;
 		spawnedEntities.clear();
+	}
+	
+	public int getNumActiveEnemies(){
+		return spawnedEntities.size();
 	}
 }

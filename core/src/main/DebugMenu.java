@@ -15,7 +15,7 @@ import entities.*;
 class DebugMenu extends Menu{
 
 	private static MenuOption<PlayerType> characters = new MenuOption<PlayerType>(Arrays.asList(
-			new PlayerType(Kicker.class, "Wasp"), new PlayerType(Frog.class, "Frog"),
+			new PlayerType(Wasp.class, "Wasp"), new PlayerType(Frog.class, "Frog"),
 			new PlayerType(Grappler.class, "Teddy"), new PlayerType(Owl.class, "Owl"),
 			new PlayerType(Mook.class, "Mook"), new PlayerType(AlloyMook.class, "AlloyMook"),
 			new PlayerType(Gunmin.class, "Gunmin"), new PlayerType(Rocketmin.class, "Rocketmin"),

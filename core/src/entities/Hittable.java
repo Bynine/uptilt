@@ -74,6 +74,7 @@ public abstract class Hittable extends Entity {
 		e.velocity.x += dirPush * pushForce;
 	}
 
+	protected float hitSpeedMod = 0.6f;
 	public void getHitByHurtlingObject(Hittable knocker){ // heheheh
 		Vector2 knockIntoVector = new Vector2(knocker.velocity.x, knocker.velocity.y);
 		float bkb = knockbackIntensity(knockIntoVector);
@@ -103,8 +104,7 @@ public abstract class Hittable extends Entity {
 		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() + baseHitstun );
 		knocker.knockIntoTimer.restart();
 		knockIntoTimer.restart();
-		float dampen = 0.7f;
-		knocker.velocity.set(knocker.velocity.x * dampen, knocker.velocity.y * dampen);
+		knocker.velocity.set(knocker.velocity.x * knocker.hitSpeedMod, knocker.velocity.y * knocker.hitSpeedMod);
 	}
 	
 	private void takeKnockIntoKnockback(Vector2 knockback, float DAM, int hitstun){

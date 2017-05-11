@@ -1,7 +1,7 @@
 package entities;
 
 import main.GlobalRepo;
-import movelists.M_Kicker;
+import movelists.M_Wasp;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Kicker extends Fighter {
+public class Wasp extends Fighter {
 
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 6, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 4, 1, 12, PlayMode.LOOP);
@@ -30,7 +30,7 @@ public class Kicker extends Fighter {
 	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
 	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fallen.png")));
 
-	public Kicker(float posX, float posY, int team) {
+	public Wasp(float posX, float posY, int team) {
 		super(posX, posY, team);
 		weight = 87;
 		runAcc = 2.3f;
@@ -50,7 +50,7 @@ public class Kicker extends Fighter {
 		jumpSquatTimer.setEndTime(3);
 		footStoolDuration = 25;
 		dashTimer.setEndTime(20);
-		moveList = new M_Kicker(this);
+		moveList = new M_Wasp(this);
 		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
 	}
 	

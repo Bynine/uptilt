@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import maps.Level;
-import maps.Level_Stages;
-import maps.Room;
+import maps.Stage;
+import maps.Room_Standard;
 import moves.ActionCircle;
 import moves.Grabbox;
 
@@ -22,16 +21,14 @@ import entities.Hittable;
 
 public class MapHandler {
 
-	static Room activeRoom;
+	static Stage activeRoom;
 	static TiledMap activeMap;
-	static Level activeLevel; 
 	private static final List<Rectangle> rectangleList = new ArrayList<>();
 	static int mapWidth;
 	static int mapHeight; 
 
-	static void begin(int startMap){
-		activeLevel = new Level_Stages();
-		activeRoom = activeLevel.getRoom(startMap);
+	static void begin(){
+		activeRoom = new Room_Standard();
 		activeMap = activeRoom.getMap();
 		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
 		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());
@@ -104,7 +101,7 @@ public class MapHandler {
 		for (ActionCircle ac: activeRoom.getActionCircleList()) ac.hitTarget((Hittable) en);
 	}
 
-	public static void updateRoomMap(Room room) {
+	public static void updateRoomMap(Stage room) {
 		activeRoom = room;
 		activeMap = activeRoom.getMap();
 		activeRoom.initEntities();

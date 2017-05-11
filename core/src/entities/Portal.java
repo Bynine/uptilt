@@ -1,6 +1,6 @@
 package entities;
 
-import maps.Room;
+import maps.Stage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 public class Portal extends Entity {
-	private Room room;
+	private Stage room;
 	protected Vector2 destination = new Vector2();
 
-	public Portal(float x, float y, Room room, float desX, float desY){
+	public Portal(float x, float y, Stage room, float desX, float desY){
 		super(x, y);
 		image = new Sprite(new Texture(Gdx.files.internal("sprites/portal.png")));
 		this.room = room;
@@ -23,7 +23,7 @@ public class Portal extends Entity {
 	@Override
 	protected void updatePosition(){ /* doesn't move */ }
 	
-	public Room getRoom(){ 
+	public Stage getRoom(){ 
 		return room; 
 	}
 

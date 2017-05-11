@@ -7,11 +7,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
-public class Room_Flat extends Room {
+public class Room_Flat extends Stage {
 
-	public Room_Flat(Level superLevel){
-		super(superLevel);
-		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/song of storm crow.mp3"));
+	public Room_Flat(){
+		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/debug.mp3"));
 		setup();
 	}
 

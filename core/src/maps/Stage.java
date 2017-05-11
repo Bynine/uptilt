@@ -19,7 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import entities.Entity;
 import entities.Fighter;
 
-public abstract class Room {
+public abstract class Stage {
 	protected MapObjects mapCollision, mapEntities;
 	protected final TmxMapLoader tmxMapLoader = new TmxMapLoader();
 	protected final List<Rectangle> rectangleList = new ArrayList<>();
@@ -31,14 +31,12 @@ public abstract class Room {
 	protected float a = 0;
 	protected float wind = 0;
 	protected float gravity = 1;
-	Level superLevel;
 	
 	public static final float LOWGRAV = 0.66f;
 	public static final float HIGRAV  = 1.3f;
 
-	public Room(Level superLevel){
+	public Stage(){
 		clearOut();
-		this.superLevel = superLevel;
 	}
 
 	public void setup(){
@@ -49,7 +47,6 @@ public abstract class Room {
 		}
 		mapEntities = layers.get(layers.getCount()-1).getObjects();
 		roomMusic.setLooping(true);
-		//roomMusic.play();
 	}
 
 	public void initEntities(){
@@ -60,8 +57,8 @@ public abstract class Room {
 			player.setRespawnPoint(getStartPosition());
 			entityList.add(player);
 		}
-
 		for (MapObject m: mapEntities) entityList.add(new EntityLoader().loadEntity(m));
+		if (UptiltEngine.musicToggle) roomMusic.play();
 	}
 
 	public void addEntity(Entity e){

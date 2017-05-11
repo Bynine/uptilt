@@ -11,6 +11,7 @@ public abstract class Throwable extends Hittable {
 	public Throwable(float posX, float posY) {
 		super(posX, posY);
 		hitstunMod = 8;
+		hitSpeedMod = -0.6f;
 	}
 	
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
@@ -24,5 +25,9 @@ public abstract class Throwable extends Hittable {
 		super.ground();
 		state = State.STAND;
 		hitstunTimer.end();
+	}
+	
+	public float getPercentage(){
+		return staticPercent;
 	}
 }

@@ -7,6 +7,7 @@ import main.UptiltEngine;
 import com.badlogic.gdx.math.Intersector;
 
 import entities.Fighter;
+import entities.Hittable;
 import entities.Projectile;
 
 public class ProjectileHitbox extends Hitbox {
@@ -27,10 +28,17 @@ public class ProjectileHitbox extends Hitbox {
 		if (proj.life.timeUp()) remove = true;
 	}
 	
-	boolean didHitTarget(Fighter target){ 
-		boolean hitAnyFighter = !remove && !target.isInvincible() && Intersector.overlaps(area, target.getHurtBox()) && !hitFighterList.contains(target);
+	boolean didHitTarget(Hittable target){ 
+		boolean hitAnyFighter = 
+				!remove &&
+				!target.isInvincible() &&
+				Intersector.overlaps(area, target.getHurtBox()) &&
+				!hitFighterList.contains(target);
 		if (null == user) return hitAnyFighter; 
-		return target != user && user.getTeam() != target.getTeam() && hitAnyFighter; 
+		return 
+				target != user &&
+				user.getTeam() != target.getTeam() &&
+				hitAnyFighter; 
 	}
 	
 	void handlePerfectBlockingKnockback(){

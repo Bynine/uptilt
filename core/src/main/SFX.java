@@ -46,7 +46,8 @@ public abstract class SFX {
 	public static class HomeRun extends SFX{ public HomeRun(){ setSFX("/melee/KRRIIIIING.wav"); } }
 	public static class FootStool extends SFX{ public FootStool(){ setSFX("/footstool.wav"); } }
 	public static class Ground extends SFX{ public Ground(){ setSFX("/land.mp3"); } }
-	public static class Tech extends SFX{ public Tech(){ setSFX("/tada.mp3"); } }
-
-
+	public static class Tech extends SFX{ public Tech(){ setSFX("/tech.mp3"); } }
+	public static class Collect extends SFX{ public Collect(){ setSFX("/collect.mp3"); } }
+	public static class Victory extends SFX{ public Victory(){ setSFX("/tada.mp3"); } }
+	
 }

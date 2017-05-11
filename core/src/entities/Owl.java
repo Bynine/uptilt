@@ -1,6 +1,6 @@
 package entities;
 
-public class Owl extends Kicker {
+public class Owl extends Wasp {
 
 	public Owl(float posX, float posY, int team) {
 		super(posX, posY, team);

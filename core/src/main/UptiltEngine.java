@@ -8,25 +8,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import maps.Room;
-import maps.Round;
+import maps.Stage;
 import timers.Timer;
 import entities.*;
+import challenges.Challenge;
+import challenges.ChallengeGraphicsHandler;
+import challenges.RoundGenerator;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 
 public class UptiltEngine extends ApplicationAdapter {
 
-	private static float volume = 1f;
 	private static final Timer hitlagTimer = new Timer(0);
-	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer));
+	private static final Timer waitTimer = new Timer(0);
+	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer, waitTimer));
 	private static final List<Fighter> playerList = new ArrayList<Fighter>();
 	private static int deltaTime = 0;
 	private static FPSLogger fpsLogger = new FPSLogger();
-	private static Round round;
 	private static boolean paused = false;
+	private static Challenge challenge;
 	private static GameState gameState = GameState.GAME;
 	private static InputHandlerPlayer primaryInputHandler = null;
 
@@ -35,23 +39,29 @@ public class UptiltEngine extends ApplicationAdapter {
 	public static boolean 	p2Toggle 		= false;
 	public static boolean 	roundToggle 	= true;
 	public static boolean 	debugToggle 	= false;
-	private static int 		roomChoice 		= 0;
+	public static boolean	musicToggle		= false;
+	private static float	volume			= 1f;
+	private static ShaderProgram p2Palette;
 
 	public void create () {
-		beginFighter(new Frog(0, 0, 0), 0);
+		p2Palette = new ShaderProgram(Gdx.files.internal("shaders/vert.glsl"), Gdx.files.internal("shaders/spooky.glsl"));
+		Fighter player1 = new Wasp(0, 0, 0);
+		beginFighter(player1, 0);
 		GraphicsHandler.begin();
-		MapHandler.begin(roomChoice);
+		MapHandler.begin();
+		
 		Menu.begin();
 		DebugMenu.begin();
 		MainMenu.begin();
+		
+		challenge = new Challenge(5, RoundGenerator.DIFF_MIDD);
 
 		if (p2Toggle){
-			Fighter player2 = new Kicker(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
+			Fighter player2 = new Wasp(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
 			beginFighter(player2, 1);
 			MapHandler.addEntity(player2);
 		}
-		
-		round = new Round();
+
 	}
 	
 	private static void beginFighter(Fighter player, int cont){
@@ -74,7 +84,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		deltaTime++;
 		updateTimers();
 		if (fpsLogToggle) fpsLogger.log();
-
+		
 		switch(gameState){
 		case GAME:	updateGame();		break;
 		case DEBUG: DebugMenu.update();	break;
@@ -83,14 +93,15 @@ public class UptiltEngine extends ApplicationAdapter {
 	}
 	
 	private void updateGame(){
-		if (roundToggle) round.update(deltaTime);
-		MapHandler.updateInputs();
+		if (roundToggle) challenge.update();
+		if (waitTimer.timeUp()) MapHandler.updateInputs();
 		if (!paused){
 			MapHandler.activeRoom.update(deltaTime);
 			MapHandler.updateActionCircleInteractions();
 			if (outOfHitlag()) MapHandler.updateEntities();
 		}
 		GraphicsHandler.updateGraphics();
+		if (roundToggle) ChallengeGraphicsHandler.update();
 		GraphicsHandler.updateCamera();
 	}
 
@@ -102,12 +113,17 @@ public class UptiltEngine extends ApplicationAdapter {
 		hitlagTimer.setEndTime(length);
 		hitlagTimer.restart();
 	}
+	
+	public static void wait(int length){
+		waitTimer.setEndTime(length);
+		waitTimer.restart();
+	}
 
 	public static void pauseGame() {
 		paused = !paused;
 	}
 
-	public static void changeRoom (Room room, Vector2 position) {
+	public static void changeRoom (Stage room, Vector2 position) {
 		deltaTime = 0;
 		for (Fighter player: getPlayers()){
 			player.setPosition(position);
@@ -122,7 +138,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	
 	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
 		startNewGame(newPlayers);
-		MapHandler.begin(roomChoice);
+		MapHandler.begin();
 		debugToggle = debug;
 	}
 	
@@ -133,11 +149,17 @@ public class UptiltEngine extends ApplicationAdapter {
 		int i = 0;
 		for (Fighter player: newPlayers) {
 			beginFighter(player, i);
+			if (i >= 1) player.setPalette(p2Palette);
 			i++;
 		}
 		GraphicsHandler.begin();
-		MapHandler.begin(roomChoice);
-		round = new Round();
+		MapHandler.begin();
+		challenge.restart();
+	}
+	
+	public static int numEnemies(){
+		if (null == challenge || null == challenge.getActiveRound()) return 0;
+		return challenge.getActiveRound().getNumEnemies();
 	}
 	
 	public enum GameState{

@@ -22,6 +22,7 @@ public class EntityLoader {
 		case "gunmin": return makeNewEnemy(Gunmin.class, Brain.GunminBrain.class, x, y);
 		case "speedy": return makeNewEnemy(Speedy.class, Brain.SpeedyBrain.class, x, y);
 		case "trash": return new TrashCan(x, y);
+		case "ammo": return new Ammo(x, y);
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));
@@ -30,7 +31,7 @@ public class EntityLoader {
 		}
 		}
 	}
-	
+
 	private Fighter makeNewEnemy(Class <? extends Fighter> fiClass, Class <? extends Brain> brClass, float x, float y){
 		Fighter enemy;
 		try {

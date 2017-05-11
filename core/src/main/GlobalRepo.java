@@ -1,5 +1,7 @@
 package main;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -76,6 +78,10 @@ public class GlobalRepo {
 		if (dir) hurtBox.x = origBox.x + (origBox.width - hurtBox.width);
 		else hurtBox.x = origBox.x;
 		return hurtBox;
+	}
+	
+	public static <T> T getRandomElementFromList(List<T> lst){
+		return lst.get( (int) (Math.random() * lst.size()) );
 	}
 	
 }

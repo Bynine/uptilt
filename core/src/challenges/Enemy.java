@@ -1,4 +1,4 @@
-package maps;
+package challenges;
 
 import input.Brain;
 import entities.Fighter;
