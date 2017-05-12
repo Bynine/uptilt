@@ -1,4 +1,4 @@
-package input;
+package inputs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,8 +33,8 @@ public abstract class InputHandler {
 	}
 
 	public void update(){
-		if (fighter.inputQueueTimer.timeUp()) fighter.queuedCommand = commandNone;
-		if (!fighter.inputQueueTimer.timeUp()) handleCommand(fighter.queuedCommand);
+		if (fighter.inputQueueTimeUp()) fighter.queuedCommand = commandNone;
+		if (!fighter.inputQueueTimeUp()) handleCommand(fighter.queuedCommand);
 	}
 
 	public abstract float getXInput();
@@ -49,11 +49,11 @@ public abstract class InputHandler {
 		if (fighter.canAct()) wasCommandAccepted = handleCanActActions(command);
 		if (fighter.canAttack()) wasCommandAccepted = handleCanAttackActions(command);
 
-		boolean shouldAddToInputQueue = !wasCommandAccepted && fighter.inputQueueTimer.timeUp()
+		boolean shouldAddToInputQueue = !wasCommandAccepted && fighter.inputQueueTimeUp()
 				&& !stickCommands.contains(command) && !(command == commandJump && fighter.isGrounded());
 		if (shouldAddToInputQueue) {
 			fighter.queuedCommand = command;
-			fighter.inputQueueTimer.restart();
+			fighter.restartInputQueue();
 		}
 		else if (wasCommandAccepted && !(command == commandDodge)) {
 			fighter.queuedCommand = commandNone;

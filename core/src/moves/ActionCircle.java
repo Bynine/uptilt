@@ -97,7 +97,7 @@ public abstract class ActionCircle {
 		boolean attackTimeUp = true;
 		if (null != user) {
 			teamCheck = user.getTeam() != target.getTeam();
-			if (user instanceof Fighter) attackTimeUp = !((Fighter)user).attackTimer.timeUp();
+			if (user instanceof Fighter) attackTimeUp = !((Fighter)user).attackTimeUp();
 		}
 		return 
 					teamCheck

@@ -7,9 +7,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
-public class Room_Flat extends Stage {
+public class Stage_Flat extends Stage {
 
-	public Room_Flat(){
+	public Stage_Flat(){
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/debug.mp3"));
 		setup();
 	}

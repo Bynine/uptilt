@@ -61,7 +61,7 @@ class DebugMenu extends Menu{
 		Gdx.gl.glClearColor(0.15f, 0.22f, 0.25f, 1);
 		batch.begin();
 
-		font.draw(batch, "Press taunt to begin",					posX, startY);
+		font.draw(batch, startStr,									posX, startY);
 		font.draw(batch, "CHARACTER: " + characters.selected().name,posX, startY -= dec);
 		font.draw(batch, "STAGE: " + stages.selected(),				posX, startY -= dec);
 		font.draw(batch, "NUM PLAYERS: " + players.selected(),		posX, startY -= dec);

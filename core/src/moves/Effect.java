@@ -96,7 +96,7 @@ public abstract class Effect extends Action{
 				if (eff != this) eff.moveForward();
 			}
 			move.addFrame();
-			user.attackTimer.countDown();
+			user.countDownAttackTimer();
 		}	
 		float getHeldCharge(){
 			return heldCharge;

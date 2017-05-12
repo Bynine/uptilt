@@ -2,8 +2,8 @@ package entities;
 
 import main.GlobalRepo;
 import movelists.M_Mook;
-import input.InputHandlerCPU;
-import input.Brain.MookBrain;
+import inputs.InputHandlerCPU;
+import inputs.Brain.MookBrain;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

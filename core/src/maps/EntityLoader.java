@@ -2,8 +2,8 @@ package maps;
 
 import java.lang.reflect.InvocationTargetException;
 
-import input.Brain;
-import input.InputHandlerCPU;
+import inputs.Brain;
+import inputs.InputHandlerCPU;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;

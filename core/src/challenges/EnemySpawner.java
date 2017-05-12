@@ -6,18 +6,19 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 
-import input.InputHandlerCPU;
+import inputs.InputHandlerCPU;
 import main.GlobalRepo;
 import main.MapHandler;
 import entities.Fighter;
 
 public class EnemySpawner {
 	final List<Enemy> enemyList = new ArrayList<Enemy>();
-	private final int initAmount;
-	int amount, capacity;
+	private int initAmount, amount, capacity;
 	float frequency;
 	final List<Fighter> spawnedEntities = new ArrayList<Fighter>();
 	private final boolean random;
+	
+	public static final int ENDLESS = -5;
 
 	EnemySpawner (List<Enemy> enemyList, int amount, int capacity, float frequency, boolean random){
 		this.enemyList.addAll(enemyList);
@@ -39,6 +40,7 @@ public class EnemySpawner {
 
 	void update(float deltaTime){
 		if (deltaTime % frequency == 1 && amount > 0 && spawnedEntities.size() < capacity) spawnNewEnemy();
+		else if (deltaTime % frequency == 1 && amount == ENDLESS && spawnedEntities.size() < capacity) spawnNewEnemy();
 
 		Iterator<Fighter> spawnIter = spawnedEntities.iterator();
 		while (spawnIter.hasNext()){
@@ -59,7 +61,7 @@ public class EnemySpawner {
 		fi.setInputHandler(new InputHandlerCPU(fi, en.brain));
 		MapHandler.addEntity(fi);
 		spawnedEntities.add(fi);
-		amount--;
+		if (amount != ENDLESS) amount--;
 	}
 
 	Enemy getEnemy(){
@@ -87,5 +89,18 @@ public class EnemySpawner {
 	
 	public int getNumActiveEnemies(){
 		return spawnedEntities.size();
+	}
+	
+	public void setToEndless(){
+		amount = ENDLESS;
+		initAmount = ENDLESS;
+	}
+	
+	public int getAmount(){
+		return amount;
+	}
+	
+	public int getCapacity(){
+		return capacity;
 	}
 }

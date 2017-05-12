@@ -17,6 +17,7 @@ abstract class Menu {
 	
 	protected static BitmapFont font = new BitmapFont();
 	protected static SpriteBatch batch;
+	protected final static String startStr = "Press TAUNT to begin";
 	
 	static void begin(){
 		batch = new SpriteBatch();

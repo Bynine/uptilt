@@ -3,43 +3,25 @@ package challenges;
 import java.util.ArrayList;
 import java.util.List;
 
+import entities.SupplyCrate;
 import entities.Fighter;
 import main.MapHandler;
 import main.SFX;
 import main.UptiltEngine;
-import maps.Stage;
-import maps.Room_Standard;
+import maps.*;
 
-public class Challenge {
+public abstract class Challenge {
 
-	private final List<Round> roundList = new ArrayList<Round>();
-	private final List<Stage> stageList = new ArrayList<Stage>();
-	private Round activeRound = null;
-	int place = 0;
-
-	/**
-	 * 
-	 * @param size Number of rounds
-	 * @param difficulty Challenge level. Set w/ static ints
-	 */
-	public Challenge(int size, int difficulty){
-		for (int i = 0; i < size; ++i){
-			int newDifficulty = difficulty;
-			if (size != 1){
-				if		(i == 0)		newDifficulty -= 1; // first round is easy...
-				else if (i == size - 1) newDifficulty += 1; // pre boss fight difficulty spike
-			}
-			roundList.add(RoundGenerator.generate(newDifficulty, i));
-			
-			stageList.add(getRoomByRound());
-		}
-		begin();
-	}
-
+	protected final List<Round> roundList = new ArrayList<Round>();
+	protected final List<Stage> stageList = new ArrayList<Stage>();
+	protected Round activeRound = null;
+	protected int place = 0;
+	protected int numLives = 5;
+	
 	int waitBetween = 60;
-	private void begin(){
+	protected void begin(){
 		for (Fighter player: (UptiltEngine.getPlayers() ) ){
-			player.setLives(5);
+			player.setLives(numLives);
 		}
 		startRound();
 	}
@@ -52,6 +34,7 @@ public class Challenge {
 			if (player.getLives() > 0) shouldRestart = false;
 		}
 		if (shouldRestart) restart();
+		if (UptiltEngine.getDeltaTime() % 640 == 0) MapHandler.addEntity(new SupplyCrate(MapHandler.getSpawnPoint().x, MapHandler.getSpawnPoint().y));
 	}
 
 	public void goToNextRound(){
@@ -59,9 +42,9 @@ public class Challenge {
 		if (place >= roundList.size()) win();
 		else startRound();
 	}
-	
-	private void startRound(){
-		MapHandler.updateRoomMap(stageList.get(place));
+
+	protected void startRound(){
+		UptiltEngine.changeRoom(stageList.get(place));
 		activeRound = roundList.get(place);
 		ChallengeGraphicsHandler.readyGo();
 		UptiltEngine.wait(waitBetween);
@@ -69,6 +52,7 @@ public class Challenge {
 
 	void win(){
 		new SFX.Victory().play();
+		UptiltEngine.returnToMenu();
 		restart();
 	}
 
@@ -82,9 +66,16 @@ public class Challenge {
 		for (Round r: roundList) r.restart();
 		begin();
 	}
-	
-	private Stage getRoomByRound(){
-		return new Room_Standard();
+
+	protected Stage getRoomByRound(int position){
+		switch(position){
+		case 0: return new Stage_Standard();
+		case 1: return new Stage_Walledin();
+		case 2: return new Stage_Flat();
+		case 3: return new Stage_Height();
+		case 4: return new Stage_Ship();
+		}
+		return new Stage_Standard();
 	}
 
 }

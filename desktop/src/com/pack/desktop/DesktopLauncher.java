@@ -20,4 +20,5 @@ public class DesktopLauncher {
 		cfg.height= GraphicsHandler.SCREENHEIGHT;
 		new LwjglApplication(new UptiltEngine(), cfg);
 	}
+	
 }

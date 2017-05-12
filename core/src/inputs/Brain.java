@@ -1,4 +1,4 @@
-package input;
+package inputs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,6 +145,8 @@ public abstract class Brain{
 	}
 
 	public static class MookBrain extends Brain{
+		
+		double getupChance = 0.02;
 
 		public MookBrain(InputHandlerCPU body) {
 			super(body);
@@ -155,7 +157,7 @@ public abstract class Brain{
 			super.update(pack);
 			if (changeDirection.timeUp()) headTowardPlayer(changeDirection, pack);
 			if (!performJump.timeUp()) performJump(performJump);
-			if (pack.state == State.FALLEN && Math.random() < 0.02) getUp();
+			if (pack.state == State.FALLEN && Math.random() < getupChance) getUp();
 			else if (pack.state == State.WALLSLIDE || Math.random() < 0.1) body.handleCommand(InputHandler.commandJump);
 			else if (pack.distanceYFromPlayer < 20 && tryJump.timeUp()) jumpTowardPlayer(tryJump, performJump, pack);
 			else if (inVerticalAttackRange(pack)) {
@@ -173,6 +175,17 @@ public abstract class Brain{
 			else return false;
 		}
 
+	}
+	
+	public static class EliteMookBrain extends MookBrain{
+
+		public EliteMookBrain(InputHandlerCPU body) {
+			super(body);
+			aggressiveness = 1;
+			getupChance = 1;
+			runTendency = 1;
+		}
+		
 	}
 
 	public static class GunminBrain extends Brain{

@@ -22,8 +22,14 @@ class MainMenu extends Menu {
 	private static MenuOption<Integer> players = new MenuOption<Integer>(Arrays.asList(
 			1, 2
 			));
-	private static MenuOption<String> choices = new MenuOption<String>(Arrays.asList("P1CHAR", "P2CHAR", "PLAYERS"));
-	private static List<MenuOption<?>> options = new ArrayList<MenuOption<?>>(Arrays.asList(choices, p1Char, p2Char, players));
+	private static MenuOption<String> challengeType = new MenuOption<String>(Arrays.asList(
+			"ADVENTURE"
+			));
+	private static MenuOption<String> difficulty = new MenuOption<String>(Arrays.asList(
+			"EASY", "MIDDLE", "HARD", "NIGHTMARE"
+			));
+	private static MenuOption<String> choices = new MenuOption<String>(Arrays.asList("CHALLENGETYPE", "DIFFICULTY", "P1CHAR", "P2CHAR", "PLAYERS"));
+	private static List<MenuOption<?>> options = new ArrayList<MenuOption<?>>(Arrays.asList(choices, challengeType, difficulty, p1Char, p2Char, players));
 	
 	private static TextureRegion cursor = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
 
@@ -47,13 +53,18 @@ class MainMenu extends Menu {
 		int startY = 600;
 		int dec = 60;
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-		Gdx.gl.glClearColor(0.1f, 0.04f, 0.1f, 1);
+		Gdx.gl.glClearColor(0.07f, 0.04f, 0.1f, 1);
 		batch.begin();
 
+		font.draw(batch, startStr,									posX, startY);
+		font.draw(batch, "CHALLENGE: " + challengeType.selected(),	posX, startY -= dec);
+		font.draw(batch, "DIFFICULTY: " + difficulty.selected(),	posX, startY -= dec);
 		font.draw(batch, "P1 CHAR: " + p1Char.selected().name,		posX, startY -= dec);
+		
 		if (players.selected() == 1) font.setColor(0.5f, 0.5f, 0.5f, 0.5f);
 		font.draw(batch, "P2 CHAR: " + p2Char.selected().name,		posX, startY -= dec);
 		font.setColor(Color.GOLDENROD);
+		
 		font.draw(batch, "NUM PLAYERS: " + players.selected(),		posX, startY -= dec);
 
 		batch.draw(cursor, posX - 50, 600 - dec * (choices.cursorPos() + 1));
@@ -62,7 +73,7 @@ class MainMenu extends Menu {
 
 	private static void start(){
 		ArrayList<PlayerType> newPlayers = new ArrayList<PlayerType>(Arrays.asList(p1Char.selected(), p2Char.selected()));
-		UptiltEngine.startNewGame(makePlayers(players.selected(), newPlayers));
+		UptiltEngine.startNewChallenge(makePlayers(players.selected(), newPlayers), difficulty.cursorPos() + 1);
 	}
 
 

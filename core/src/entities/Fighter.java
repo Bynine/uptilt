@@ -1,7 +1,7 @@
 package entities;
 
-import input.InputHandler;
-import input.InputHandlerKeyboard;
+import inputs.InputHandler;
+import inputs.InputHandlerKeyboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,43 +29,43 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class Fighter extends Hittable{
 
-	final float unregisteredInputMax = 0.2f;
-	boolean doubleJumped, blockHeld;
+	protected final float unregisteredInputMax = 0.2f;
+	protected boolean doubleJumped, blockHeld;
 	public int queuedCommand = InputHandler.commandNone;
-	public final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0);
-	final Timer grabbingTimer = new Timer(0), dashTimer = new Timer(20);
-	private final Timer invincibleTimer = new Timer(0), dodgeTimer = new Timer(1);
-	private final Timer footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
-	float prevStickX = 0, stickX = 0, prevStickY = 0, stickY = 0, prevPositionX = 0, prevPositionY = 0;
+	protected final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0), grabbingTimer = new Timer(0), 
+			dashTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(1), footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
+	protected float prevStickX = 0, stickX = 0, stickY = 0;
 
-	float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
-	float jumpStrength = 5f, dashStrength = 5f;
-	float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
-	float wallJumpStrengthX = 8f;
-	float wallJumpStrengthY = 7.2f;
-	float wallSlideSpeed = -1f;
-	float doubleJumpStrength = 8.5f;
-	
+	protected float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
+	protected float jumpStrength = 5f, dashStrength = 5f;
+	protected float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
+	protected float wallJumpStrengthX = 8f;
+	protected float wallJumpStrengthY = 7.2f;
+	protected float wallSlideSpeed = -1f;
+	protected float doubleJumpStrength = 8.5f;
+
 	private ShaderProgram palette = null;
-	
-	static final int SPECIALMETERMAX = 16;
-	float specialMeter = SPECIALMETERMAX;
+	private final Vector2 spawnPoint;
+	private int team = 0, lives = 1;
 
-	Vector2 footStoolKB = new Vector2(0, 0);
-	int footStoolDuration = 30;
-	int footStoolDamage = 0;
+	public static final int SPECIALMETERMAX = 16;
+	private float specialMeter = SPECIALMETERMAX;
+
+	protected Vector2 footStoolKB = new Vector2(0, 0);
+	protected int footStoolDuration = 30;
+	protected int footStoolDamage = 0;
 
 	protected TextureRegion defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconalien.png")));
-	
+
 	private Hittable caughtFighter = null;
 	private IDMove activeMove = null; 
-	
+
 	private InputHandler inputHandler = new InputHandlerKeyboard(this);
 	private final int randomAnimationDisplacement;
-	final Vector2 spawnPoint;
-	private int team = 0, lives = 1;
-	MoveList moveList = new M_Mook(this);
+	protected MoveList moveList = new M_Mook(this);
+	
 	private final List<IDMove> staleMoveQueue = new ArrayList<IDMove>();
+	public static final int staleMoveQueueSize = 5;
 
 	public Fighter(float posX, float posY, int team) {
 		super(posX, posY);
@@ -94,12 +94,8 @@ public abstract class Fighter extends Hittable{
 			handleMove();
 		}
 
-		prevPositionX = position.x;
-		prevPositionY = position.y;
 		super.update(rectangleList, entityList, deltaTime);
-
 		prevStickX = stickX;
-		prevStickY = stickY;
 	}
 
 	private void handleThrow(){
@@ -134,10 +130,10 @@ public abstract class Fighter extends Hittable{
 		prevState = state;
 	}
 
-	private float minCrouchHold = 0.9f;
-	private float minRunHold = 0.5f;
-	private float minRunFromAirHold = 0.9f;
 	private void updateGroundedState(){
+		float minCrouchHold = 0.9f;
+		float minRunHold = 0.5f;
+		float minRunFromAirHold = 0.9f;
 		if (!(jumpSquatTimer.timeUp() && state == State.JUMPSQUAT) && !inGroundedState()) ground();
 
 		if (state == State.FALLEN) state = State.FALLEN;
@@ -272,12 +268,14 @@ public abstract class Fighter extends Hittable{
 
 	public boolean tryStickDown(){
 		upDownStick();
-		if (isGrounded()){
-			for (Rectangle r: tempRectangleList){
-				if (Math.abs(position.y - r.y) < 2 && r.getHeight() <= 1) position.y -= 2;
-			}
-		}
+		if (isGrounded()) fallThroughThinFloor();
 		return true; 
+	}
+	
+	private void fallThroughThinFloor(){
+		for (Rectangle r: tempRectangleList){
+			if (Math.abs(position.y - r.y) < 2 && r.getHeight() <= 1) position.y -= 2;
+		}
 	}
 
 	private void upDownStick(){
@@ -293,22 +291,22 @@ public abstract class Fighter extends Hittable{
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		startAttack(new IDMove(moveList.dodge(), MoveList.noStaleMove));
 	}
-	
+
 	public boolean tryCStickUp(){
 		startAttack(moveList.selectCStickUp()); 
 		return true; 
 	}
-	
+
 	public boolean tryCStickDown(){
 		startAttack(moveList.selectCStickDown()); 
 		return true; 
 	}
-	
+
 	public boolean tryCStickForward(){
 		startAttack(moveList.selectCStickForward()); 
 		return true; 
 	}
-	
+
 	public boolean tryCStickBack(){
 		startAttack(moveList.selectCStickBack()); 
 		return true; 
@@ -330,7 +328,6 @@ public abstract class Fighter extends Hittable{
 		return true;
 	}
 
-	public static final int staleMoveQueueSize = 5;
 	private void startAttack(IDMove im){
 		if (im.id == MoveList.noMove) return;
 		Move m = im.move;
@@ -521,7 +518,7 @@ public abstract class Fighter extends Hittable{
 		if (inputHandler.isTeching()) tech();
 		else super.bounceOff();
 	}
-	
+
 	private void tech(){
 		setInvincible(30);
 		new SFX.Tech().play();
@@ -561,7 +558,7 @@ public abstract class Fighter extends Hittable{
 			boolean bReverse = 
 					!attackTimer.timeUp() && attackTimer.getCounter() < minFrameBReverse && !getActiveMove().move.isNoTurn()
 					&& getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1];
-			if (!bReverse) return;
+					if (!bReverse) return;
 		}
 		else if (!isGrounded()) return;
 		boolean turnLeft = stickX < -minTurn && (prevStickX > -minTurn) && getDirection() == Direction.RIGHT;
@@ -569,7 +566,7 @@ public abstract class Fighter extends Hittable{
 		if (turnLeft || turnRight) flip();
 	}
 	private final List<State> cantTurnStates = new ArrayList<State>(Arrays.asList(State.CROUCH, State.DODGE, State.JUMPSQUAT, State.FALLEN));
-	
+
 	protected boolean activeMoveIsSpecial(){
 		if (null == getActiveMove()) return false;
 		else return getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1];
@@ -647,6 +644,10 @@ public abstract class Fighter extends Hittable{
 		if (null == getInputHandler()) return false;
 		else return !attackTimer.timeUp() && getInputHandler().isCharging();
 	}
+	public boolean inputQueueTimeUp(){ return inputQueueTimer.timeUp(); }
+	public void restartInputQueue() { inputQueueTimer.restart(); }
+	public boolean attackTimeUp(){ return attackTimer.timeUp(); }
+	public void countDownAttackTimer(){ attackTimer.countDown(); }
 	public InputPackage getInputPackage() { return new InputPackage(this); }
 	public void setArmor(float armor) { this.armor = armor; }
 	public float getArmor() { 
@@ -668,14 +669,11 @@ public abstract class Fighter extends Hittable{
 	public float getSpecialMeter() { return specialMeter; }
 	public ShaderProgram getPalette() { return palette; }
 	public void setPalette(ShaderProgram pal) { palette = pal; }
-	
+	public TextureRegion getIcon(){ return defaultIcon; }
+	public void changeSpecial(float change) { specialMeter = MathUtils.clamp(specialMeter + change, 0, SPECIALMETERMAX); }
 	public void setInvincible(int i) { 
 		invincibleTimer.restart();
 		invincibleTimer.setEndTime(i);
-	}
-
-	public void changeSpecial(float change) {
-		specialMeter = MathUtils.clamp(specialMeter + change, 0, SPECIALMETERMAX);
 	}
 
 	private final float minDirect = 0.85f;
@@ -698,7 +696,5 @@ public abstract class Fighter extends Hittable{
 	abstract TextureRegion getJumpSquatFrame(float deltaTime);
 	abstract TextureRegion getHitstunFrame(float deltaTime);
 	abstract TextureRegion getFallenFrame(float deltaTime);
-	public TextureRegion getIcon(){
-		return defaultIcon;
-	}
+
 }

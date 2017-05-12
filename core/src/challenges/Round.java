@@ -19,7 +19,7 @@ public class Round {
 		numEnemies = 0;
 		for (EnemySpawner fs: fSList) {
 			fs.update(deltaTime);
-			numEnemies += fs.amount + fs.getNumActiveEnemies();
+			numEnemies += fs.getAmount() + fs.getNumActiveEnemies();
 		}
 	}
 

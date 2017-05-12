@@ -1,6 +1,6 @@
 package challenges;
 
-import input.Brain;
+import inputs.Brain;
 import entities.Fighter;
 
 public class Enemy {

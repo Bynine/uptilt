@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import maps.Stage;
-import maps.Room_Standard;
+import maps.Stage_Standard;
 import moves.ActionCircle;
 import moves.Grabbox;
 
@@ -28,9 +28,9 @@ public class MapHandler {
 	static int mapHeight; 
 
 	static void begin(){
-		activeRoom = new Room_Standard();
+		activeRoom = new Stage_Standard();
 		activeMap = activeRoom.getMap();
-		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition());
+		UptiltEngine.changeRoom(activeRoom);
 		activeRoom.getMusic().setVolume(UptiltEngine.getVolume());
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	}
@@ -113,7 +113,7 @@ public class MapHandler {
 	}
 
 	public static void resetRoom() {
-		UptiltEngine.changeRoom(activeRoom, activeRoom.getStartPosition()); 
+		UptiltEngine.changeRoom(activeRoom); 
 	}
 
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }

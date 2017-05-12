@@ -121,7 +121,7 @@ public abstract class Hittable extends Entity {
 		velocity.add(knockback);
 	}
 
-	private void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
+	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
 		takeDamage(DAM);
 		if (knockbackIntensity(knockback) > 0) takeKnockback(knockback, hitstun, tryy, ht);
 		if (knockbackIntensity(knockback) > tumbleBK) tumbling = true;

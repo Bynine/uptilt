@@ -27,8 +27,8 @@ public abstract class SFX {
 	}
 	
 	public static SFX proportionalHit(float dam){ 
-		if (dam < 11) return new LightHit();
-		else if (dam < 14) return new MidHit(); 
+		if (dam < 10) return new LightHit();
+		else if (dam < 15) return new MidHit(); 
 		else if (dam < 20) return new MeatyHit();
 		else return new HeavyHit();
 	}
@@ -47,7 +47,7 @@ public abstract class SFX {
 	public static class FootStool extends SFX{ public FootStool(){ setSFX("/footstool.wav"); } }
 	public static class Ground extends SFX{ public Ground(){ setSFX("/land.mp3"); } }
 	public static class Tech extends SFX{ public Tech(){ setSFX("/tech.mp3"); } }
-	public static class Collect extends SFX{ public Collect(){ setSFX("/collect.mp3"); } }
+	public static class Collect extends SFX{ public Collect(){ setSFX("/melee/itemdrop.wav"); } }
 	public static class Victory extends SFX{ public Victory(){ setSFX("/tada.mp3"); } }
 	
 }
