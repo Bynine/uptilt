@@ -278,14 +278,18 @@ public abstract class Entity {
 	}
 
 	public void setRemove() { toRemove = true; }
-	public boolean toRemove(int mapWidth, int mapHeight) { 
-		return toRemove || isOOB(mapWidth, mapHeight); 
+	public boolean toRemove(Rectangle boundary) { 
+		return toRemove || isOOB(boundary); 
 	} 
-	private boolean isOOB(int mapWidth, int mapHeight) {
+	private boolean isOOB(Rectangle boundary) {
 		int OOBGrace = 2;
-		boolean highNotHitstun = (mapHeight + image.getHeight()*OOBGrace) < position.y && !hitstunTimer.timeUp();
-		if (position.x < (0 - image.getWidth()*OOBGrace) || (mapWidth + image.getWidth()*OOBGrace) < position.x) return true;
-		if (position.y < (0 - image.getHeight()*OOBGrace) || highNotHitstun) return true;
+		boolean highNotHitstun = (position.y > (boundary.y + + boundary.height + image.getHeight()*OOBGrace)) && !hitstunTimer.timeUp();
+		if (
+				(position.x < (boundary.x - image.getWidth()*OOBGrace)) ||
+				(position.x > (boundary.x + boundary.width + image.getWidth()*OOBGrace))  ||
+				(position.y < (boundary.y - image.getHeight()*OOBGrace))  ||
+				(highNotHitstun))
+			return true;
 		return false;
 	}
 	public Vector2 getPosition() { return position; }

@@ -3,6 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import moves.ActionCircle;
 
@@ -19,6 +20,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 import entities.Entity;
 import entities.Fighter;
@@ -54,22 +56,30 @@ public class GraphicsHandler {
 		generator.dispose();
 	}
 
-	public static java.util.function.Predicate<? super Fighter> isDead() {
+	public static Predicate<? super Fighter> isDead() {
 		return p -> p.getLives() <= 0;
 	}
 
 	static void updateCamera(){
-		float posX = 0;
-		float posY = 0;
-		List<Fighter> livePlayers = new ArrayList<Fighter>();
-		livePlayers.addAll(UptiltEngine.getPlayers());
-		livePlayers.removeIf(isDead());
-		for (Fighter player: livePlayers){
-			posX += player.getPosition().x / livePlayers.size();
-			posY += player.getPosition().y / livePlayers.size();
+		float centerX = 0;
+		float centerY = 0;
+
+		if (UptiltEngine.getChallenge().isInCombat()){
+			Vector2 combatPosition = UptiltEngine.getChallenge().getCombatPosition();
+			centerX = combatPosition.x;
+			centerY = combatPosition.y;
 		}
-		cam.position.x = (cam.position.x*(camAdjustmentSpeed-1) + posX)/camAdjustmentSpeed;
-		cam.position.y = (cam.position.y*(camAdjustmentSpeed-1) + GlobalRepo.TILE * 2 + posY)/camAdjustmentSpeed;
+		else{
+			List<Fighter> livePlayers = new ArrayList<Fighter>();
+			livePlayers.addAll(UptiltEngine.getPlayers());
+			livePlayers.removeIf(isDead());
+			for (Fighter player: livePlayers){
+				centerX += player.getPosition().x / livePlayers.size();
+				centerY += player.getPosition().y / livePlayers.size();
+			}
+		}
+		cam.position.x = (cam.position.x*(camAdjustmentSpeed-1) + centerX)/camAdjustmentSpeed;
+		cam.position.y = (cam.position.y*(camAdjustmentSpeed-1) + GlobalRepo.TILE * 2 + centerY)/camAdjustmentSpeed;
 
 		cam.position.x = MathUtils.round(MathUtils.clamp(cam.position.x, screenBoundary(SCREENWIDTH), MapHandler.mapWidth - screenBoundary(SCREENWIDTH)));
 		cam.position.y = MathUtils.round(MathUtils.clamp(cam.position.y, screenBoundary(SCREENHEIGHT), MapHandler.mapHeight - screenBoundary(SCREENHEIGHT)));
@@ -87,7 +97,6 @@ public class GraphicsHandler {
 		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE * 3;
 	}
 
-	static float stockLocationMod = 1/4.3f;
 	static void updateGraphics(){
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		batch.setProjectionMatrix(cam.combined);
@@ -110,23 +119,14 @@ public class GraphicsHandler {
 		batch.end();
 		font.setColor(1, 1, 1, 1);
 
-		float lineHeight = 8;
-		batch.begin();
-		for (Fighter player: UptiltEngine.getPlayers()){
-			font.draw(batch, "lives: " + player.getLives(), 
-					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
-			font.draw(batch, "special: " + player.getSpecialMeter(), 
-					cam.position.x - SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
-			lineHeight *= -1/2;
-		}
-		font.draw(batch, "aliens: " + UptiltEngine.numEnemies(), cam.position.x + SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod);
-		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
-		batch.end();
-
 		arr = new int[]{numLayers-1};  // render foreground
 		renderer.render(arr);
 
 		if (UptiltEngine.debugToggle) debugRender();
+
+		batch.begin();
+		renderGUI();
+		batch.end();
 	}
 
 	private static void renderEntity(Entity e){
@@ -164,6 +164,23 @@ public class GraphicsHandler {
 		batch.draw(fi.getIcon(), iconX, iconY);
 	}
 
+	private static void renderGUI(){
+		float lineHeight = 8;
+		float stockLocationMod = 1/4.3f;
+		for (Fighter player: UptiltEngine.getPlayers()){
+			font.draw(batch, "lives: " + player.getLives(), 
+					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
+			font.draw(batch, "special: " + player.getSpecialMeter(), 
+					cam.position.x - SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
+			lineHeight *= -1/2;
+		}
+		int numEnemies = UptiltEngine.getChallenge().getActiveRound().getNumEnemies();
+		if (numEnemies > 0){
+			font.draw(batch, "aliens: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod);
+		}
+		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
+	}
+
 	private static List<Float> cameraBoundaries(){
 		return new ArrayList<Float>(Arrays.asList( 
 				(cam.position.x - SCREENWIDTH/2*ZOOM),
@@ -171,6 +188,11 @@ public class GraphicsHandler {
 				(cam.position.y - SCREENHEIGHT/2*ZOOM),
 				(cam.position.y + SCREENHEIGHT/2*ZOOM)
 				) );
+	}
+
+	public static Rectangle getCameraBoundary() {
+		List<Float> bounds = cameraBoundaries();
+		return new Rectangle(bounds.get(0), bounds.get(2), bounds.get(1) - bounds.get(0), bounds.get(3) - bounds.get(2));
 	}
 
 	private static void drawFighterPercentage(Entity e) {
@@ -204,7 +226,7 @@ public class GraphicsHandler {
 
 	private static double shakeScreenHelper() { 
 		double posOrNeg = Math.signum(0.5 - Math.random());
-		return posOrNeg * 5.0 * (0.9 + (Math.random()/10.0));
+		return posOrNeg * 6.0 * (0.9 + (Math.random()/10.0));
 	}
 
 	public static void debugRender(){

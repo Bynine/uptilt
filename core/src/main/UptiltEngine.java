@@ -27,7 +27,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	private static int deltaTime = 0;
 	private static FPSLogger fpsLogger = new FPSLogger();
 	private static boolean paused = false;
-	private static Challenge challenge;
+	private static Challenge challenge, defaultChallenge;
 	private static GameState gameState = GameState.MENU;
 	private static InputHandlerPlayer primaryInputHandler = null;
 
@@ -52,6 +52,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		MainMenu.begin();
 		
 		challenge = new ChallengeAdventure(RoundGenerator.DIFF_HARD);
+		defaultChallenge = new ChallengeAdventure(RoundGenerator.DIFF_TEST);
 
 		if (p2Toggle){
 			Fighter player2 = new Wasp(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
@@ -90,7 +91,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	}
 	
 	private void updateGame(){
-		if (roundToggle) challenge.update();
+		challenge.update();
 		if (waitTimer.timeUp()) MapHandler.updateInputs();
 		if (!paused){
 			MapHandler.activeRoom.update(deltaTime);
@@ -98,7 +99,7 @@ public class UptiltEngine extends ApplicationAdapter {
 			if (outOfHitlag()) MapHandler.updateEntities();
 		}
 		GraphicsHandler.updateGraphics();
-		if (roundToggle) ChallengeGraphicsHandler.update();
+		ChallengeGraphicsHandler.update();
 		GraphicsHandler.updateCamera();
 	}
 
@@ -129,10 +130,6 @@ public class UptiltEngine extends ApplicationAdapter {
 		GraphicsHandler.updateRoomGraphics(getPlayers().get(0));
 	}
 	
-	public static void startDebugMenu(){
-		gameState = GameState.DEBUG;
-	}
-	
 	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
 		startNewChallenge(newPlayers, RoundGenerator.DIFF_HARD);
 		MapHandler.begin();
@@ -154,13 +151,17 @@ public class UptiltEngine extends ApplicationAdapter {
 		challenge = new ChallengeAdventure(difficulty);
 	}
 	
+	public static void startDebugMenu(){
+		gameState = GameState.DEBUG;
+	}
+	
 	public static void returnToMenu(){
 		gameState = GameState.MENU;
 	}
 	
-	public static int numEnemies(){
-		if (null == challenge || null == challenge.getActiveRound()) return 0;
-		return challenge.getActiveRound().getNumEnemies();
+	public static Challenge getChallenge(){
+		if (challenge == null) return defaultChallenge;
+		else return challenge;
 	}
 	
 	public enum GameState{

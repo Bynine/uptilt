@@ -59,6 +59,10 @@ public abstract class InputHandler {
 			fighter.queuedCommand = commandNone;
 		}
 	}
+	
+	public void refresh(){
+		/* */
+	}
 
 	private boolean handleCanMoveActions(int command){
 		switch (command){

@@ -60,6 +60,11 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 			sd.update();
 		}
 	}
+	
+	public void refresh(){
+		xInput = 0;
+		yInput = 0;
+	}
 
 	public boolean buttonDown(Controller controller, int buttonCode) {
 		if (!control.getButton(buttonCode)) return false;

@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
-public class Portal extends Entity {
+public class Portal extends ImmobileEntity {
 	private Stage room;
 	protected Vector2 destination = new Vector2();
 
@@ -19,9 +19,6 @@ public class Portal extends Entity {
 		destination.y = desY;
 		updateImagePosition(0);
 	}
-
-	@Override
-	protected void updatePosition(){ /* doesn't move */ }
 	
 	public Stage getRoom(){ 
 		return room; 

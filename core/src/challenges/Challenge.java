@@ -3,6 +3,8 @@ package challenges;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector2;
+
 import entities.SupplyCrate;
 import entities.Fighter;
 import main.MapHandler;
@@ -17,6 +19,8 @@ public abstract class Challenge {
 	protected Round activeRound = null;
 	protected int place = 0;
 	protected int numLives = 5;
+	private Mode mode = Mode.ADVENTURE;
+	private final Vector2 combatPosition = new Vector2(0, 0);
 	
 	int waitBetween = 60;
 	protected void begin(){
@@ -48,6 +52,7 @@ public abstract class Challenge {
 		activeRound = roundList.get(place);
 		ChallengeGraphicsHandler.readyGo();
 		UptiltEngine.wait(waitBetween);
+		for (Fighter player: UptiltEngine.getPlayers()) player.refresh();
 	}
 
 	void win(){
@@ -58,6 +63,19 @@ public abstract class Challenge {
 
 	public Round getActiveRound(){
 		return activeRound;
+	}
+	
+	public boolean isInCombat(){
+		return mode == Mode.COMBAT;
+	}
+	
+	public Vector2 getCombatPosition(){
+		return combatPosition;
+	}
+	
+	public void startCombat(Vector2 position) {
+		combatPosition.set(position);
+		mode = Mode.COMBAT;
 	}
 
 	public void restart(){
@@ -76,6 +94,10 @@ public abstract class Challenge {
 		case 4: return new Stage_Ship();
 		}
 		return new Stage_Standard();
+	}
+	
+	private static enum Mode{
+		COMBAT, ADVENTURE
 	}
 
 }
