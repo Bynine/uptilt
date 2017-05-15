@@ -24,6 +24,7 @@ public class EntityLoader {
 		case "trash": return new TrashCan(x, y);
 		case "ammo": return new Ammo(x, y);
 		case "combatstarter": return new CombatStarter(x, y);
+		case "endcombatstarter": return new CombatStarter.EndCombatStarter(x, y);
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);
 			dummy.setInputHandler(new InputHandlerCPU(dummy, Brain.Braindead.class));

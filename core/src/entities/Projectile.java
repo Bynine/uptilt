@@ -226,6 +226,7 @@ public abstract class Projectile extends Entity{
 			airFriction = 0.993f;
 			friction = 0.97f;
 			gravity = -0.42f;
+			fallSpeed = -10f;
 			timerList.add(bounceTimer);
 		}
 

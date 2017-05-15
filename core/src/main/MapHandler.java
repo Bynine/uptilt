@@ -49,8 +49,8 @@ public class MapHandler {
 			Entity en = entityIter.next();
 			boolean shouldUpdate = UptiltEngine.outOfHitlag() || en instanceof Graphic;
 			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), UptiltEngine.getDeltaTime()); 
-			boolean toRemove = en.toRemove(new Rectangle(0, 0, mapWidth, mapHeight));
-			if (UptiltEngine.getChallenge().isInCombat()) toRemove = en.toRemove(GraphicsHandler.getCameraBoundary());
+			boolean toRemove = en.toRemove() || en.isOOB(new Rectangle(0, 0, mapWidth, mapHeight));
+			if (UptiltEngine.getChallenge().isInCombat()) toRemove = toRemove || en instanceof Fighter && en.isOOB(GraphicsHandler.getCameraBoundary());
 			if (toRemove) {
 				if (en instanceof Fighter){
 					if (kill ((Fighter) en)) entityIter.remove();

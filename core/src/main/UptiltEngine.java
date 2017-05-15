@@ -51,8 +51,8 @@ public class UptiltEngine extends ApplicationAdapter {
 		DebugMenu.begin();
 		MainMenu.begin();
 		
-		challenge = new ChallengeAdventure(RoundGenerator.DIFF_HARD);
-		defaultChallenge = new ChallengeAdventure(RoundGenerator.DIFF_TEST);
+		challenge = new ChallengeAdventure(CombatGenerator.DIFF_EASY);
+		defaultChallenge = new ChallengeAdventure(CombatGenerator.DIFF_TEST);
 
 		if (p2Toggle){
 			Fighter player2 = new Wasp(MapHandler.activeRoom.getStartPosition().x, MapHandler.activeRoom.getStartPosition().y, 0);
@@ -131,7 +131,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	}
 	
 	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
-		startNewChallenge(newPlayers, RoundGenerator.DIFF_HARD);
+		startNewChallenge(newPlayers, CombatGenerator.DIFF_HARD);
 		MapHandler.begin();
 		debugToggle = debug;
 	}
@@ -173,6 +173,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	public static boolean isPaused() { return paused; }
 	public static List<Fighter> getPlayers(){ return playerList; }
 	public static boolean outOfHitlag(){ return hitlagTimer.timeUp(); }
+	public static boolean justOutOfHitlag() { return hitlagTimer.timeJustUp(); }
 	public static GameState getGameState() { return gameState; }
 	public static InputHandlerPlayer getPrimaryInputHandler() { return primaryInputHandler; }
 

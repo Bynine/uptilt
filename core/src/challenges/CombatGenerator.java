@@ -16,7 +16,7 @@ import entities.Rocketmin;
 import entities.Speedy;
 import entities.Wasp;
 
-public class RoundGenerator {
+public class CombatGenerator {
 
 	public static final int DIFF_TEST	=-1;
 	public static final int DIFF_BABB	= 0;
@@ -80,7 +80,7 @@ public class RoundGenerator {
 	protected EnemySpawner esDummies = new EnemySpawner(Arrays.asList(dummies), 24, 4, 10, true);
 	protected EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks, alloys), 1, 1, 10, true);
 
-	static Round generate(int difficulty, int position){
+	static Combat generate(int difficulty){
 		EnemySpawner enemySpawner;
 
 		switch(difficulty){
@@ -93,13 +93,13 @@ public class RoundGenerator {
 		default: enemySpawner = newEnemySpawner(babbList);
 		}
 
-		return new Round(enemySpawner);
+		return new Combat(enemySpawner);
 	}
 	
-	public static Round generateEndless(int difficulty) {
+	public static Combat generateEndless(int difficulty) {
 		EnemySpawner enemySpawner = newEnemySpawner(middList);
 		enemySpawner.setToEndless();
-		return new Round(enemySpawner);
+		return new Combat(enemySpawner);
 	}
 
 	private static EnemySpawner newEnemySpawner(List<EnemySpawner> enemyList){

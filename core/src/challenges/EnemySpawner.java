@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import inputs.InputHandlerCPU;
 import main.GlobalRepo;
 import main.MapHandler;
+import main.UptiltEngine;
 import entities.Fighter;
 
 public class EnemySpawner {
@@ -51,7 +52,7 @@ public class EnemySpawner {
 
 	void spawnNewEnemy(){
 		Fighter fi = null;
-		Vector2 spawnPoint = MapHandler.getSpawnPoint();
+		Vector2 spawnPoint = UptiltEngine.getChallenge().getCombatPosition();
 		Enemy en = getEnemy();
 		try {
 			fi = en.type.getDeclaredConstructor(float.class, float.class, int.class).newInstance(spawnPoint.x, spawnPoint.y, 1);

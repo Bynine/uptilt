@@ -24,8 +24,7 @@ public abstract class Entity {
 	protected Sprite image;
 	Collision collision;
 
-	float gravity = -0.35f;
-	float friction = 0.85f, airFriction = 0.95f;
+	protected float gravity = -0.35f, friction = 0.85f, airFriction = 0.95f, fallSpeed = -7f;
 	final int tumbleBK = 10;
 
 	boolean toRemove = false;
@@ -125,7 +124,8 @@ public abstract class Entity {
 	}
 
 	void limitSpeeds(){
-		/* */
+		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
+		if (hitstunTimer.timeUp() && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
 	}
 
 	void setupRectangles(List<Rectangle> mapRectangleList, List<Entity> entityList){
@@ -278,10 +278,10 @@ public abstract class Entity {
 	}
 
 	public void setRemove() { toRemove = true; }
-	public boolean toRemove(Rectangle boundary) { 
-		return toRemove || isOOB(boundary); 
+	public boolean toRemove() { 
+		return toRemove; 
 	} 
-	private boolean isOOB(Rectangle boundary) {
+	public boolean isOOB(Rectangle boundary) {
 		int OOBGrace = 2;
 		boolean highNotHitstun = (position.y > (boundary.y + + boundary.height + image.getHeight()*OOBGrace)) && !hitstunTimer.timeUp();
 		if (

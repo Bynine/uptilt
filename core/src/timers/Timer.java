@@ -20,6 +20,8 @@ public class Timer {
 	
 	public boolean timeUp(){ return (counter > endTime); }
 	
+	public boolean timeJustUp() { return (counter == endTime); }
+	
 	public int getCounter(){ return counter; }
 	
 	public int getEndTime(){ return endTime; }

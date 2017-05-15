@@ -3,14 +3,14 @@ package challenges;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Round {
+public class Combat {
 
 	protected List<EnemySpawner> fSList = new ArrayList<EnemySpawner>();
 	protected boolean restarted = false;
 	protected int numEnemies = 0;
 	SpecialEffect specialEffect;
 
-	public Round(EnemySpawner es){
+	public Combat(EnemySpawner es){
 		fSList.add(es);
 		setup();
 	}

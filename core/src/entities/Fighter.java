@@ -614,7 +614,6 @@ public abstract class Fighter extends Hittable{
 
 	public void respawn() {
 		lives -= 1;
-		position.set(spawnPoint);
 		changeSpecial(SPECIALMETERMAX);
 		percentage = 0;
 		re();
@@ -626,6 +625,7 @@ public abstract class Fighter extends Hittable{
 	}
 	
 	private void re(){
+		position.set(spawnPoint);
 		velocity.x = 0;
 		velocity.y = 0;
 		state = State.FALL;

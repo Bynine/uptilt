@@ -22,7 +22,7 @@ public abstract class Hittable extends Entity {
 	float percentage = 0, armor = 0, weight = 100;
 	boolean tumbling = false, slowed = true;
 	final Timer caughtTimer = new Timer(0), knockIntoTimer = new Timer(20), stunTimer = new Timer(0);
-	float hitstunMod = 1, powerMod = 1, damageMod = 1, initialHitAngle = 0, fallSpeed = -7f;
+	float hitstunMod = 1, powerMod = 1, damageMod = 1, initialHitAngle = 0;
 	int baseHitstun = 0;
 	HitstunType hitstunType = HitstunType.NORMAL;
 
@@ -44,8 +44,7 @@ public abstract class Hittable extends Entity {
 	
 	void limitSpeeds(){
 		boolean notAMeteor = initialHitAngle > 0 && initialHitAngle < 180;
-		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
-		if ((hitstunTimer.timeUp() || notAMeteor) && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
+		if (notAMeteor) super.limitSpeeds();
 	}
 	
 	void updatePosition(){

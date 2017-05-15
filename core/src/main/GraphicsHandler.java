@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -31,19 +32,23 @@ public class GraphicsHandler {
 	private static SpriteBatch batch;
 	private static final OrthographicCamera cam = new OrthographicCamera();
 	private static final OrthographicCamera parallaxCam = new OrthographicCamera();
-	private static final int camAdjustmentSpeed = 4;
+	private static final int camAdjustmentLimiter = 16;
 	private static OrthogonalTiledMapRenderer renderer;
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
+	private static ShaderProgram dimension;
 
 	public static final int SCREENWIDTH  = (int) ((48 * GlobalRepo.TILE));
 	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
 	public static final float ZOOM2X = 1/2f;
 	public static final float ZOOM1X = 1/1f;
 	static float ZOOM = ZOOM2X;
+	
+	private final static Vector2 origCamPosition = new Vector2(0, 0);
 
 	public static void begin() {
+		dimension = new ShaderProgram(Gdx.files.internal("shaders/vert.glsl"), Gdx.files.internal("shaders/dimension.glsl"));
 		batch = new SpriteBatch();
 		cam.setToOrtho(false, SCREENWIDTH, SCREENHEIGHT);
 		cam.zoom = ZOOM;
@@ -63,23 +68,20 @@ public class GraphicsHandler {
 	static void updateCamera(){
 		float centerX = 0;
 		float centerY = 0;
+		float yDisplacement = GlobalRepo.TILE * 1;
 
 		if (UptiltEngine.getChallenge().isInCombat()){
 			Vector2 combatPosition = UptiltEngine.getChallenge().getCombatPosition();
 			centerX = combatPosition.x;
-			centerY = combatPosition.y;
+			centerY = combatPosition.y + yDisplacement * 2;
 		}
 		else{
-			List<Fighter> livePlayers = new ArrayList<Fighter>();
-			livePlayers.addAll(UptiltEngine.getPlayers());
-			livePlayers.removeIf(isDead());
-			for (Fighter player: livePlayers){
-				centerX += player.getPosition().x / livePlayers.size();
-				centerY += player.getPosition().y / livePlayers.size();
-			}
+			centerX = UptiltEngine.getPlayers().get(0).getPosition().x;
+			centerY = UptiltEngine.getPlayers().get(0).getPosition().y + yDisplacement;
 		}
-		cam.position.x = (cam.position.x*(camAdjustmentSpeed-1) + centerX)/camAdjustmentSpeed;
-		cam.position.y = (cam.position.y*(camAdjustmentSpeed-1) + GlobalRepo.TILE * 2 + centerY)/camAdjustmentSpeed;
+		
+		cam.position.x = (cam.position.x*(camAdjustmentLimiter-1) + centerX)/camAdjustmentLimiter;
+		cam.position.y = (cam.position.y*(camAdjustmentLimiter-1) + yDisplacement + centerY)/camAdjustmentLimiter;
 
 		cam.position.x = MathUtils.round(MathUtils.clamp(cam.position.x, screenBoundary(SCREENWIDTH), MapHandler.mapWidth - screenBoundary(SCREENWIDTH)));
 		cam.position.y = MathUtils.round(MathUtils.clamp(cam.position.y, screenBoundary(SCREENHEIGHT), MapHandler.mapHeight - screenBoundary(SCREENHEIGHT)));
@@ -88,13 +90,18 @@ public class GraphicsHandler {
 		parallaxCam.position.y = cam.position.y;
 
 		if (!UptiltEngine.outOfHitlag()) shakeScreen();
+		if (UptiltEngine.justOutOfHitlag()) {
+			cam.position.x = origCamPosition.x;
+			cam.position.y = origCamPosition.y;
+		}
+		else origCamPosition.set(cam.position.x, cam.position.y);
 
 		cam.update();
 		parallaxCam.update();
 	}
 
 	private static float screenBoundary(float dimension){
-		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE * 3;
+		return dimension/(screenAdjust/ZOOM) + GlobalRepo.TILE * 1;
 	}
 
 	static void updateGraphics(){
@@ -103,6 +110,7 @@ public class GraphicsHandler {
 		int[] arr;
 		renderer.setView(parallaxCam);
 
+		if (UptiltEngine.getChallenge().isInCombat()) renderer.getBatch().setShader(dimension);
 		arr = new int[]{0, 1};  // render back
 		renderer.render(arr);
 
@@ -113,7 +121,8 @@ public class GraphicsHandler {
 			arr[i] = i + 2;
 		}
 		renderer.render(arr);
-
+		renderer.getBatch().setShader(null);
+		
 		batch.begin();  // render entities
 		for (Entity e: MapHandler.activeRoom.getEntityList()) renderEntity(e);
 		batch.end();
@@ -174,7 +183,7 @@ public class GraphicsHandler {
 					cam.position.x - SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			lineHeight *= -1/2;
 		}
-		int numEnemies = UptiltEngine.getChallenge().getActiveRound().getNumEnemies();
+		int numEnemies = UptiltEngine.getChallenge().getActiveCombat().getNumEnemies();
 		if (numEnemies > 0){
 			font.draw(batch, "aliens: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod);
 		}

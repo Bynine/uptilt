@@ -45,10 +45,11 @@ class MainMenu extends Menu {
 		if (UptiltEngine.getPrimaryInputHandler().flickDown())	choices.moveCursor(1);
 		if (UptiltEngine.getPrimaryInputHandler().taunt())		start();
 
-		draw();
+		try { draw(); }
+		catch (Exception e) { System.out.println(e); }
 	}
 
-	private static void draw(){
+	private static void draw() throws Exception{
 		int posX = 400;
 		int startY = 600;
 		int dec = 60;
@@ -61,7 +62,7 @@ class MainMenu extends Menu {
 		font.draw(batch, "DIFFICULTY: " + difficulty.selected(),	posX, startY -= dec);
 		font.draw(batch, "P1 CHAR: " + p1Char.selected().name,		posX, startY -= dec);
 		
-		if (players.selected() == 1) font.setColor(0.5f, 0.5f, 0.5f, 0.5f);
+		if (players.selected() == 1) font.setColor(0.4f, 0.4f, 0.4f, 0.4f);
 		font.draw(batch, "P2 CHAR: " + p2Char.selected().name,		posX, startY -= dec);
 		font.setColor(Color.GOLDENROD);
 		
