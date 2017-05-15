@@ -18,23 +18,8 @@ public class Stage_Flat extends Stage {
 		return tmxMapLoader.load("maps/flat.tmx");
 	}
 
-	public int[] getSides() {
-		return new int[]{15 * GlobalRepo.TILE, 34 * GlobalRepo.TILE};
-	}
-
-	public float getFloor() {
-		return 5 * GlobalRepo.TILE;
-	}
-
-	public Vector2 getSpawnPoint() {
-		if (Math.random() < 0.5) 
-			return new Vector2(19 * GlobalRepo.TILE, 16 * GlobalRepo.TILE);
-		else 
-			return new Vector2(30 * GlobalRepo.TILE, 16 * GlobalRepo.TILE);
-	}
-
 	public Vector2 getStartPosition() {
-		return new Vector2(25 * GlobalRepo.TILE, getFloor());
+		return new Vector2(25 * GlobalRepo.TILE, 5 * GlobalRepo.TILE);
 	}
 
 	float windStrength = 0.5f;

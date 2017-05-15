@@ -115,6 +115,7 @@ public class M_Mook extends MoveList {
 		int sChargeFrameSpeed = 11;
 		Move m = new Move(user, spinFrames * sChargeFrameSpeed);
 		m.setContinueOnLanding();
+		m.setStopsInAir();
 		m.setAnimation("sprites/fighters/mook/scharge.png", spinFrames, sChargeFrameSpeed);
 		Effect.Charge c = new Charge(6, 36, 0.01f, user, m);
 		Hitbox h1 = new Hitbox(user, 3, 2.6f, 12, Hitbox.SAMURAI, 26, 4, 16, new SFX.MidHit(), c);

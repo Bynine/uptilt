@@ -40,6 +40,7 @@ public class Frog extends Fighter {
 		walkAcc = 1.4f;
 		walkSpeed = 4f;
 		gravity = -0.48f;
+		jumpStrength = 6;
 		jumpAcc = 1.1f;
 		doubleJumpStrength = 10;
 		wallJumpStrengthX = 7f;

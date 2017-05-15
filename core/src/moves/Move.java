@@ -1,6 +1,7 @@
 package moves;
 
 import main.GlobalRepo;
+import moves.Effect.Charge;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -57,6 +58,12 @@ public class Move {
 	public void setArmor(float armor) { this.armor = armor; }
 	public boolean connected() { return connected; }
 	public Rectangle getHurtBox() { return hurtBox; }
+	public boolean isCharging() {
+		for (Effect e: eventList.effectList){
+			if (e instanceof Charge) if (e.isActive(duration.getCounter())) return true;
+		}
+		return false;
+	}
 	public void setHurtBox(Rectangle hb) { 
 		hurtBox = hb; 
 		hurtBoxDispX = hb.x - user.getImage().getBoundingRectangle().x;

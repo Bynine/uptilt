@@ -1,7 +1,5 @@
 package maps;
 
-import java.lang.reflect.InvocationTargetException;
-
 import inputs.Brain;
 import inputs.InputHandlerCPU;
 
@@ -18,11 +16,8 @@ public class EntityLoader {
 		float y = mp.get("y", Float.class);
 
 		switch(m.getName().toLowerCase()){
-		case "mook": return makeNewEnemy(Mook.class, Brain.MookBrain.class, x, y);
-		case "gunmin": return makeNewEnemy(Gunmin.class, Brain.GunminBrain.class, x, y);
-		case "speedy": return makeNewEnemy(Speedy.class, Brain.SpeedyBrain.class, x, y);
 		case "trash": return new TrashCan(x, y);
-		case "ammo": return new Ammo(x, y);
+		case "ammo": return new Drink(x, y);
 		case "combatstarter": return new CombatStarter(x, y);
 		case "endcombatstarter": return new CombatStarter.EndCombatStarter(x, y);
 		default: {
@@ -34,17 +29,17 @@ public class EntityLoader {
 		}
 	}
 
-	private Fighter makeNewEnemy(Class <? extends Fighter> fiClass, Class <? extends Brain> brClass, float x, float y){
-		Fighter enemy;
-		try {
-			enemy = fiClass.getDeclaredConstructor(float.class, float.class, int.class).newInstance(x, y, 1);
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-			enemy = new Mook(x, y, 1);
-		}
-		enemy.setInputHandler(new InputHandlerCPU(enemy, brClass));
-		return enemy;
-	}
+//	private Fighter makeNewEnemy(Class <? extends Fighter> fiClass, Class <? extends Brain> brClass, float x, float y){
+//		Fighter enemy;
+//		try {
+//			enemy = fiClass.getDeclaredConstructor(float.class, float.class, int.class).newInstance(x, y, 1);
+//		} catch (InstantiationException | IllegalAccessException
+//				| IllegalArgumentException | InvocationTargetException
+//				| NoSuchMethodException | SecurityException e) {
+//			e.printStackTrace();
+//			enemy = new Mook(x, y, 1);
+//		}
+//		enemy.setInputHandler(new InputHandlerCPU(enemy, brClass));
+//		return enemy;
+//	}
 }

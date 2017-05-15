@@ -17,7 +17,6 @@ import moves.Move;
 import timers.Timer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -117,6 +116,7 @@ public abstract class Fighter extends Hittable{
 		if (getActiveMove().move.done()) {
 			if (getActiveMove().move.causesHelpless()) state = State.HELPLESS;
 			setActiveMove(null);
+			attackTimer.end();
 		}
 	}
 
@@ -274,7 +274,8 @@ public abstract class Fighter extends Hittable{
 	
 	private void fallThroughThinFloor(){
 		for (Rectangle r: tempRectangleList){
-			if (Math.abs(position.y - r.y) < 2 && r.getHeight() <= 1) position.y -= 2;
+			Rectangle checker = new Rectangle(getCenter().x, position.y - 1, 1, 1);
+			if (checker.overlaps(r) && r.getHeight() <= 1) position.y -= 2;
 		}
 	}
 
@@ -568,8 +569,16 @@ public abstract class Fighter extends Hittable{
 	private final List<State> cantTurnStates = new ArrayList<State>(Arrays.asList(State.CROUCH, State.DODGE, State.JUMPSQUAT, State.FALLEN));
 
 	protected boolean activeMoveIsSpecial(){
+		return activeMoveIsWhatever(MoveList.specialRange);
+	}
+	
+	protected boolean activeMoveIsCharge(){
+		return activeMoveIsWhatever(MoveList.chargeRange);
+	}
+	
+	private boolean activeMoveIsWhatever(int[] range){
 		if (null == getActiveMove()) return false;
-		else return getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1];
+		else return getActiveMove().id >= range[0] && getActiveMove().id <= range[1];
 	}
 
 	void handleMovement(){
@@ -631,6 +640,7 @@ public abstract class Fighter extends Hittable{
 		state = State.FALL;
 		doubleJumped = false;
 		tumbling = false;
+		if (direction == Direction.LEFT) flip();
 		for (Timer t: timerList) t.end();
 		setInvincible(120);
 		staleMoveQueue.clear();
@@ -651,9 +661,14 @@ public abstract class Fighter extends Hittable{
 	public boolean isInHitstun() { return !hitstunTimer.timeUp(); }
 	public boolean isCharging() {
 		if (null == getInputHandler()) return false;
-		else return !attackTimer.timeUp() && getInputHandler().isCharging();
+		else return activeMoveIsCharge() && getInputHandler().isCharging();
 	}
 	public boolean inputQueueTimeUp(){ return inputQueueTimer.timeUp(); }
+	public boolean noGroundBelow(){
+		Rectangle r = new Rectangle (getCenter().x, position.y, 1, 1234);
+		for (Rectangle tr: tempRectangleList) if (r.overlaps(tr)) return false;
+		return true;
+	}
 	public void restartInputQueue() { inputQueueTimer.restart(); }
 	public boolean attackTimeUp(){ return attackTimer.timeUp(); }
 	public void countDownAttackTimer(){ attackTimer.countDown(); }
@@ -673,7 +688,6 @@ public abstract class Fighter extends Hittable{
 	protected TextureRegion getFrame(Animation anim, float deltaTime) { return anim.getKeyFrame(deltaTime + randomAnimationDisplacement); }
 	public int getLives() { return lives; }
 	public void setLives(int i) { lives = i; }
-	public Color getColor() { return new Color(1, 1, 1, 1); }
 	public List<IDMove> getMoveQueue() { return staleMoveQueue; }
 	public float getSpecialMeter() { return specialMeter; }
 	public ShaderProgram getPalette() { return palette; }

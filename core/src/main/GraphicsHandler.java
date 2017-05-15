@@ -139,18 +139,19 @@ public class GraphicsHandler {
 	}
 
 	private static void renderEntity(Entity e){
+		batch.setColor(e.getColor());
 		if (e instanceof Fighter) {
 			Fighter fi = (Fighter) e;
 			drawFighterPercentage(fi);
 			if (isOffScreen(fi) && !fi.isInHitstun()) drawFighterIcon(fi);
 			if (UptiltEngine.debugToggle) drawState(e);
-			batch.setColor(fi.getColor());
+			batch.setColor(batch.getColor().r - 0.1f, batch.getColor().g - 0.1f, batch.getColor().g - 0.1f, 1);
 			if (!fi.hitstunTimer.timeUp()) 
 				batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);
 			else if (fi.isInvincible()) 
 				batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
 			else if (fi.isCharging()) 
-				batch.setColor(batch.getColor().r + 0.2f, batch.getColor().g + 0.2f, batch.getColor().g + 0.2f, 1);
+				batch.setColor(batch.getColor().r + 0.1f, batch.getColor().g + 0.1f, batch.getColor().g + 0.1f, 1);
 			if (null != fi.getPalette()) batch.setShader(fi.getPalette());
 		}
 		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
@@ -183,9 +184,11 @@ public class GraphicsHandler {
 					cam.position.x - SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);
 			lineHeight *= -1/2;
 		}
+		font.draw(batch, "score: " +  UptiltEngine.getChallenge().getScore(), 
+				cam.position.x, cam.position.y - SCREENHEIGHT * stockLocationMod);
 		int numEnemies = UptiltEngine.getChallenge().getActiveCombat().getNumEnemies();
 		if (numEnemies > 0){
-			font.draw(batch, "aliens: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.5f), cam.position.y - SCREENHEIGHT * stockLocationMod);
+			font.draw(batch, "remaining: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.6f), cam.position.y - SCREENHEIGHT * stockLocationMod);
 		}
 		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
 	}

@@ -30,7 +30,7 @@ public class InputHandlerCPU extends InputHandler {
 	}
 
 	public boolean isCharging() {
-		return false;
+		return cpuBrain.isCharging();
 	}
 	
 	public boolean isTeching() {

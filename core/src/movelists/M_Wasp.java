@@ -391,7 +391,7 @@ public class M_Wasp extends MoveList{
 	public Move grab() {
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/kicker/grab.png", 1, 1);
-		Grabbox g1 = new Grabbox(user, 18, 12, 14);
+		Grabbox g1 = new Grabbox(user, 18, 10, 16);
 		m.eventList.addActionCircle(g1, 4, 8);
 		return m;
 	}
@@ -400,7 +400,7 @@ public class M_Wasp extends MoveList{
 		Move m = new Move(user, 28);
 		m.setAnimation("sprites/fighters/kicker/dashgrab.png", 1, 1);
 		m.eventList.addVelocityChange(user, 4, 6, Action.ChangeVelocity.noChange);
-		Grabbox g1 = new Grabbox(user, 18, 12, 14);
+		Grabbox g1 = new Grabbox(user, 18, 10, 16);
 		m.eventList.addActionCircle(g1, 4, 8);
 		return m;
 	}

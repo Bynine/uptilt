@@ -9,6 +9,7 @@ import main.SFX;
 import main.UptiltEngine;
 import timers.Timer;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -311,6 +312,7 @@ public abstract class Entity {
 		float intensity = (float) Math.sqrt(Math.pow(Math.abs(knockback.x), 2) + Math.pow(Math.abs(knockback.y), 2)); 
 		return intensity; 
 	}
+	public Color getColor() { return new Color(1, 1, 1, 1); }
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }

@@ -34,6 +34,7 @@ public abstract class SFX {
 	}
 
 	public static class None extends SFX{ }
+	public static class EmptyHit extends SFX{ public EmptyHit(){ setSFX("/melee/emptyhit.wav"); } }
 	public static class LightHit extends SFX{ public LightHit(){ setSFX("/melee/softhit.wav"); } }
 	public static class MidHit extends SFX{ public MidHit(){ setSFX("/melee/smack.wav"); } }
 	public static class MeatyHit extends SFX{ public MeatyHit(){ setSFX("/melee/blow.wav"); } }

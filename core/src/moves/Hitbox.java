@@ -20,7 +20,7 @@ public class Hitbox extends ActionCircle{
 	protected float ANG;
 	protected float heldCharge = 1;
 	protected final Effect.Charge charge;
-	protected final SFX sfx;
+	protected SFX sfx;
 
 	/**
 	 * @param User (this)
@@ -112,7 +112,10 @@ public class Hitbox extends ActionCircle{
 			if (im.id == currMove.id) staleness *= staleMod;
 			if (im.id != currMove.id) spam = false;
 		}
-		if (spam) staleness = 0.25f;
+		if (spam) {
+			staleness = 0.25f;
+			sfx = new SFX.EmptyHit();
+		}
 		return staleness;
 	}
 

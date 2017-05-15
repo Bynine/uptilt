@@ -109,6 +109,8 @@ public abstract class MoveList {
 	private static final int IDfair = 52;
 	private static final int IDbair = 53;
 	private static final int IDnair = 54;
+	public static int[] specialRange = {10, 19};
+	public static int[] chargeRange = {40, 49};
 
 	public IDMove selectNormalMove(){
 		if (user.isGrounded()) {
@@ -121,7 +123,6 @@ public abstract class MoveList {
 		else return selectAerial();
 	}
 
-	public static int[] specialRange = {10, 19};
 	public IDMove selectSpecialMove(){
 		if (user.isHoldUp()) return new IDMove(uSpecial(), IDuspecial);
 		else if (user.isHoldDown()) return new IDMove(dSpecial(), IDdspecial);

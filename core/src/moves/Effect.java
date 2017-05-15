@@ -23,6 +23,9 @@ public abstract class Effect extends Action{
 		start += 1;
 		end += 1;
 	}
+	public boolean isActive(int position){
+		return position > start && position < end;
+	}
 	abstract void finish();
 	
 	public static class ConstantVelocity extends Effect{

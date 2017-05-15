@@ -44,7 +44,8 @@ public abstract class Hittable extends Entity {
 	
 	void limitSpeeds(){
 		boolean notAMeteor = initialHitAngle > 0 && initialHitAngle < 180;
-		if (notAMeteor) super.limitSpeeds();
+		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
+		if ( (hitstunTimer.timeUp() || notAMeteor) && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
 	}
 	
 	void updatePosition(){

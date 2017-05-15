@@ -11,8 +11,6 @@ import moves.Grabbox;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
 import entities.Entity;
 import entities.Fighter;
 import entities.Graphic;
@@ -120,20 +118,6 @@ public class MapHandler {
 	public static void addEntity(Entity e){ activeRoom.addEntity(e); }
 	public static ActionCircle addActionCircle(ActionCircle ac){ 
 		return activeRoom.addActionCircle(ac); 
-	}
-
-	public static int[] getStageSides() { 
-		if (activeRoom == null) return new int[]{0, 0};
-		else return activeRoom.getSides();
-	}
-	public static float getStageFloor() {
-		if (activeRoom == null) return 0;
-		else return activeRoom.getFloor();
-	}
-
-	public static Vector2 getSpawnPoint() {
-		if (activeRoom == null) return new Vector2(0, 0);
-		else return activeRoom.getSpawnPoint();
 	}
 
 	public static List<Entity> getEntities() {

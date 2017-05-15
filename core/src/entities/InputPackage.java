@@ -1,6 +1,5 @@
 package entities;
 
-import main.MapHandler;
 import main.UptiltEngine;
 import moves.Move;
 import entities.Entity.State;
@@ -15,29 +14,28 @@ public class InputPackage {
 	
 	/**
 	 * 
-	 * distance X: left of player is negative, right is positive
-	 * distance Y: below player is negative, above is positive
+	 * distance X: left of player is positive, right is neg
+	 * distance Y: below player is positive, above is neg
 	 */
 	InputPackage(Fighter fighter){
 		Fighter target = getTarget(fighter);
 		state = fighter.state;
-		isOffStage = (!fighter.isGrounded() && distanceFromEdges(0, fighter) );
-		isBelowStage = (fighter.position.y < MapHandler.getStageFloor());
+		isOffStage = (!fighter.isGrounded() && fighter.noGroundBelow());
+		isBelowStage = fighter.position.y < UptiltEngine.getChallenge().getCombatPosition().y;
 		hasDoubleJumped = fighter.doubleJumped;
 		isGrounded = fighter.isGrounded();
 		isRunning = fighter.isRunning();
 		awayFromWall = distanceFromEdges(-48, fighter);
-		distanceFromCenter = fighter.position.x - (MapHandler.getStageSides()[0] + MapHandler.getStageSides()[1])/2;
-		distanceXFromPlayer = fighter.position.x + fighter.getHurtBox().getWidth()/2 - 
-				(target.position.x + target.getHurtBox().getWidth()/2) ;
-		distanceYFromPlayer = fighter.position.y + fighter.getHurtBox().getHeight()/2 - target.position.y;
+		distanceFromCenter = UptiltEngine.getChallenge().getCombatPosition().x - fighter.position.x;
+		distanceXFromPlayer = (target.position.x + target.getHurtBox().getWidth()/2) - fighter.position.x + fighter.getHurtBox().getWidth()/2;
+		distanceYFromPlayer = target.position.y - (fighter.position.y + fighter.getHurtBox().getHeight()/2);
 		direct = fighter.direct();
 		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;
 		else activeMove = null;
 	}
 	
 	private boolean distanceFromEdges(float dist, Fighter fighter){
-		return (fighter.position.x - dist*2 <= MapHandler.getStageSides()[0] || fighter.position.x + dist*2 >= MapHandler.getStageSides()[1]);
+		return false;
 	}
 	
 	private Fighter getTarget(Fighter fighter){

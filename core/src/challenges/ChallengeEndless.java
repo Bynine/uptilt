@@ -9,7 +9,7 @@ public class ChallengeEndless extends Challenge {
 		numLives = 1;
 		activeCombat = CombatGenerator.generateEndless(difficulty);
 		stageList.add(getRoomByRound(difficulty));
-		startEndlessCombat(new Vector2(200, 200));
+		startEndlessCombat(null, new Vector2(200, 200));
 		begin();
 	}
 	

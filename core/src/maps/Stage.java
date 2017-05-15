@@ -92,9 +92,6 @@ public abstract class Stage {
 	}
 
 	public abstract TiledMap getMap();
-	public abstract int[] getSides();
-	public abstract float getFloor();
-	public abstract Vector2 getSpawnPoint();
 	public abstract Vector2 getStartPosition();
 
 	public List<Rectangle> getRectangleList(){ return rectangleList; }

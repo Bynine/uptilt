@@ -27,24 +27,24 @@ public class CombatGenerator {
 	private static final int DIFF_FUCK	= 5;
 
 	protected static Enemy mooks = new Enemy(Mook.class, Brain.MookBrain.class);
-	protected static Enemy elites = new Enemy(Mook.class, Brain.EliteMookBrain.class);
-	protected static Enemy guns = new Enemy(Gunmin.class, Brain.GunminBrain.class);
+	protected static Enemy elites = new Enemy(Mook.class, Brain.MookBrain.class);
+	protected static Enemy guns = new Enemy(Gunmin.class, Brain.MookBrain.class);
 	protected static Enemy alloys = new Enemy(AlloyMook.class, Brain.MookBrain.class);
-	protected static Enemy rockets = new Enemy(Rocketmin.class, Brain.GunminBrain.class);
+	protected static Enemy rockets = new Enemy(Rocketmin.class, Brain.MookBrain.class);
 	protected static Enemy heavies = new Enemy(Heavy.class, Brain.MookBrain.class);
-	protected static Enemy speedies = new Enemy(Speedy.class, Brain.SpeedyBrain.class);
-	protected static Enemy hypers = new Enemy(HyperSpeedy.class, Brain.SpeedyBrain.class);
+	protected static Enemy speedies = new Enemy(Speedy.class, Brain.MookBrain.class);
+	protected static Enemy hypers = new Enemy(HyperSpeedy.class, Brain.MookBrain.class);
 	protected static Enemy dummies = new Enemy(Mook.class, Brain.Recover.class);
-	protected static Enemy kickers = new Enemy(Wasp.class, Brain.KickerBrain.class);
+	protected static Enemy kickers = new Enemy(Wasp.class, Brain.MookBrain.class);
 
 	protected static List<EnemySpawner> babbList = new ArrayList<EnemySpawner>(Arrays.asList(
 			new EnemySpawner(Arrays.asList(mooks), 3, 1, 120, true),
 			new EnemySpawner(Arrays.asList(guns), 3, 1, 120, true)
 			));
 	protected static List<EnemySpawner> easyList = new ArrayList<EnemySpawner>(Arrays.asList(
-			new EnemySpawner(Arrays.asList(mooks, guns),	5, 2, 80, true),
-			new EnemySpawner(Arrays.asList(mooks),			5, 2, 80, true),
-			new EnemySpawner(Arrays.asList(guns),			5, 2, 80, true)
+			new EnemySpawner(Arrays.asList(mooks),	5, 2, 80, true),
+			new EnemySpawner(Arrays.asList(guns),	5, 2, 80, true),
+			new EnemySpawner(Arrays.asList(mooks, guns),	5, 2, 80, true)
 			));
 	protected static List<EnemySpawner> middList = new ArrayList<EnemySpawner>(Arrays.asList(			
 			new EnemySpawner(Arrays.asList(mooks, speedies),			8,	3, 60, true),

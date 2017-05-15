@@ -6,21 +6,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 
-import main.SFX;
-
 public class Food extends Collectible {
 
 	public Food(float posX, float posY) {
 		super(posX, posY);
 		image = new Sprite(new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/food.png"))));
+		bonus = 30;
 	}
 
-	void collect(Fighter fi) {
-		if (fi.getPercentage() > 0){
-			new SFX.Collect().play();
-			fi.setPercentage(MathUtils.clamp(fi.getPercentage() - restoredHealth(), 0, 999));
-			setRemove();
-		}
+	void collectHelper(Fighter fi) {
+		fi.setPercentage(MathUtils.clamp(fi.getPercentage() - restoredHealth(), 0, 999));
 	}
 	
 	private float restoredHealth(){

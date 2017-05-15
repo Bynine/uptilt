@@ -16,20 +16,7 @@ public class Stage_Walledin extends Stage {
 	public TiledMap getMap() {
 		return tmxMapLoader.load("maps/wall.tmx");
 	}
-	
-	public int[] getSides() {
-		return new int[]{11 * GlobalRepo.TILE, 30 * GlobalRepo.TILE};
-	}
 
-	public float getFloor() {
-		return 10 * GlobalRepo.TILE;
-	}
-
-	public Vector2 getSpawnPoint() {
-		return new Vector2(28 * GlobalRepo.TILE, 23 * GlobalRepo.TILE);
-	}
-
-	@Override
 	public Vector2 getStartPosition() {
 		return new Vector2(18 * GlobalRepo.TILE, 6 * GlobalRepo.TILE);
 	}

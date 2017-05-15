@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import entities.CombatStarter;
 import entities.Fighter;
+import entities.TreasureChest;
+import main.GlobalRepo;
 import main.MapHandler;
 import main.SFX;
 import main.UptiltEngine;
@@ -16,11 +18,13 @@ public abstract class Challenge {
 
 	protected final List<Stage> stageList = new ArrayList<Stage>();
 	protected Combat activeCombat = null;
+	protected CombatStarter activeCombatStarter = null;
 	protected int place = 0;
+	protected long score = 0;
 	protected int numLives = 5;
 	private Mode mode = Mode.ADVENTURE;
 	private final Vector2 combatPosition = new Vector2(0, 0);
-	private boolean endCombat = false;
+	private boolean endCombat = false, combatNotEnded = false;
 	final int difficulty;
 
 	Challenge(int difficulty){
@@ -37,7 +41,7 @@ public abstract class Challenge {
 
 	public void update(){
 		if (isInCombat()) activeCombat.update(UptiltEngine.getDeltaTime());
-		if (activeCombat.getNumEnemies() == 0) endCombat();
+		if (activeCombat.getNumEnemies() == 0 && combatNotEnded) endCombat();
 		boolean shouldRestart = true;
 		for (Fighter player: (UptiltEngine.getPlayers() ) ){
 			if (player.getLives() > 0) shouldRestart = false;
@@ -78,15 +82,14 @@ public abstract class Challenge {
 		return combatPosition;
 	}
 
-	public void startCombat(CombatStarter cs, Vector2 startPosition) {
-		for (Fighter player: UptiltEngine.getPlayers()) player.setRespawnPoint(startPosition);
+	public void startCombat(CombatStarter cs, Vector2 position) {
+		startCombatHelper(cs, position);
+		for (Fighter player: UptiltEngine.getPlayers()) player.setRespawnPoint(position);
 		if (UptiltEngine.getPlayers().size() > 1){
 			for (Fighter player: UptiltEngine.getPlayers().subList(1,  UptiltEngine.getPlayers().size())){
 				player.refresh();
 			}
 		}
-		combatPosition.set(startPosition);
-		mode = Mode.COMBAT;
 		if (cs instanceof CombatStarter.EndCombatStarter){
 			activeCombat = CombatGenerator.generate(difficulty + 1);
 			endCombat = true;
@@ -94,14 +97,22 @@ public abstract class Challenge {
 		else activeCombat = CombatGenerator.generate(difficulty);
 	}
 
-	public void startEndlessCombat(Vector2 position) {
+	public void startEndlessCombat(CombatStarter cs, Vector2 position) {
+		startCombatHelper(cs, position);
+		activeCombat = CombatGenerator.generate(difficulty);
+	}
+	
+	private void startCombatHelper(CombatStarter cs, Vector2 position){
+		activeCombatStarter = cs;
 		combatPosition.set(position);
 		mode = Mode.COMBAT;
-		activeCombat = CombatGenerator.generate(difficulty);
+		combatNotEnded = true;
 	}
 
 	public void endCombat(){
 		mode = Mode.ADVENTURE;
+		MapHandler.addEntity(new TreasureChest(combatPosition.x, combatPosition.y + GlobalRepo.TILE));
+		combatNotEnded = false;
 		if (endCombat) goToNextStage();
 	}
 
@@ -115,9 +126,17 @@ public abstract class Challenge {
 	protected Stage getRoomByRound(int position){
 		return new Stage_Adventure();
 	}
+	
+	public long getScore(){
+		return score;
+	}
 
 	private static enum Mode{
 		COMBAT, ADVENTURE
+	}
+
+	public void score(int i) {
+		score += i;
 	}
 
 }
