@@ -28,7 +28,7 @@ public class Dog extends Fighter{
 		friction = 0.92f;
 		fallSpeed = -6f;
 		airFriction = 0.96f;
-		weight = 85;
+		baseWeight = 85;
 		dashStrength = -1;
 		moveList = new M_Dog(this);
 	}

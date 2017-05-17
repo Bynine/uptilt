@@ -10,8 +10,10 @@ import moves.ActionCircle;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -38,6 +40,7 @@ public class GraphicsHandler {
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
 	private static ShaderProgram dimension;
+	private static TextureRegion guiBar = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/guibar.png")));
 
 	public static final int SCREENWIDTH  = (int) ((48 * GlobalRepo.TILE));
 	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
@@ -177,6 +180,7 @@ public class GraphicsHandler {
 	private static void renderGUI(){
 		float lineHeight = 8;
 		float stockLocationMod = 1/4.3f;
+		batch.draw(guiBar, cameraBoundaries().get(0), cameraBoundaries().get(2));
 		for (Fighter player: UptiltEngine.getPlayers()){
 			font.draw(batch, "lives: " + player.getLives(), 
 					cam.position.x - SCREENWIDTH * stockLocationMod, cam.position.y - SCREENHEIGHT * stockLocationMod + lineHeight);

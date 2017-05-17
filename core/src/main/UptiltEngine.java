@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import maps.Stage;
+import moves.Equipment;
 import timers.Timer;
 import entities.*;
 import challenges.*;
@@ -143,6 +144,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		int i = 0;
 		for (Fighter player: newPlayers) {
 			beginFighter(player, i);
+			player.setEquipment(new Equipment.NinjaBoots());
 			if (i >= 1) player.setPalette(p2Palette);
 			i++;
 		}

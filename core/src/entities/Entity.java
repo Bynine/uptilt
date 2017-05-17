@@ -115,17 +115,17 @@ public abstract class Entity {
 	}
 
 	void handleGravity(){
-		velocity.y += gravity * MapHandler.getRoomGravity();
+		velocity.y += getGravity() * MapHandler.getRoomGravity();
 	}
 
 	void handleFriction(){
 		if (!isGrounded() && !hitstunTimer.timeUp() || state == State.JUMPSQUAT) {}
-		else if (!isGrounded()) velocity.x *= airFriction;
-		else velocity.x *= friction;
+		else if (!isGrounded()) velocity.x *= getAirFriction();
+		else velocity.x *= getFriction();
 	}
 
 	void limitSpeeds(){
-		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
+		float gravFallSpeed = getFallSpeed() * MapHandler.getRoomGravity();
 		if (hitstunTimer.timeUp() && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
 	}
 
@@ -273,11 +273,6 @@ public abstract class Entity {
 		}
 	}
 
-	public void fallOffScreen() {
-		collision = Collision.GHOST;
-		gravity = -0.5f;
-	}
-
 	public void setRemove() { toRemove = true; }
 	public boolean toRemove() { 
 		return toRemove; 
@@ -301,7 +296,6 @@ public abstract class Entity {
 	public Sprite getImage() { return image; }
 	protected boolean inGroundedState() { return groundedStates.contains(state);}
 	protected boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
-	public float getGravity() { return gravity; }
 	public Vector2 getCenter() {
 		Vector2 center = new Vector2();
 		center.x = position.x +  image.getWidth()/2;
@@ -318,5 +312,9 @@ public abstract class Entity {
 	public static enum Direction{ LEFT, RIGHT }
 	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, DODGE, JUMPSQUAT, FALLEN, JUMP, FALL, WALLSLIDE, HELPLESS }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
+	public float getGravity() { return gravity; }
+	public float getFallSpeed() { return fallSpeed; }
+	public float getFriction() { return friction; }
+	public float getAirFriction() { return airFriction; }
 
 }

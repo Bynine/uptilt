@@ -31,7 +31,7 @@ public class Mook extends Fighter {
 		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(standImage.getKeyFrame(0));
 		gravity = -0.45f;
-		weight = 100;
+		baseWeight = 100;
 		jumpAcc = 0.52f;
 		airSpeed = 1.8f;
 		walkSpeed = 1.7f;
@@ -42,7 +42,7 @@ public class Mook extends Fighter {
 		doubleJumpStrength = 7.5f;
 		moveList = new M_Mook(this);
 		jumpSquatTimer.setEndTime(5);
-		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
+		baseHitstun = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 
 	TextureRegion getJumpFrame(float deltaTime) { return jumpImage.getKeyFrame(deltaTime); }

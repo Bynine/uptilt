@@ -51,23 +51,35 @@ public class MapHandler {
 			if (UptiltEngine.getChallenge().isInCombat()) toRemove = toRemove || en instanceof Fighter && en.isOOB(GraphicsHandler.getCameraBoundary());
 			if (toRemove) {
 				if (en instanceof Fighter){
-					if (kill ((Fighter) en)) entityIter.remove();
+					Fighter fi = ((Fighter) en);
+					if (kill(fi)) {
+						if (fi.getTeam() == GlobalRepo.BADTEAM) UptiltEngine.getChallenge().score(20);
+						entityIter.remove();
+					}
 				}
 				else entityIter.remove();
 			}
 		}
 	}
-	
+
 	private static boolean kill(Fighter fi){
 		new SFX.Die().play();
 		if (fi.getLives() > 1) {
 			fi.respawn();
 			return false;
 		}
-		else {
-			fi.setLives(0);
-			return true;
+		if (UptiltEngine.getPlayers().size() > 1){
+			for (Fighter player: UptiltEngine.getPlayers()){
+				if (player.getLives() > 1 && player.getTeam() == GlobalRepo.GOODTEAM){
+					fi.respawn();
+					fi.setLives(1);
+					player.setLives(player.getLives() - 1);
+					return false;
+				}
+			}
 		}
+		fi.setLives(0);
+		return true;
 	}
 
 	static void updateActionCircleInteractions(){
@@ -124,17 +136,17 @@ public class MapHandler {
 		if (activeRoom == null) return new ArrayList<Entity>();
 		else return activeRoom.getEntityList();
 	}
-	
+
 	public static float getRoomWind(){
 		if (activeRoom == null) return 0;
 		else return activeRoom.getWind();
 	}
-	
+
 	public static float getRoomGravity(){
 		if (activeRoom == null) return 1;
 		else return activeRoom.getGravity();
 	}
-	
+
 	public static List<ActionCircle> getActionCircles(){
 		if (activeRoom == null) return new ArrayList<ActionCircle>();
 		else return activeRoom.getActionCircleList();

@@ -162,16 +162,16 @@ public class M_Wasp extends MoveList{
 
 	public Move nAir() {
 		Move m = new Move(user, 24);
-		m.setAnimation("sprites/fighters/kicker/nair.png", 1, 1);
+		m.setAnimation("sprites/fighters/kicker/nair.png", 2, 14);
 		Hitbox earlyBody = new Hitbox(user, 4, 1.5f, 10, 75, -10, 0, 20, new SFX.MidHit());
 		Hitbox earlyFoot = new Hitbox(user, 4, 1.4f, 11, 90, 24, -6, 18, new SFX.MidHit());
 		Hitbox lateBody = new Hitbox(user,  2, 1.1f, 7, 80, -10, 0, 16, new SFX.LightHit());
 		Hitbox lateFoot = new Hitbox(user,  2, 1.1f, 8, 90, 24, -6, 14, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(earlyBody, earlyFoot, lateBody, lateFoot));
-		m.eventList.addActionCircle(earlyBody, 3, 6);
-		m.eventList.addActionCircle(earlyFoot, 3, 6);
-		m.eventList.addActionCircle(lateBody, 7, 22);
-		m.eventList.addActionCircle(lateFoot, 7, 22);
+		m.eventList.addActionCircle(earlyBody, 3, 8);
+		m.eventList.addActionCircle(earlyFoot, 3, 8);
+		m.eventList.addActionCircle(lateBody, 9, 24);
+		m.eventList.addActionCircle(lateFoot, 9, 24);
 		return m;
 	}
 

@@ -13,18 +13,29 @@ import com.badlogic.gdx.math.Vector2;
 import main.GlobalRepo;
 import main.MapHandler;
 import main.SFX;
+import moves.Equipment;
 import moves.Hitbox;
 import timers.Timer;
 
 public abstract class Hittable extends Entity {
 	
 	protected TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
-	float percentage = 0, armor = 0, weight = 100;
+	float percentage = 0;
 	boolean tumbling = false, slowed = true;
 	final Timer caughtTimer = new Timer(0), knockIntoTimer = new Timer(20), stunTimer = new Timer(0);
-	float hitstunMod = 1, powerMod = 1, damageMod = 1, initialHitAngle = 0;
-	int baseHitstun = 0;
+	private float initialHitAngle = 0;
 	HitstunType hitstunType = HitstunType.NORMAL;
+	
+	protected float baseHitstun = 1, basePower = 1, baseKnockIntoDamage = 1, armor = 0, baseWeight = 100;
+	protected float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
+	protected float jumpStrength = 5f, doubleJumpStrength = 8.5f, dashStrength = 5f;
+	protected float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
+	protected float wallJumpStrengthX = 8f, wallJumpStrengthY = 7.2f;
+	protected float wallSlideSpeed = -1f;
+	
+	protected float powerMod = 1, defenseMod = 1, speedMod = 1, airMod = 1, armorAdd = 0;
+	protected int hitstunDealtBonus = 0;
+	private Equipment equipment = new Equipment.Default();
 
 	public Hittable(float posX, float posY) {
 		super(posX, posY);
@@ -35,6 +46,7 @@ public abstract class Hittable extends Entity {
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		super.update(rectangleList, entityList, deltaTime);
 		updateImage(deltaTime);
+		System.out.println(equipment.getSpeedMod());
 	}
 	
 	void updateImage(float deltaTime){
@@ -44,7 +56,7 @@ public abstract class Hittable extends Entity {
 	
 	void limitSpeeds(){
 		boolean notAMeteor = initialHitAngle > 0 && initialHitAngle < 180;
-		float gravFallSpeed = fallSpeed * MapHandler.getRoomGravity();
+		float gravFallSpeed = getFallSpeed() * MapHandler.getRoomGravity();
 		if ( (hitstunTimer.timeUp() || notAMeteor) && velocity.y < gravFallSpeed) velocity.y = gravFallSpeed;
 	}
 	
@@ -79,7 +91,7 @@ public abstract class Hittable extends Entity {
 		Vector2 knockIntoVector = new Vector2(knocker.velocity.x, knocker.velocity.y);
 		float bkb = knockbackIntensity(knockIntoVector);
 		float kbg = 0.5f;
-		float dam = knockbackIntensity(knockIntoVector) * knocker.damageMod;
+		float dam = knockbackIntensity(knockIntoVector) * knocker.baseKnockIntoDamage;
 		Hitbox h;
 		if (knocker.hitstunType != HitstunType.NORMAL) {
 			if (knocker.hitstunType == HitstunType.ULTRA){ // ultra hitstun
@@ -101,7 +113,7 @@ public abstract class Hittable extends Entity {
 			knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
 		}
 		SFX.proportionalHit(h.getDamage()).play();
-		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() + baseHitstun );
+		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() + hitstunDealtBonus );
 		knocker.knockIntoTimer.restart();
 		knockIntoTimer.restart();
 		knocker.velocity.set(knocker.velocity.x * knocker.hitSpeedMod, knocker.velocity.y * knocker.hitSpeedMod);
@@ -172,14 +184,39 @@ public abstract class Hittable extends Entity {
 		/**/
 	}
 	
+	public float getPower(){ return basePower * powerMod * equipment.getPowerMod(); }
+	public float getWeight() { return baseWeight * defenseMod * equipment.getWeightMod(); }
+	public float getArmor() { return armor + defenseMod + equipment.getArmorMod(); }
+	public float getDashStrength() { return dashStrength * getSpeedMod(); }
+	public float getWalkSpeed() { return walkSpeed * getSpeedMod() * equipment.getSpeedMod() * equipment.getWalkSpeedMod(); }
+	public float getWalkAcc() { return walkAcc * getSpeedMod() * equipment.getSpeedMod() * equipment.getWalkAccMod(); }
+	public float getRunSpeed() { return runSpeed * getSpeedMod() * equipment.getSpeedMod() * equipment.getRunSpeedMod(); }
+	public float getRunAcc() { return runAcc * getSpeedMod() * equipment.getSpeedMod() * equipment.getRunAccMod(); }
+	public float getAirSpeed() { return airSpeed * airMod * equipment.getAirSpeedMod(); }
+	public float getAirAcc() { return airAcc * airMod * equipment.getAirAccMod(); }
+	public float getJumpStrength() { return jumpStrength; }
+	public float getJumpAcc() { return jumpAcc * airMod * equipment.getJumpAccMod(); }
+	public float getFallSpeed() { return fallSpeed * equipment.getFallSpeedMod(); }
+	public float getGravity() { return gravity * equipment.getGravityMod(); }
+	public float getFriction() { return (float) Math.pow(friction, equipment.getFrictionMod()); }
+	public float getAirFriction() { return (float) Math.pow(airFriction, equipment.getAirFrictionMod()); }
+	public float getDoubleJumpStrength() { return doubleJumpStrength * airMod; }
+	public float getWallJumpStrengthX() { return wallJumpStrengthX; }
+	public float getWallJumpStrengthY() { return wallJumpStrengthY; }
+	public float getWallSlideSpeed() { return wallSlideSpeed * equipment.getWallSlideMod(); }
+	
+	public void addPower(float add){ powerMod += add; }
+	public void addDefense(float add){ defenseMod += add; }
+	public void addArmor(float add){ armorAdd += add; }
+	public void addSpeed(float add){ speedMod += add; }
+	public void addAir(float add){ airMod += add; }
+	
+	private float getSpeedMod(){ return speedMod * equipment.getSpeedMod(); }
+	
 	public boolean isInvincible(){ return hitstunTimer.getCounter() == 0; }
 	
 	void handleWind(){
-		velocity.x += MapHandler.getRoomWind() * (weight/100);
-	}
-
-	public float getArmor() { 
-		return armor;
+		velocity.x += MapHandler.getRoomWind() * (baseWeight/100);
 	}
 	
 	public void setPercentage(float perc){
@@ -190,16 +227,8 @@ public abstract class Hittable extends Entity {
 		return percentage; 
 	}
 	
-	public float getWeight() { 
-		return weight;
-	}
-	
-	public float getHitstunMod(){
-		return hitstunMod;
-	}
-	
-	public float getPowerMod(){
-		return powerMod;
+	public float getHitstun(){
+		return baseHitstun;
 	}
 	
 	public int getTeam() {
@@ -208,6 +237,10 @@ public abstract class Hittable extends Entity {
 	
 	public boolean canMove(){
 		return stunTimer.timeUp() && caughtTimer.timeUp();
+	}
+	
+	public void setEquipment(Equipment e){
+		equipment = e;
 	}
 	
 	abstract TextureRegion getStandFrame(float deltaTime);

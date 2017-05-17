@@ -10,7 +10,7 @@ public abstract class Throwable extends Hittable {
 
 	public Throwable(float posX, float posY) {
 		super(posX, posY);
-		hitstunMod = 8;
+		baseHitstun = 8;
 		hitSpeedMod = -0.6f;
 	}
 	

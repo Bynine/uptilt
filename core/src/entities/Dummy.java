@@ -13,7 +13,7 @@ public class Dummy extends Fighter {
 		super(posX, posY, team);
 		image = new Sprite(texture);
 		gravity = -0.42f;
-		weight = 100;
+		baseWeight = 100;
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime) { return texture; }

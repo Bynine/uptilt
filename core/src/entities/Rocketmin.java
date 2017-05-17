@@ -12,10 +12,10 @@ public class Rocketmin extends Gunmin {
 		walkAcc = 0.09f;
 		runAcc = 0.15f;
 		airAcc = 0.17f;
-		weight = 94;
+		baseWeight = 94;
 		friction = 0.97f;
 		
-		powerMod = 1.5f;
+		basePower = 1.5f;
 	}
 	
 	public Color getColor() { return new Color(0.6f, 0.4f, 0.4f, 1); }

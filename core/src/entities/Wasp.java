@@ -32,7 +32,7 @@ public class Wasp extends Fighter {
 
 	public Wasp(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 87;
+		baseWeight = 87;
 		runAcc = 2.3f;
 		runSpeed = 7.8f;
 		walkAcc = 0.9f;

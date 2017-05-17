@@ -71,7 +71,11 @@ public class CombatGenerator {
 			new EnemySpawner(Arrays.asList(mooks, alloys),		 				16, 32, 40, true)
 			));
 	protected static List<EnemySpawner> ohnoList = new ArrayList<EnemySpawner>(Arrays.asList(
-			new EnemySpawner(Arrays.asList(elites), 4, 1, 60, true)
+//			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	10, 8, 60, true),
+//			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	16, 6, 60, true),
+//			
+//			new EnemySpawner(Arrays.asList(alloys),		 				20, 40, 20, true)
+			new EnemySpawner(Arrays.asList(kickers),	8, 2, 120, true)
 			));
 	protected static List<EnemySpawner> fuckList = new ArrayList<EnemySpawner>(Arrays.asList(
 			new EnemySpawner(Arrays.asList(hypers), 12, 6, 60, true)

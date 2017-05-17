@@ -12,7 +12,7 @@ public class Heavy extends Fighter {
 
 	public Heavy(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 200;
+		baseWeight = 200;
 		gravity = -0.4f;
 		friction = 0.7f;
 		armor = 1.2f;

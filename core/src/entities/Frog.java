@@ -32,7 +32,7 @@ public class Frog extends Fighter {
 
 	public Frog(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 114;
+		baseWeight = 114;
 		runAcc = 2.4f;
 		runSpeed = 9.1f;
 		airSpeed = 4f;

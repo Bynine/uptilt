@@ -22,9 +22,9 @@ public class HyperSpeedy extends Speedy {
 		dashStrength = 10f;
 		doubleJumpStrength = 9.3f;
 		fallSpeed = -8f;
-		weight = 90;
+		baseWeight = 90;
 		wallSlideSpeed = 5.5f;
-		powerMod = 1.1f;
+		basePower = 1.1f;
 		moveList = new M_HyperSpeedy(this);
 		
 		wallSlide = GlobalRepo.makeAnimation("sprites/fighters/speedy/wallslide.png", 3, 1, 10, PlayMode.LOOP);

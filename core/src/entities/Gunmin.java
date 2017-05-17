@@ -28,13 +28,13 @@ public class Gunmin extends Fighter {
 		runAcc = 0.11f;
 		airAcc = 0.13f;
 		gravity = -0.38f;
-		weight = 64;
+		baseWeight = 64;
 		doubleJumpStrength = 8;
 		friction = 0.94f;
 		jumpAcc = 0.6f;
 		moveList = new M_Gunmin(this);
 		jumpSquatTimer.setEndTime(6);
-		hitstunMod = GlobalRepo.ENEMYHITSTUNMOD;
+		baseHitstun = GlobalRepo.ENEMYHITSTUNMOD;
 	}
 
 	TextureRegion getJumpFrame(float deltaTime) { return jump; }

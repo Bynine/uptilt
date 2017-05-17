@@ -17,10 +17,10 @@ public class TrashCan extends Throwable {
 	public TrashCan(float posX, float posY) {
 		super(posX, posY);
 		image = new Sprite(new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/trashcan.png"))));
-		damageMod = 3f;
-		baseHitstun = 12;
+		baseKnockIntoDamage = 3f;
+		hitstunDealtBonus = 12;
 		airFriction = 0.986f;
-		weight = 130;
+		baseWeight = 130;
 	}
 
 	TextureRegion getStandFrame(float deltaTime) {

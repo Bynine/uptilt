@@ -13,7 +13,7 @@ public class Stage_Adventure extends Stage {
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/adventure.tmx");
+		return tmxMapLoader.load("maps/adventure2.tmx");
 	}
 
 	public Vector2 getStartPosition() {

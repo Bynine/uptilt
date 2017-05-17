@@ -1,5 +1,8 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import main.GlobalRepo;
 import main.MapHandler;
 
@@ -21,6 +24,7 @@ public class TreasureChest extends Throwable {
 	public TreasureChest(float posX, float posY) {
 		super(posX, posY);
 		image = new Sprite(closed);
+		staticPercent = 25;
 	}
 
 	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
@@ -29,22 +33,37 @@ public class TreasureChest extends Throwable {
 	}
 
 	private void open(){
-		final float collectibleSpeed = 7;
 		int numberOfCollectibles = 2;
-		for (int i = 0; i < numberOfCollectibles; ++i){
-			Collectible co = spawnCollectible();
-			co.velocity.set(collectibleSpeed, collectibleSpeed);
-			co.velocity.setAngle((float) (110 - (Math.random() * 40)));
-			MapHandler.addEntity(co);
-		}
+		//int numberOfPowerups = 2;
+		for (int i = 0; i < numberOfCollectibles; ++i) addCollectible(spawnCollectible());
+		//for (int i = 0; i < numberOfPowerups; ++i) addCollectible(spawnPowerUp());
 		opened = true;
+	}
+	
+	private void addCollectible(Collectible co){
+		float collectibleSpeed = 7;
+		float angleVariance = 30;
+		co.velocity.set(collectibleSpeed, collectibleSpeed);
+		co.velocity.setAngle((float) ( (90 + (angleVariance/2)) - (Math.random() * angleVariance)));
+		MapHandler.addEntity(co);
 	}
 
 	private Collectible spawnCollectible(){
-		if (Math.random() < 1.0/3.0) return new Treasure(position.x, position.y);
-		else if (Math.random() < 1.0/2.0) return new Drink(position.x, position.y);
-		else return new Food(position.x, position.y);
+		List<Collectible> potentialCollectibles = new ArrayList<Collectible>();
+		potentialCollectibles.add(new Collectible.Treasure(position.x, position.y));
+		potentialCollectibles.add(new Collectible.Food(position.x, position.y));
+		potentialCollectibles.add(new Collectible.Drink(position.x, position.y));
+		return GlobalRepo.getRandomElementFromList(potentialCollectibles);
 	}
+	
+//	private Collectible spawnPowerUp(){
+//		List<Collectible> potentialCollectibles = new ArrayList<Collectible>();
+//		potentialCollectibles.add(new Collectible.BoostPower(position.x, position.y));
+//		potentialCollectibles.add(new Collectible.BoostDefense(position.x, position.y));
+//		potentialCollectibles.add(new Collectible.BoostSpeed(position.x, position.y));
+//		potentialCollectibles.add(new Collectible.BoostAir(position.x, position.y));
+//		return GlobalRepo.getRandomElementFromList(potentialCollectibles);
+//	}
 
 	TextureRegion getStandFrame(float deltaTime) {
 		if (opened) return open;

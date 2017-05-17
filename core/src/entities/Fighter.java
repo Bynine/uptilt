@@ -35,14 +35,6 @@ public abstract class Fighter extends Hittable{
 			dashTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(1), footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
 	protected float prevStickX = 0, stickX = 0, stickY = 0;
 
-	protected float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
-	protected float jumpStrength = 5f, dashStrength = 5f;
-	protected float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
-	protected float wallJumpStrengthX = 8f;
-	protected float wallJumpStrengthY = 7.2f;
-	protected float wallSlideSpeed = -1f;
-	protected float doubleJumpStrength = 8.5f;
-
 	private ShaderProgram palette = null;
 	private final Vector2 spawnPoint;
 	private int team = 0, lives = 1;
@@ -184,7 +176,7 @@ public abstract class Fighter extends Hittable{
 	private boolean tryDash(){
 		if (!isGrounded() || !inGroundedState() || isRun()) return false;
 		dashTimer.restart();
-		velocity.x = Math.signum(stickX) * dashStrength;
+		velocity.x = Math.signum(stickX) * getDashStrength();
 		state = State.DASH;
 		MapHandler.addEntity(new Graphic.DustCloud(this, position.x, position.y));
 		return true;
@@ -360,7 +352,7 @@ public abstract class Fighter extends Hittable{
 		else MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
 		if (velocity.y < 0) velocity.y = 0;
 		velocity.x += 2 * stickX;
-		getVelocity().y += jumpStrength;
+		getVelocity().y += getJumpStrength();
 	}
 
 	protected final int wallSlideDistance = 1;
@@ -381,13 +373,13 @@ public abstract class Fighter extends Hittable{
 	private void wallJump(){
 		wallJumpTimer.restart();
 		flip();
-		velocity.x = wallJumpStrengthX * direct();
-		velocity.y = wallJumpStrengthY;
+		velocity.x = getWallJumpStrengthX() * direct();
+		velocity.y = getWallJumpStrengthY();
 		tumbling = false;
 	}
 
 	private void doubleJump(){
-		getVelocity().y = doubleJumpStrength;
+		getVelocity().y = getDoubleJumpStrength();
 		MapHandler.addEntity(new Graphic.DoubleJumpRing(position.x, getCenter().y));
 		if (prevStickX < -unregisteredInputMax && velocity.x > 0) velocity.x = 0; 
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
@@ -416,7 +408,7 @@ public abstract class Fighter extends Hittable{
 		for (Entity en: MapHandler.getEntities()) {
 			if (en instanceof Fighter){
 				Fighter fi = (Fighter) en;
-				if (fi != this && isAbove(fi)) return fi;
+				if (fi != this && isAbove(fi) && fi.getTeam() != GlobalRepo.GOODTEAM) return fi;
 			}
 		}
 		return null;
@@ -547,7 +539,7 @@ public abstract class Fighter extends Hittable{
 	}
 
 	void handleGravity(){
-		if (state == State.WALLSLIDE) velocity.y = wallSlideSpeed * MapHandler.getRoomGravity();
+		if (state == State.WALLSLIDE) velocity.y = getWallSlideSpeed() * MapHandler.getRoomGravity();
 		else super.handleGravity();
 	}
 
@@ -585,15 +577,15 @@ public abstract class Fighter extends Hittable{
 		boolean groundedAttacking = !attackTimer.timeUp() && isGrounded();
 		if (groundedAttacking || !canMove() || !hitstunTimer.timeUp() || state == State.DODGE) return;
 		switch (state){
-		case WALK: addSpeed(walkSpeed, walkAcc); break;
+		case WALK: addSpeed(getWalkSpeed(), getWalkAcc()); break;
 		case DASH:
-		case RUN: addSpeed(runSpeed, runAcc); break;
-		case JUMP: velocity.y += jumpAcc; break;
+		case RUN: addSpeed(getRunSpeed(), getRunAcc()); break;
+		case JUMP: velocity.y += getJumpAcc(); break;
 		default: break;
 		}
 		if (!isGrounded() && wallJumpTimer.timeUp() && Math.abs(stickX) > unregisteredInputMax) {
-			if (Math.abs(velocity.x) > airSpeed) addSpeed(runSpeed, airAcc);
-			else addSpeed(airSpeed, airAcc);
+			if (Math.abs(velocity.x) > getAirSpeed()) addSpeed(getRunSpeed(), getAirAcc());
+			else addSpeed(getAirSpeed(), getAirAcc());
 		}
 	}
 
@@ -642,7 +634,7 @@ public abstract class Fighter extends Hittable{
 		tumbling = false;
 		if (direction == Direction.LEFT) flip();
 		for (Timer t: timerList) t.end();
-		setInvincible(120);
+		if (team == GlobalRepo.GOODTEAM) setInvincible(120);
 		staleMoveQueue.clear();
 	}
 
@@ -677,7 +669,7 @@ public abstract class Fighter extends Hittable{
 	public float getArmor() { 
 		float addedMoveArmor = 0;
 		if (null != getActiveMove()) addedMoveArmor = getActiveMove().move.getArmor();
-		return armor + addedMoveArmor; 
+		return super.getArmor() + addedMoveArmor; 
 	}
 	public IDMove getActiveMove() { return activeMove; }
 	public void setActiveMove(IDMove activeMove) { this.activeMove = activeMove; }
@@ -699,11 +691,14 @@ public abstract class Fighter extends Hittable{
 		invincibleTimer.setEndTime(i);
 	}
 
+
 	private final float minDirect = 0.85f;
 	public boolean isHoldUp() 		{ return -stickY > minDirect; }
 	public boolean isHoldDown()		{ return stickY > minDirect; }
 	public boolean isHoldForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
 	public boolean isHoldBack() 	{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
+	
+	
 
 	abstract TextureRegion getWalkFrame(float deltaTime);
 	abstract TextureRegion getRunFrame(float deltaTime);

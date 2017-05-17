@@ -15,7 +15,7 @@ public class Grappler extends Fighter {
 
 	public Grappler(float posX, float posY, int team) {
 		super(posX, posY, team);
-		weight = 175;
+		baseWeight = 175;
 		jumpAcc = 0.7f;
 		doubleJumpStrength = 8f;
 		runSpeed = 6f;

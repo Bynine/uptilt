@@ -74,9 +74,9 @@ public class Hitbox extends ActionCircle{
 		float staleness = 1;
 		if (null != user) {
 			if (user instanceof Fighter) staleness = getStaleness((Fighter)user);
-			DAM *= user.getPowerMod();
-			BKB *= user.getPowerMod();
-			KBG *= user.getPowerMod();
+			DAM *= user.getPower();
+			BKB *= user.getPower();
+			KBG *= user.getPower();
 		}
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
@@ -158,7 +158,7 @@ public class Hitbox extends ActionCircle{
 	private static final float hitstunRatio = 4f;
 	public int hitstunFormula(Hittable target, float knockback){
 		if (BKB + KBG == 0) return 0;
-		return  2 + (int) (knockback * hitstunRatio * target.getHitstunMod());
+		return  2 + (int) (knockback * hitstunRatio * target.getHitstun());
 	}
 
 	private float crouchCancelMod = .75f;
