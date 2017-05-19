@@ -31,6 +31,7 @@ public abstract class Stage {
 	protected float a = 0;
 	protected float wind = 0;
 	protected float gravity = 1;
+	protected String name = "DEFAULT STAGE";
 	
 	public static final float LOWGRAV = 0.66f;
 	public static final float HIGRAV  = 1.3f;
@@ -89,6 +90,10 @@ public abstract class Stage {
 	public void removeEntity(Entity en){
 		getEntityList().remove(en);
 		getRectangleList().remove(en.getImage().getBoundingRectangle());
+	}
+	
+	public String getName(){
+		return name;
 	}
 
 	public abstract TiledMap getMap();

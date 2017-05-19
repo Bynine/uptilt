@@ -122,18 +122,18 @@ public class UptiltEngine extends ApplicationAdapter {
 		paused = !paused;
 	}
 
-	public static void changeRoom (Stage room) {
+	public static void changeRoom (Stage stage) {
 		deltaTime = 0;
 		for (Fighter player: getPlayers()){
-			player.setPosition(room.getStartPosition());
+			player.setPosition(stage.getStartPosition());
 		}
-		MapHandler.updateRoomMap(room);
+		MapHandler.updateRoomMap(stage);
 		GraphicsHandler.updateRoomGraphics(getPlayers().get(0));
 	}
 	
-	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
-		startNewChallenge(newPlayers, new Equipment.Default(), CombatGenerator.DIFF_HARD);
-		MapHandler.begin();
+	public static void startDebugChallenge(List<Fighter> newPlayers, Equipment equipment, int difficulty, Stage stage, boolean debug){
+		startNewChallenge(newPlayers, equipment, difficulty);
+		changeRoom(stage);
 		debugToggle = debug;
 	}
 	

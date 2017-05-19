@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import moves.Equipment;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;

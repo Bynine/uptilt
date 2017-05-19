@@ -10,6 +10,7 @@ public class Stage_Adventure extends Stage {
 	public Stage_Adventure(){
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/debug.mp3"));
 		setup();
+		name = "ADVENTURE";
 	}
 
 	public TiledMap getMap() {
@@ -19,4 +20,5 @@ public class Stage_Adventure extends Stage {
 	public Vector2 getStartPosition() {
 		return new Vector2(2 * GlobalRepo.TILE, 6 * GlobalRepo.TILE);
 	}
+	
 }

@@ -30,7 +30,10 @@ public abstract class InputHandlerPlayer extends InputHandler {
 		inputToCommand(flickCUp(), commandCStickUp);
 		inputToCommand(flickCDown(), commandCStickDown);
 		if (pause()) UptiltEngine.pauseGame(); 
-		if (select()) UptiltEngine.returnToMenu();
+		if (select()) {
+			if (UptiltEngine.isPaused()) UptiltEngine.returnToMenu();
+			else UptiltEngine.startDebugMenu();
+		}
 		
 		fighter.handleJumpHeld(jumpHold());
 		fighter.handleBlockHeld(blockHold());

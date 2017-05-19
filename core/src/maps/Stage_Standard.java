@@ -11,6 +11,7 @@ public class Stage_Standard extends Stage {
 	public Stage_Standard(){
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/alienattack.mp3"));
 		setup();
+		name = "STANDARD";
 	}
 
 	public TiledMap getMap() {
