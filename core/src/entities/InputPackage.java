@@ -1,5 +1,10 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.math.Vector2;
+
 import main.UptiltEngine;
 import moves.Move;
 import entities.Entity.State;
@@ -11,6 +16,8 @@ public class InputPackage {
 	public final float distanceFromCenter, distanceXFromPlayer, distanceYFromPlayer;
 	public final int direct;
 	public final Move activeMove;
+	public final List<Vector2> shitToAvoid = new ArrayList<Vector2>();
+	public final Vector2 position, velocity;
 	
 	/**
 	 * 
@@ -27,11 +34,13 @@ public class InputPackage {
 		isRunning = fighter.isRunning();
 		awayFromWall = distanceFromEdges(-48, fighter);
 		distanceFromCenter = UptiltEngine.getChallenge().getCombatPosition().x - fighter.position.x;
-		distanceXFromPlayer = (target.position.x + target.getHurtBox().getWidth()/2) - fighter.position.x + fighter.getHurtBox().getWidth()/2;
+		distanceXFromPlayer = target.position.x - fighter.position.x;
 		distanceYFromPlayer = target.position.y - (fighter.position.y + fighter.getHurtBox().getHeight()/2);
 		direct = fighter.direct();
 		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;
 		else activeMove = null;
+		position = fighter.getPosition();
+		velocity = fighter.getVelocity();
 	}
 	
 	private boolean distanceFromEdges(float dist, Fighter fighter){

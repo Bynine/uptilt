@@ -14,7 +14,7 @@ import moves.Hitbox;
 import moves.Move;
 import moves.Effect.Charge;
 
-public class M_Grappler extends MoveList {
+public class M_Grappler extends MoveList_Advanced {
 
 	public M_Grappler(Fighter user) {
 		super(user);

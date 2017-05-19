@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import moves.Equipment;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -28,8 +30,13 @@ class MainMenu extends Menu {
 	private static MenuOption<String> difficulty = new MenuOption<String>(Arrays.asList(
 			"EASY", "MIDDLE", "HARD", "NIGHTMARE"
 			));
-	private static MenuOption<String> choices = new MenuOption<String>(Arrays.asList("CHALLENGETYPE", "DIFFICULTY", "P1CHAR", "P2CHAR", "PLAYERS"));
-	private static List<MenuOption<?>> options = new ArrayList<MenuOption<?>>(Arrays.asList(choices, challengeType, difficulty, p1Char, p2Char, players));
+	private static MenuOption<Equipment> equipment = new MenuOption<Equipment>(Arrays.asList(
+			new Equipment.Default(), new Equipment.FocusBand(), new Equipment.IronBoots(), new Equipment.LeadBoots(),
+			new Equipment.NinjaBoots(), new Equipment.OverDriveHelmet(), new Equipment.SlipSocks(), new Equipment.SpringShoes(),
+			new Equipment.GroundBaby()
+			));
+	private static MenuOption<String> choices = new MenuOption<String>(Arrays.asList("CHALLENGETYPE", "DIFFICULTY", "EQUIPMENT", "P1CHAR", "P2CHAR", "PLAYERS"));
+	private static List<MenuOption<?>> options = new ArrayList<MenuOption<?>>(Arrays.asList(choices, challengeType, equipment, difficulty, p1Char, p2Char, players));
 	
 	private static TextureRegion cursor = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
 
@@ -59,6 +66,7 @@ class MainMenu extends Menu {
 
 		font.draw(batch, startStr,									posX, startY);
 		font.draw(batch, "CHALLENGE: " + challengeType.selected(),	posX, startY -= dec);
+		font.draw(batch, "EQUIP: " + equipment.selected().getName(),posX, startY -= dec);
 		font.draw(batch, "DIFFICULTY: " + difficulty.selected(),	posX, startY -= dec);
 		font.draw(batch, "P1 CHAR: " + p1Char.selected().name,		posX, startY -= dec);
 		
@@ -74,7 +82,7 @@ class MainMenu extends Menu {
 
 	private static void start(){
 		ArrayList<PlayerType> newPlayers = new ArrayList<PlayerType>(Arrays.asList(p1Char.selected(), p2Char.selected()));
-		UptiltEngine.startNewChallenge(makePlayers(players.selected(), newPlayers), difficulty.cursorPos() + 1);
+		UptiltEngine.startNewChallenge(makePlayers(players.selected(), newPlayers), equipment.selected(), difficulty.cursorPos() + 1);
 	}
 
 

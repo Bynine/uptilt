@@ -11,7 +11,7 @@ public abstract class Throwable extends Hittable {
 	public Throwable(float posX, float posY) {
 		super(posX, posY);
 		baseHitstun = 8;
-		hitSpeedMod = -0.6f;
+		baseHitSpeed = -0.6f;
 	}
 	
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){

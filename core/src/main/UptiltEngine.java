@@ -132,19 +132,19 @@ public class UptiltEngine extends ApplicationAdapter {
 	}
 	
 	public static void startNewDebugGame(List<Fighter> newPlayers, int roomChoice, boolean debug){
-		startNewChallenge(newPlayers, CombatGenerator.DIFF_HARD);
+		startNewChallenge(newPlayers, new Equipment.Default(), CombatGenerator.DIFF_HARD);
 		MapHandler.begin();
 		debugToggle = debug;
 	}
 	
-	public static void startNewChallenge(List<Fighter> newPlayers, int difficulty){
+	public static void startNewChallenge(List<Fighter> newPlayers, Equipment equipment, int difficulty){
 		gameState = GameState.GAME;
 		playerList.clear();
 		paused = false;
 		int i = 0;
 		for (Fighter player: newPlayers) {
 			beginFighter(player, i);
-			player.setEquipment(new Equipment.NinjaBoots());
+			player.setEquipment(equipment);
 			if (i >= 1) player.setPalette(p2Palette);
 			i++;
 		}

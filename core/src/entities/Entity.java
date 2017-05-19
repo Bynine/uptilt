@@ -139,7 +139,6 @@ public abstract class Entity {
 
 	private final int collisionCheck = 4;
 	private final float softening = .8f;
-	private final float bounce = -0.75f;
 	void checkWalls(){
 		for (int i = 0; i < collisionCheck; ++i)
 			if (doesCollide(position.x + velocity.x, position.y)) {
@@ -154,6 +153,7 @@ public abstract class Entity {
 		}
 	}
 
+	private final float bounce = -0.75f;
 	void bounceOffWall(){
 		velocity.x *= bounce;
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth()/2, position.y));

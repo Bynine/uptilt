@@ -92,7 +92,7 @@ public abstract class ActionCircle {
 	
 	public Circle getArea(){ return area; }
 	public boolean toRemove() { return duration.timeUp(); }
-	boolean didHitTarget(Hittable target){ 
+	public boolean didHitTarget(Hittable target){ 
 		boolean teamCheck = true;
 		boolean attackTimeUp = true;
 		if (null != user) {

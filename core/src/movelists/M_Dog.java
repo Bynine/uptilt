@@ -14,7 +14,7 @@ import entities.Fighter;
 import entities.Projectile;
 import entities.Entity.Direction;
 
-public class M_Dog extends MoveList {
+public class M_Dog extends MoveList_Advanced {
 
 	public M_Dog(Fighter user) {
 		super(user);

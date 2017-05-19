@@ -42,9 +42,9 @@ public class CombatGenerator {
 			new EnemySpawner(Arrays.asList(guns), 3, 1, 120, true)
 			));
 	protected static List<EnemySpawner> easyList = new ArrayList<EnemySpawner>(Arrays.asList(
-			new EnemySpawner(Arrays.asList(mooks),	5, 2, 80, true),
-			new EnemySpawner(Arrays.asList(guns),	5, 2, 80, true),
-			new EnemySpawner(Arrays.asList(mooks, guns),	5, 2, 80, true)
+			new EnemySpawner(Arrays.asList(mooks),	5, 2, 80, true)
+//			new EnemySpawner(Arrays.asList(guns),	5, 2, 80, true),
+//			new EnemySpawner(Arrays.asList(mooks, guns),	5, 2, 80, true)
 			));
 	protected static List<EnemySpawner> middList = new ArrayList<EnemySpawner>(Arrays.asList(			
 			new EnemySpawner(Arrays.asList(mooks, speedies),			8,	3, 60, true),

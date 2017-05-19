@@ -12,7 +12,7 @@ import moves.Effect.Charge;
 import entities.Fighter;
 import entities.Projectile;
 
-public class M_Speedy extends MoveList {
+public class M_Speedy extends MoveList_Advanced {
 
 	public M_Speedy(Fighter user) {
 		super(user);

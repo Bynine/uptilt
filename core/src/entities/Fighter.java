@@ -10,8 +10,9 @@ import java.util.List;
 import main.GlobalRepo;
 import main.MapHandler;
 import main.SFX;
-import movelists.MoveList;
+import movelists.MoveList_Advanced;
 import movelists.M_Mook;
+import movelists.MoveList;
 import moves.IDMove;
 import moves.Move;
 import timers.Timer;
@@ -78,7 +79,7 @@ public abstract class Fighter extends Hittable{
 
 		if (!grabbingTimer.timeUp()) handleThrow();
 		if (null != getActiveMove()) {
-			if (getActiveMove().id != MoveList.noStaleMove && getActiveMove().move.connected() && !staleMoveQueue.contains(getActiveMove())){
+			if (getActiveMove().id != MoveList_Advanced.noStaleMove && getActiveMove().move.connected() && !staleMoveQueue.contains(getActiveMove())){
 				staleMoveQueue.add(getActiveMove());
 				if (staleMoveQueue.size() > staleMoveQueueSize) staleMoveQueue.remove(0);
 			}
@@ -150,7 +151,7 @@ public abstract class Fighter extends Hittable{
 		}
 		else if (blockHeld) activateBlock();
 		else state = State.STAND;
-		if (canAttack() && prevState == State.RUN && state != State.RUN) startAttack(new IDMove(moveList.skid(), MoveList.noStaleMove));
+		if (canAttack() && prevState == State.RUN && state != State.RUN) startAttack(new IDMove(moveList.skid(), MoveList_Advanced.noStaleMove));
 	}
 
 	protected void updateAerialState(){
@@ -202,7 +203,7 @@ public abstract class Fighter extends Hittable{
 	public boolean tryNormal(){
 		if (state == State.FALLEN){
 			state = State.STAND;
-			startAttack(new IDMove(moveList.getUpAttack(), -1));
+			startAttack(new IDMove(moveList.getUpAttack(), MoveList.noStaleMove));
 		}
 		else if (canAttack()) {
 			startAttack(moveList.selectNormalMove());
@@ -227,13 +228,13 @@ public abstract class Fighter extends Hittable{
 
 	public boolean tryStickForward(){
 		if (state == State.DODGE) {
-			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
-			else startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollBack(), MoveList_Advanced.noStaleMove));
+			else startAttack(new IDMove(moveList.rollForward(), MoveList_Advanced.noStaleMove));
 		}
 		if (state == State.FALLEN){
 			state = State.STAND;
-			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
-			else startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollBack(), MoveList_Advanced.noStaleMove));
+			else startAttack(new IDMove(moveList.rollForward(), MoveList_Advanced.noStaleMove));
 		}
 		else if (canAttack()) tryDash();
 		return true;
@@ -241,13 +242,13 @@ public abstract class Fighter extends Hittable{
 
 	public boolean tryStickBack(){ 
 		if (state == State.DODGE) {
-			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
-			else startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollForward(), MoveList_Advanced.noStaleMove));
+			else startAttack(new IDMove(moveList.rollBack(), MoveList_Advanced.noStaleMove));
 		}
 		if (state == State.FALLEN){
 			state = State.STAND;
-			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollForward(), MoveList.noStaleMove));
-			else startAttack(new IDMove(moveList.rollBack(), MoveList.noStaleMove));
+			if (direction == Direction.LEFT) startAttack(new IDMove(moveList.rollForward(), MoveList_Advanced.noStaleMove));
+			else startAttack(new IDMove(moveList.rollBack(), MoveList_Advanced.noStaleMove));
 		}
 		else if (canAttack()) tryDash();
 		return true;
@@ -282,7 +283,7 @@ public abstract class Fighter extends Hittable{
 	private void spotDodge(){
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x + image.getWidth(), position.y + 8));
 		MapHandler.addEntity(new Graphic.SmokeTrail(position.x, position.y + 8));
-		startAttack(new IDMove(moveList.dodge(), MoveList.noStaleMove));
+		startAttack(new IDMove(moveList.dodge(), MoveList_Advanced.noStaleMove));
 	}
 
 	public boolean tryCStickUp(){
@@ -322,7 +323,7 @@ public abstract class Fighter extends Hittable{
 	}
 
 	private void startAttack(IDMove im){
-		if (im.id == MoveList.noMove) return;
+		if (im.id == MoveList_Advanced.noMove) return;
 		Move m = im.move;
 		setActiveMove(im);
 		attackTimer.setEndTime(m.getDuration() + 1);
@@ -533,7 +534,7 @@ public abstract class Fighter extends Hittable{
 		super.ground();
 		if (null != getActiveMove() && !getActiveMove().move.continuesOnLanding()) endAttack();
 		if (velocity.y < 0 && getActiveMove() == null && state != State.FALLEN){
-			startAttack(new IDMove(moveList.land(), MoveList.noStaleMove));
+			startAttack(new IDMove(moveList.land(), MoveList_Advanced.noStaleMove));
 		}
 		doubleJumped = false;
 	}
@@ -550,7 +551,7 @@ public abstract class Fighter extends Hittable{
 		if (null != getActiveMove()){
 			boolean bReverse = 
 					!attackTimer.timeUp() && attackTimer.getCounter() < minFrameBReverse && !getActiveMove().move.isNoTurn()
-					&& getActiveMove().id >= MoveList.specialRange[0] && getActiveMove().id <= MoveList.specialRange[1];
+					&& getActiveMove().id >= MoveList_Advanced.specialRange[0] && getActiveMove().id <= MoveList_Advanced.specialRange[1];
 					if (!bReverse) return;
 		}
 		else if (!isGrounded()) return;
@@ -561,11 +562,11 @@ public abstract class Fighter extends Hittable{
 	private final List<State> cantTurnStates = new ArrayList<State>(Arrays.asList(State.CROUCH, State.DODGE, State.JUMPSQUAT, State.FALLEN));
 
 	protected boolean activeMoveIsSpecial(){
-		return activeMoveIsWhatever(MoveList.specialRange);
+		return activeMoveIsWhatever(MoveList_Advanced.specialRange);
 	}
 	
 	protected boolean activeMoveIsCharge(){
-		return activeMoveIsWhatever(MoveList.chargeRange);
+		return activeMoveIsWhatever(MoveList_Advanced.chargeRange);
 	}
 	
 	private boolean activeMoveIsWhatever(int[] range){

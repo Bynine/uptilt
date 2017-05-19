@@ -24,12 +24,12 @@ public class TreasureChest extends Throwable {
 	public TreasureChest(float posX, float posY) {
 		super(posX, posY);
 		image = new Sprite(closed);
-		staticPercent = 25;
+		staticPercent = 40;
 	}
 
-	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
+	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean shouldChangeKnockback, HitstunType ht){
 		if (knockbackIntensity(knockback) > 0 && !opened) open();
-		super.knockbackHelper(knockback, DAM, hitstun, tryy, ht);
+		super.knockbackHelper(knockback, DAM, hitstun, shouldChangeKnockback, ht);
 	}
 
 	private void open(){

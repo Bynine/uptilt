@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 
 import entities.Entity;
 import entities.Entity.Direction;
+import entities.Hittable;
+import entities.Mook;
 
 public class GlobalRepo {
 	
@@ -19,6 +21,7 @@ public class GlobalRepo {
 	public static final int TILE = 32;
 	public static final int GOODTEAM = 0;
 	public static final int BADTEAM = 1;
+	public static final int NOTEAM = 2;
 	public static final float ENEMYHITSTUNMOD = 1.5f;
 	
 	/* GLOBAL METHODS */
@@ -82,6 +85,11 @@ public class GlobalRepo {
 	
 	public static <T> T getRandomElementFromList(List<T> lst){
 		return lst.get( (int) (Math.random() * lst.size()) );
+	}
+	
+	static final Hittable genericHittable = new Mook(0, 0, NOTEAM);
+	public static Hittable getGenericHittable(){
+		return genericHittable;
 	}
 	
 }

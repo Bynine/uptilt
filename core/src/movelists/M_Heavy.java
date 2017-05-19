@@ -12,7 +12,7 @@ import moves.Hitbox;
 import moves.Move;
 import moves.Effect.Charge;
 
-public class M_Heavy extends MoveList {
+public class M_Heavy extends MoveList_Advanced {
 
 	public M_Heavy(Fighter user) {
 		super(user);

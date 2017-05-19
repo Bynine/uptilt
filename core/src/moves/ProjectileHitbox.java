@@ -28,7 +28,7 @@ public class ProjectileHitbox extends Hitbox {
 		if (proj.life.timeUp()) remove = true;
 	}
 	
-	boolean didHitTarget(Hittable target){ 
+	public boolean didHitTarget(Hittable target){ 
 		boolean hitAnyFighter = 
 				!remove &&
 				!target.isInvincible() &&

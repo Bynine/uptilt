@@ -11,7 +11,7 @@ import entities.Fighter;
 import entities.Graphic;
 import entities.Projectile;
 
-public class M_Gunmin extends MoveList {
+public class M_Gunmin extends MoveList_Advanced {
 
 	public M_Gunmin(Fighter user) {
 		super(user);

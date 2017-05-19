@@ -20,12 +20,14 @@ import timers.Timer;
 public abstract class Hittable extends Entity {
 	
 	protected TextureRegion defaultTexture = new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/dummy.png")));
-	float percentage = 0;
-	boolean tumbling = false, slowed = true;
-	final Timer caughtTimer = new Timer(0), knockIntoTimer = new Timer(20), stunTimer = new Timer(0);
+	protected float percentage = 0;
+	protected boolean tumbling = false, slowed = true;
+	protected final Timer caughtTimer = new Timer(0), knockIntoTimer = new Timer(20), stunTimer = new Timer(0);
 	private float initialHitAngle = 0;
-	HitstunType hitstunType = HitstunType.NORMAL;
+	protected HitstunType hitstunType = HitstunType.NORMAL;
 	
+	protected float baseHurtleBK = 4;
+	protected float baseHitSpeed = 0.6f;
 	protected float baseHitstun = 1, basePower = 1, baseKnockIntoDamage = 1, armor = 0, baseWeight = 100;
 	protected float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
 	protected float jumpStrength = 5f, doubleJumpStrength = 8.5f, dashStrength = 5f;
@@ -46,7 +48,6 @@ public abstract class Hittable extends Entity {
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		super.update(rectangleList, entityList, deltaTime);
 		updateImage(deltaTime);
-		System.out.println(equipment.getSpeedMod());
 	}
 	
 	void updateImage(float deltaTime){
@@ -64,43 +65,48 @@ public abstract class Hittable extends Entity {
 		if (canMove()) super.updatePosition();
 	}
 	
-	protected float baseHurtleBK = 4;
 	void handleTouchHelper(Entity e){
 		if (e instanceof Hittable){
-			Hittable hi = (Hittable) e;
-			int pushDistance = 16 + 2 * ((int) image.getWidth() - defaultTexture.getRegionWidth());
-			boolean toPush = isTouching(hi, pushDistance) && Math.abs(hi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1 && e.isGrounded() && isGrounded();
-			if (getTeam() == hi.getTeam()) toPush = isTouching(hi, 0);
-			if (toPush) pushAway(hi);
-			boolean fighterGoingFastEnough = knockbackIntensity(hi.velocity) > baseHurtleBK;
-			if (hi.hitstunType != HitstunType.NORMAL) fighterGoingFastEnough = true;
-			boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == hi.getTeam() && !hi.hitstunTimer.timeUp();
-			if (knockInto && isTouching(hi, 8) && knockbackIntensity(hi.velocity) > knockbackIntensity(velocity)) getHitByHurtlingObject(hi);
+			checkPushAway((Hittable) e);
+			checkHitByHurtlingObject((Hittable) e);
 		}
 	}
 	
-	private final float pushForce = 0.04f;
+	private void checkPushAway(Hittable hi){
+		int pushDistance = 16 + 2 * ((int) image.getWidth() - defaultTexture.getRegionWidth());
+		boolean toPush = isTouching(hi, pushDistance) && Math.abs(hi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1;
+		if (getTeam() == hi.getTeam()) toPush = isTouching(hi, 0);
+		if (toPush) pushAway(hi);
+	}
+	
 	protected void pushAway(Entity e){
+		float pushForce = 0.04f;
 		float dirPush = Math.signum(e.position.x - this.position.x);
 		velocity.x -= dirPush * pushForce;
 		e.velocity.x += dirPush * pushForce;
 	}
+	
+	private void checkHitByHurtlingObject(Hittable hi){
+		boolean fighterGoingFastEnough = knockbackIntensity(hi.velocity) > baseHurtleBK;
+		if (hi.hitstunType != HitstunType.NORMAL) fighterGoingFastEnough = true;
+		boolean knockInto = knockIntoTimer.timeUp() && fighterGoingFastEnough && getTeam() == hi.getTeam() && !hi.hitstunTimer.timeUp();
+		if (knockInto && isTouching(hi, 8) && knockbackIntensity(hi.velocity) > knockbackIntensity(velocity)) getHitByHurtlingObject(hi);
+	}
 
-	protected float hitSpeedMod = 0.6f;
-	public void getHitByHurtlingObject(Hittable knocker){ // heheheh
-		Vector2 knockIntoVector = new Vector2(knocker.velocity.x, knocker.velocity.y);
+	public void getHitByHurtlingObject(Hittable hurtler){ // heheheh
+		Vector2 knockIntoVector = new Vector2(hurtler.velocity.x, hurtler.velocity.y);
 		float bkb = knockbackIntensity(knockIntoVector);
 		float kbg = 0.5f;
-		float dam = knockbackIntensity(knockIntoVector) * knocker.baseKnockIntoDamage;
+		float dam = knockbackIntensity(knockIntoVector) * hurtler.baseKnockIntoDamage;
 		Hitbox h;
-		if (knocker.hitstunType != HitstunType.NORMAL) {
-			if (knocker.hitstunType == HitstunType.ULTRA){ // ultra hitstun
+		if (hurtler.hitstunType != HitstunType.NORMAL) {
+			if (hurtler.hitstunType == HitstunType.ULTRA){ // ultra hitstun
 				bkb *= 1.05f;
-				h = new Hitbox(knocker, bkb, kbg, dam * 2, knockIntoVector.angle(), 0, 0, 0, null);
+				h = new Hitbox(hurtler, bkb, kbg, dam * 3, knockIntoVector.angle(), 0, 0, 0, null);
 			}
-			else{ // super hitstun
+			else { // super hitstun
 				bkb *= .7f;
-				h = new Hitbox(knocker, bkb, kbg, dam * 3, knockIntoVector.angle(), 0, 0, 0, null);
+				h = new Hitbox(hurtler, bkb, kbg, dam * 2, knockIntoVector.angle(), 0, 0, 0, null);
 			}
 			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
 			float newAngle = h.getAngle();
@@ -108,15 +114,15 @@ public abstract class Hittable extends Entity {
 		}
 		else { // normal hitstun
 			bkb *= .3f;
-			h = new Hitbox(knocker, bkb, kbg, dam, knockIntoVector.angle(), 0, 0, 0, null);
+			h = new Hitbox(hurtler, bkb, kbg, dam, knockIntoVector.angle(), 0, 0, 0, null);
 			knockIntoVector.set(h.knockbackFormula(this), h.knockbackFormula(this));
 			knockIntoVector.setAngle( (h.getAngle() + 90) / 2);
 		}
 		SFX.proportionalHit(h.getDamage()).play();
 		takeKnockIntoKnockback(knockIntoVector, h.getDamage() / 2, (int) h.getDamage() + hitstunDealtBonus );
-		knocker.knockIntoTimer.restart();
+		hurtler.knockIntoTimer.restart();
 		knockIntoTimer.restart();
-		knocker.velocity.set(knocker.velocity.x * knocker.hitSpeedMod, knocker.velocity.y * knocker.hitSpeedMod);
+		hurtler.velocity.set(hurtler.velocity.x * hurtler.baseHitSpeed, hurtler.velocity.y * hurtler.baseHitSpeed);
 	}
 	
 	private void takeKnockIntoKnockback(Vector2 knockback, float DAM, int hitstun){
@@ -133,9 +139,9 @@ public abstract class Hittable extends Entity {
 		velocity.add(knockback);
 	}
 
-	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean tryy, HitstunType ht){
+	protected void knockbackHelper(Vector2 knockback, float DAM, int hitstun, boolean shouldChangeKnockback, HitstunType ht){
 		takeDamage(DAM);
-		if (knockbackIntensity(knockback) > 0) takeKnockback(knockback, hitstun, tryy, ht);
+		if (knockbackIntensity(knockback) > 0) takeKnockback(knockback, hitstun, shouldChangeKnockback, ht);
 		if (knockbackIntensity(knockback) > tumbleBK) tumbling = true;
 	}
 	
@@ -147,9 +153,9 @@ public abstract class Hittable extends Entity {
 		/* */
 	}
 	
-	protected void takeKnockback(Vector2 knockback, int hitstun, boolean tryy, HitstunType ht){
+	protected void takeKnockback(Vector2 knockback, int hitstun, boolean shouldChangeKnockback, HitstunType ht){
 		knockback.setAngle(directionalInfluenceAngle(knockback));
-		if (tryy) velocity.set(knockback);
+		if (shouldChangeKnockback) velocity.set(knockback);
 		initialHitAngle = knockback.angle();
 		if (state == State.HELPLESS) state = State.FALL;
 		hitstunTimer.setEndTime(hitstun);
