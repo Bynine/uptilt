@@ -58,26 +58,6 @@ public class M_Wasp extends MoveList_Advanced{
 		return m;
 	}
 
-	public Move sWeak() {
-		Move m = new Move(user, 20);
-		m.setAnimation("sprites/fighters/kicker/sweak.png", 3, 7);
-		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 24, 60));
-		Hitbox vinner = new Hitbox(user, 2, 2.4f, 8, 70, 6, 4, 14, new SFX.MidHit());
-		Hitbox inner = new Hitbox(user, 2, 2.4f, 8, 60, 20, 4, 14, new SFX.MidHit());
-		Hitbox outer = new Hitbox(user, 2, 2.4f, 8, 60, 34, 4, 12, new SFX.MidHit());
-		Hitbox vinner2 = new Hitbox(user, 1, 1.4f, 5, 70, 6, 4, 14, new SFX.LightHit());
-		Hitbox inner2 = new Hitbox(user, 1, 1.4f, 5, 60, 20, 4, 14, new SFX.LightHit());
-		Hitbox outer2 = new Hitbox(user, 1, 1.4f, 5, 60, 34, 4, 12, new SFX.LightHit());
-		new ActionCircleGroup(Arrays.asList(vinner, inner, outer, vinner2, inner2, outer2));
-		m.eventList.addActionCircle(vinner, 7, 10);
-		m.eventList.addActionCircle(inner, 7, 10);
-		m.eventList.addActionCircle(outer, 7, 10);
-		m.eventList.addActionCircle(vinner2, 10, 14);
-		m.eventList.addActionCircle(inner2,  10, 14);
-		m.eventList.addActionCircle(outer2,  10, 14);
-		return m;
-	}
-
 	public Move slide() { 
 		Move m = new Move(user, 32);
 		m.dontTurn();
@@ -93,7 +73,7 @@ public class M_Wasp extends MoveList_Advanced{
 
 	/* CHARGE ATTACKS */
 
-	public Move sCharge() {
+	public Move nCharge() {
 		Move m = new Move(user, 36);
 		m.setAnimation("sprites/fighters/kicker/scharge.png", 6, 6);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 60));
@@ -263,7 +243,7 @@ public class M_Wasp extends MoveList_Advanced{
 		return m;
 	}
 
-	public Move sSpecial() {
+	public Move nSpecial() {
 		Move m = new Move(user, 20);
 		m.setAnimation("sprites/fighters/kicker/grab.png", 1, 1);
 		m.setContinueOnLanding();
@@ -272,23 +252,14 @@ public class M_Wasp extends MoveList_Advanced{
 		return m;
 	}
 
-	public Move nSpecial() {
-		Move m = new Move(user, 15);
-		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 24, 60));
-		m.setAnimation("sprites/fighters/kicker/nspecial.png", 1, 1);
-		m.setContinueOnLanding();
-		m.eventList.addUseSpecial(user, 5, -1);
-		m.eventList.addProjectile(user, Projectile.Stunner.class, 6);
-		return m;
-	}
-
 	/* THROWS */
 
+	int throwSize = 18;
 	public Move fThrow(){
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/kicker/fthrow.png", 4, 6);
 		m.dontTurn();
-		Hitbox thro  =  new Hitbox(user, 3.2f, 0.0f,  1, 85,  8, 0, 20, new SFX.None());
+		Hitbox thro  =  new Hitbox(user, 3.2f, 0.0f,  1, 85,  8, 0, throwSize, new SFX.None());
 		Hitbox swing1 = new Hitbox(user, 4.0f, 2.4f, 14, 30,  8, 0, 20, new SFX.MeatyHit());
 		Hitbox swing2 = new Hitbox(user, 4.0f, 2.4f, 14, 30, 28, 0, 20, new SFX.MeatyHit());
 		thro.setNoReverse();
@@ -307,8 +278,8 @@ public class M_Wasp extends MoveList_Advanced{
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/kicker/bthrow.png", 3, 8);
 		m.dontTurn();
-		Hitbox thro = new Hitbox(user, 5.5f, 0, 2, 160, 8, 0, 30, new SFX.LightHit());
-		Hitbox kick = new Hitbox(user, 3, 2.4f, 12, 150, -24, 0, 30, new SFX.MeatyHit());
+		Hitbox thro = new Hitbox(user, 5.5f, 0, 2, 160, 8, 0, throwSize, new SFX.LightHit());
+		Hitbox kick = new Hitbox(user, 3, 2.4f, 12, 150, -24, 0, throwSize, new SFX.MeatyHit());
 		thro.setNoReverse();
 		kick.setNoReverse();
 		kick.setHitstunType(Fighter.HitstunType.SUPER);
@@ -321,7 +292,7 @@ public class M_Wasp extends MoveList_Advanced{
 		Move m = new Move(user, 14);
 		m.dontTurn();
 		m.setAnimation("sprites/fighters/kicker/uthrow.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 5, 1.6f, 12, 90, 8, 0, 30, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 5, 1.6f, 12, 90, 8, 0, throwSize, new SFX.MidHit());
 		h1.setNoReverse();
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
@@ -332,8 +303,8 @@ public class M_Wasp extends MoveList_Advanced{
 		Move m = new Move(user, 10);
 		m.setAnimation("sprites/fighters/kicker/dthrow.png", 1, 1);
 		m.dontTurn();
-		Hitbox down = new Hitbox(user, 3, 0, 4, 270, 8, 0, 30, new SFX.LightHit());
-		Hitbox up = new Hitbox(user, 3, 1.2f, 8, 82, 8, -8, 30, new SFX.MidHit());
+		Hitbox down = new Hitbox(user, 3, 0, 4, 270, 8, 0, throwSize, new SFX.LightHit());
+		Hitbox up = new Hitbox(user, 3, 1.2f, 8, 82, 8, -8, throwSize, new SFX.MidHit());
 		down.setNoReverse();
 		up.setNoReverse();
 		m.eventList.addActionCircle(down, 0, 1);
@@ -344,7 +315,7 @@ public class M_Wasp extends MoveList_Advanced{
 	public Move fAirThrow(){
 		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/kicker/fair.png", 3, 6);
-		Hitbox h1 = new Hitbox(user, 3, 2.8f, 14, 30, 16, 0, 30, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 3, 2.8f, 14, 30, 16, 0, throwSize, new SFX.MidHit());
 		h1.setNoReverse();
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addActionCircle(h1, 0, 4);
@@ -355,7 +326,7 @@ public class M_Wasp extends MoveList_Advanced{
 		Move m = new Move(user, 18);
 		m.setAnimation("sprites/fighters/kicker/fjump.png", 1, 1);
 		m.dontTurn();
-		Hitbox h1 = new Hitbox(user, 3, 2.4f, 14, 150, 24, -12, 20, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 3, 2.4f, 14, 150, 24, -12, throwSize, new SFX.MidHit());
 		h1.setNoReverse();
 		h1.setHitstunType(Fighter.HitstunType.SUPER);
 		m.eventList.addVelocityChange(user, 5, 4, 4);
@@ -366,7 +337,7 @@ public class M_Wasp extends MoveList_Advanced{
 	public Move uAirThrow(){
 		Move m = new Move(user, 8);
 		m.setAnimation("sprites/fighters/kicker/uairthrow.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 7, 0.1f, 13, 90, 8, 0, 30, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 7, 0.1f, 13, 90, 8, 0, throwSize, new SFX.MidHit());
 		h1.setNoReverse();
 		m.eventList.addActionCircle(h1, 0, 4);
 		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 6);
@@ -376,7 +347,7 @@ public class M_Wasp extends MoveList_Advanced{
 	public Move dAirThrow(){
 		Move m = new Move(user, 30);
 		m.setAnimation("sprites/fighters/kicker/airgrab.png", 1, 1);
-		Hitbox down = new Hitbox(user, 3.4f, 0, 5, 270, 8, 0, 30, new SFX.LightHit());
+		Hitbox down = new Hitbox(user, 3.4f, 0, 5, 270, 8, 0, throwSize, new SFX.LightHit());
 		down.setNoReverse();
 		m.eventList.addActionCircle(down, 0, 4);
 		m.eventList.addConstantVelocity(user, 0, 20, 0, 0);

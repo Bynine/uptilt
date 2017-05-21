@@ -5,16 +5,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
-public class Stage_Adventure extends Stage {
+public class Stage_Adventure2 extends Stage {
 
-	public Stage_Adventure(){
+	public Stage_Adventure2(){
 		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/debug.mp3"));
 		setup();
 		name = "ADVENTURE";
 	}
 
 	public TiledMap getMap() {
-		return tmxMapLoader.load("maps/adventure.tmx");
+		return tmxMapLoader.load("maps/adventure2.tmx");
 	}
 
 	public Vector2 getStartPosition() {

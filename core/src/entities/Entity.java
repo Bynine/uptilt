@@ -170,9 +170,7 @@ public abstract class Entity {
 
 	void bounceOff(){
 		UptiltEngine.causeHitlag((int)(knockbackIntensity(velocity) / 4));
-		if (knockbackIntensity(velocity) > 14) new SFX.MeatyHit().play();
-		else if (knockbackIntensity(velocity) > 9) new SFX.MidHit().play();
-		else new SFX.LightHit().play();
+		SFX.proportionalHit(knockbackIntensity(velocity)).play();
 	}
 
 	void checkFloor(){

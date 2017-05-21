@@ -63,6 +63,11 @@ public class MapHandler {
 	}
 
 	private static boolean kill(Fighter fi){
+		int mod = 6;
+		addEntity(new Graphic.Die(
+				(fi.getCenter().x * (mod-1) + GraphicsHandler.getCameraPos().x) / mod, 
+				(fi.getCenter().y * (mod-1) + GraphicsHandler.getCameraPos().y) / mod
+		));
 		new SFX.Die().play();
 		if (fi.getLives() > 1) {
 			fi.respawn();

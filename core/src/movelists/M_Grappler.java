@@ -80,7 +80,7 @@ public class M_Grappler extends MoveList_Advanced {
 
 	/* CHARGE ATTACKS */
 
-	public Move sCharge() {
+	public Move nCharge() {
 		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/grappler/stand.png", 1, 1);
 		Effect.Charge c = new Charge(3, 33, 0.02f, user, m);

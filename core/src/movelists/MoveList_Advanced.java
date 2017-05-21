@@ -14,12 +14,11 @@ public abstract class MoveList_Advanced extends MoveList{
 	/* grounded normals */
 	public abstract Move nWeak();
 	public abstract Move uWeak();
-	public abstract Move sWeak();
 	public abstract Move dWeak();
 	public abstract Move slide();
 
 	/* charge attacks */
-	public abstract Move sCharge();
+	public abstract Move nCharge();
 	public Move fCharge(){
 		return setSideCharge(1);
 	}
@@ -27,7 +26,7 @@ public abstract class MoveList_Advanced extends MoveList{
 		return setSideCharge(-1);
 	}
 	private Move setSideCharge(int dir){
-		Move m = sCharge();
+		Move m = nCharge();
 		if (user.isGrounded() && user.direct() != dir) user.flip();
 		return m;
 	}
@@ -43,7 +42,6 @@ public abstract class MoveList_Advanced extends MoveList{
 
 	/* specials */
 	public abstract Move nSpecial();
-	public abstract Move sSpecial();
 	public abstract Move uSpecial();
 	public abstract Move dSpecial();
 
@@ -83,12 +81,10 @@ public abstract class MoveList_Advanced extends MoveList{
 	private static final int IDslide = 0;
 	private static final int IDuweak = 1;
 	private static final int IDdweak = 2;
-	private static final int IDsweak = 3;
-	private static final int IDnweak = 4;
+	private static final int IDnweak = 3;
 	private static final int IDuspecial = 10;
 	private static final int IDdspecial = 11;
-	private static final int IDsspecial = 12;
-	private static final int IDnspecial = 13;
+	private static final int IDnspecial = 12;
 	private static final int IDuthrow = 20;
 	private static final int IDdthrow = 21;
 	private static final int IDfthrow = 22;
@@ -99,7 +95,7 @@ public abstract class MoveList_Advanced extends MoveList{
 	private static final int IDbairthrow = 27;
 	private static final int IDucharge = 40;
 	private static final int IDdcharge = 41;
-	private static final int IDscharge = 42;
+	private static final int IDncharge = 42;
 	private static final int IDuair = 50;
 	private static final int IDdair = 51;
 	private static final int IDfair = 52;
@@ -113,7 +109,6 @@ public abstract class MoveList_Advanced extends MoveList{
 			if (user.isRunning()) return new IDMove(slide(), IDslide);
 			else if (user.isHoldUp()) return new IDMove(uWeak(), IDuweak);
 			else if (user.isHoldDown()) return new IDMove(dWeak(), IDdweak);
-			else if (user.isHoldForward()) return new IDMove(sWeak(), IDsweak);
 			else return new IDMove(nWeak(), IDnweak);
 		}
 		else return selectAerial();
@@ -122,10 +117,9 @@ public abstract class MoveList_Advanced extends MoveList{
 	public IDMove selectSpecialMove(){
 		if (user.isHoldUp()) return new IDMove(uSpecial(), IDuspecial);
 		else if (user.isHoldDown()) return new IDMove(dSpecial(), IDdspecial);
-		else if (user.isHoldForward()) return new IDMove(sSpecial(), IDsspecial);
 		else if (user.isHoldBack()) {
 			user.flip();
-			return new IDMove(sSpecial(), IDsspecial);
+			return new IDMove(nSpecial(), IDnspecial);
 		}
 		else return new IDMove(nSpecial(), IDnspecial);
 	}
@@ -161,9 +155,9 @@ public abstract class MoveList_Advanced extends MoveList{
 			else if (user.isHoldDown()) return new IDMove(dCharge(), IDdcharge);
 			else if (user.isHoldBack()) {
 				user.flip();
-				return new IDMove(sCharge(), IDscharge);
+				return new IDMove(nCharge(), IDncharge);
 			}
-			else return new IDMove(sCharge(), IDscharge);
+			else return new IDMove(nCharge(), IDncharge);
 		}
 		else return selectAerial();
 	}
@@ -193,7 +187,7 @@ public abstract class MoveList_Advanced extends MoveList{
 	}
 	
 	protected IDMove cStickCharge(boolean dir){
-		IDMove im = new IDMove(sCharge(), IDscharge);
+		IDMove im = new IDMove(nCharge(), IDncharge);
 		if (dir) user.flip();
 		return im;
 	}

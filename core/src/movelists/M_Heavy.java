@@ -107,7 +107,7 @@ public class M_Heavy extends MoveList_Advanced {
 	}
 	
 	int spinFrames = 14;
-	public Move sCharge() {
+	public Move nCharge() {
 		int sChargeFrameSpeed = 8;
 		Move m = new Move(user, spinFrames * sChargeFrameSpeed);
 		m.setContinueOnLanding();

@@ -142,5 +142,19 @@ public abstract class Graphic extends Entity{
 			if (duration.getCounter() > dur/2) setSmall(small);
 		}
 	}
+	
+	public static class Die extends Graphic {
+		private static TextureRegion tex = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/die.png")));
+		private TextureRegion small = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/diesmall.png")));
+		public Die(float posX, float posY){
+			super(posX - tex.getRegionWidth()/2, posY - tex.getRegionHeight()/2, 16);
+			image = new Sprite(tex);
+			updatePosition();
+		}
+		void updatePosition(){
+			if (duration.timeUp()) setRemove();
+			if (duration.getCounter() > dur/2) setSmall(small);
+		}
+	}
 
 }

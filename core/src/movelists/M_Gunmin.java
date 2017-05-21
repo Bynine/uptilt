@@ -157,7 +157,7 @@ public class M_Gunmin extends MoveList_Advanced {
 	
 	/* UNUSED */
 	
-	public Move sCharge() {
+	public Move nCharge() {
 		return new Move(user, 0);
 	}
 	

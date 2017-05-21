@@ -142,7 +142,7 @@ public class M_Speedy extends MoveList_Advanced {
 	}
 	
 	protected int sChargeSpeed = 10;
-	public Move sCharge() {
+	public Move nCharge() {
 		Move m = new Move(user, 50);
 		m.setContinueOnLanding();
 		m.setAnimation("sprites/fighters/speedy/fair.png", 2, 7);

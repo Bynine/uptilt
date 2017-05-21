@@ -124,7 +124,8 @@ public abstract class Challenge {
 	}
 
 	protected Stage getRoomByRound(int position){
-		return new Stage_Adventure();
+		if (position == 0) return new Stage_Adventure();
+		return new Stage_Adventure2();
 	}
 	
 	public long getScore(){

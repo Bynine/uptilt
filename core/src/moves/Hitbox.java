@@ -14,7 +14,7 @@ import entities.Hittable;
 
 public class Hitbox extends ActionCircle{
 	public static final int SAMURAI = 361;
-	public static final int REVERSE = 362;
+	public static final int REVERSE = -487;
 	
 	protected float BKB, KBG;
 	protected float DAM;
@@ -81,9 +81,9 @@ public class Hitbox extends ActionCircle{
 		Vector2 knockback = new Vector2();
 		if (null != charge) heldCharge = charge.getHeldCharge();
 		knockback.set(knockbackFormula(target) * staleness, knockbackFormula(target) * staleness);
-		if (ANG == SAMURAI) setSamuraiAngle(target, knockback);
-		if (ANG == REVERSE) setReverseAngle(target, knockback);
-		else knockback.setAngle(ANG);
+				if (ANG == SAMURAI) setSamuraiAngle(target, knockback);
+		else 	if (ANG == REVERSE) setReverseAngle(target, knockback);
+		else 						knockback.setAngle(ANG);
 		knockback.x *= applyReverseHitbox(target);
 		if (knockbackFormula(target) > 8 && null != user) user.takeRecoil(recoilFormula(knockback, target));
 		int hitstun = hitstunFormula( target, knockbackFormula(target) * staleness );

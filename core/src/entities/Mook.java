@@ -19,7 +19,7 @@ public class Mook extends Fighter {
 	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/mook/run.png", 2, 1, 8, PlayMode.LOOP);
 	private Animation jumpImage = GlobalRepo.makeAnimation("sprites/fighters/mook/jump.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation crouchImage = GlobalRepo.makeAnimation("sprites/fighters/mook/crouch.png", 1, 1, 1, PlayMode.LOOP);
-	private Animation helplessImage = GlobalRepo.makeAnimation("sprites/fighters/mook/nair.png", 4, 1, 8, PlayMode.LOOP_REVERSED);
+	private Animation helplessImage = GlobalRepo.makeAnimation("sprites/fighters/mook/tumble.png", 4, 1, 8, PlayMode.LOOP_REVERSED);
 	private TextureRegion hitstunImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/hitstun.png")));
 	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/fall.png")));
 	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/mook/fallen.png")));
@@ -31,7 +31,7 @@ public class Mook extends Fighter {
 		setInputHandler(new InputHandlerCPU(this, MookBrain.class));
 		image = new Sprite(standImage.getKeyFrame(0));
 		gravity = -0.45f;
-		baseWeight = 100;
+		baseWeight = 90;
 		jumpAcc = 0.52f;
 		airSpeed = 1.8f;
 		walkSpeed = 1.7f;

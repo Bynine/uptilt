@@ -12,9 +12,9 @@ void main() {
 		float oldR = color.r;
 		float oldG = color.g;
 		float oldB = color.b;
-		float nonRedDivisor = 1.0/2.0;
-        color.g = oldB * nonRedDivisor;
-        color.b = oldG * nonRedDivisor;
-        color.r = oldR * 1.5;
+		float lower = 1.0/1.5;
+        color.g = oldG * lower;
+        color.b = oldB * lower;
+        color.r = oldR * lower;
         gl_FragColor = vec4(color, texture2D(u_texture, v_texCoords).a);
 }

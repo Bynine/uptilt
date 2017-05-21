@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import entities.Entity;
 import entities.Fighter;
@@ -194,7 +195,10 @@ public class GraphicsHandler {
 		if (numEnemies > 0){
 			font.draw(batch, "remaining: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.6f), cam.position.y - SCREENHEIGHT * stockLocationMod);
 		}
-		if (UptiltEngine.isPaused()) font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
+		if (UptiltEngine.isPaused()) {
+			font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
+			font.draw(batch, "Press Select to quit", cam.position.x, cam.position.y - GlobalRepo.TILE * 2);
+		}
 	}
 
 	private static List<Float> cameraBoundaries(){
@@ -209,6 +213,10 @@ public class GraphicsHandler {
 	public static Rectangle getCameraBoundary() {
 		List<Float> bounds = cameraBoundaries();
 		return new Rectangle(bounds.get(0), bounds.get(2), bounds.get(1) - bounds.get(0), bounds.get(3) - bounds.get(2));
+	}
+	
+	public static Vector3 getCameraPos(){
+		return cam.position;
 	}
 
 	private static void drawFighterPercentage(Entity e) {

@@ -41,13 +41,16 @@ public abstract class Projectile extends Entity{
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
+		System.out.println(life.getCounter() + " " + life.getEndTime());
 		updateVelocity(rectangleList, entityList);
 		if (life.timeUp()) setRemove();
 		setupRectangles(rectangleList, entityList);
 		checkWalls();
 		checkFloor();
 		if (deltaTime > 1) handleTouch(entityList);
+
 		updateTimers();
+		System.out.println(life.getCounter() + " " + life.getEndTime());
 		updatePosition();
 		updateImagePosition(deltaTime);
 	}
@@ -63,14 +66,19 @@ public abstract class Projectile extends Entity{
 		setImage(texture);
 		if (owner.direct() == -1) flip();
 		life.setEndTime(lifeTime);
+		life.restart();
 		this.velX = owner.direct() * velX;
 		this.velY = velY;
 	}
 
 	public boolean doesCollide(float x, float y){
 		boolean hitWall = super.doesCollide(x, y);
-		if (hitWall) life.end();
+		if (hitWall) handleHitWall();
 		return hitWall;
+	}
+	
+	void handleHitWall(){
+		life.end();
 	}
 
 	void handleTouchHelper(Entity e){
@@ -112,9 +120,9 @@ public abstract class Projectile extends Entity{
 		}
 
 		void explode(){
-			MapHandler.addEntity(getExplosion());
 			exploded = true;
 			life.end();
+			MapHandler.addEntity(getExplosion());
 		}
 
 		void touchOtherProjectile(Projectile p){
@@ -182,16 +190,16 @@ public abstract class Projectile extends Entity{
 
 	private static class RocketExplosion extends Projectile{
 
-		private final int lifeTime = 12;
+		private final int lifeTime = 30;
 		private final int displacement = 40;
 
 		public RocketExplosion(Fighter owner, Projectile rocket, int ownerDirect) {
 			super(0, 0, owner);
+			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
 			new SFX.Explode().play();
 			int facingOffset = 40 * ownerDirect;
 			position.x = rocket.position.x - displacement;
 			position.y = rocket.position.y - displacement;
-			setup("sprites/entities/explosion.png", lifeTime, 0, 0);
 			ac = 		 new ProjectileHitbox(null, 11.0f, 4.5f, 20, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			Hitbox ac2 = new ProjectileHitbox(null,  8.0f, 3.5f, 12, Hitbox.SAMURAI, facingOffset, 0, 60, new SFX.HeavyHit(), this, lifeTime);
 			Hitbox ac3 = new ProjectileHitbox(null,  5.0f, 1.5f, 0, 10, facingOffset*2, 0, 120, new SFX.LightHit(), this, lifeTime);
@@ -205,6 +213,10 @@ public abstract class Projectile extends Entity{
 		}
 
 		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
+		
+		void handleHitWall(){
 			/* nothing */
 		}
 	}
@@ -319,6 +331,10 @@ public abstract class Projectile extends Entity{
 		}
 
 		void touchOtherProjectile(Projectile p){
+			/* nothing */
+		}
+		
+		void handleHitWall(){
 			/* nothing */
 		}
 	}

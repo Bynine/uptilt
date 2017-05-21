@@ -35,14 +35,14 @@ public abstract class Brain{
 	}
 	
 	/* BEHAVIORS */
+
+	float setInput(float value){
+		return MathUtils.clamp(value, -1, 1);
+	}
 	
 	boolean isCharging(){
 		if (Math.random() < 0.95) return true;
 		else return false;
-	}
-
-	float setInput(float value){
-		return MathUtils.clamp(value, -1, 1);
 	}
 
 	void getUp(){
@@ -124,6 +124,10 @@ public abstract class Brain{
 		return shouldAttack;
 	}
 	
+	boolean shouldAttack(double chance, int closeDistance, int farDistance, boolean mustBeGrounded){
+		return shouldAttack(chance, farDistance, mustBeGrounded) && Math.abs(pack.distanceXFromPlayer) > closeDistance;
+	}
+	
 	boolean shouldGetUp(double d){
 		return pack.state == State.FALLEN && Math.random() < d;
 	}
@@ -148,19 +152,15 @@ public abstract class Brain{
 
 	public static class Recover extends Brain{ // Recovers if thrown offstage, mixes up vertical DI
 
-		Timer changeDI = new DurationTimer(60);
-		Timer waitToUseUpSpecial = new Timer(30);
-
 		public Recover(InputHandlerCPU body) {
 			super(body);
-			timerList.addAll(Arrays.asList(changeDI, waitToUseUpSpecial));
+			timerList.addAll(Arrays.asList(waitToUseUpSpecial));
 		}
 
 		void update(InputPackage pack){
 			super.update(pack);
 			body.xInput = 0;
 			if (pack.isOffStage) attemptRecovery(waitToUseUpSpecial);
-			if (changeDI.timeUp()) changeUpDown(); 
 		}
 
 	}
@@ -173,20 +173,20 @@ public abstract class Brain{
 
 		void update(InputPackage pack){
 			super.update(pack);
+			body.yInput = 0;
 			if (changeDirection.timeUp()) headTowardPlayer(changeDirection);
 			if (!performJump.timeUp()) performJump(performJump);
 			if (shouldGetUp(0.02)) getUp();
 			else if (pack.distanceYFromPlayer > 20 && tryJump.timeUp()) jumpAtPlayer(tryJump, performJump);
 			else if (inVerticalAttackRange()) chooseAttack();
 			else if (pack.isOffStage) attemptRecovery(waitToUseUpSpecial);
-			if (changeUpDown.timeUp()) changeUpDown(); 
 		}
 		
 		void chooseAttack(){
-			if		(shouldAttack(0.02, 70,  true)) performJump(performJump);
-			if 		(shouldAttack(0.7,  20, false)) attackPlayer(InputHandler.commandAttack);
-			else if (shouldAttack(0.09, 40,  true)) attackPlayer(InputHandler.commandSpecial);
-			else if (shouldAttack(0.06, 80, false)) attackPlayer(InputHandler.commandCharge);
+			if		(shouldAttack(0.02, 70,  true))		performJump(performJump);
+			if 		(shouldAttack(0.20, 30, false))		attackPlayer(InputHandler.commandAttack);
+			else if (shouldAttack(0.09, 30,  true))		attackPlayer(InputHandler.commandSpecial);
+			else if (shouldAttack(0.05, 40, 80, false)) attackPlayer(InputHandler.commandCharge);
 		}
 
 	}

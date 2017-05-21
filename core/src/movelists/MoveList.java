@@ -17,7 +17,7 @@ public abstract class MoveList {
 	public abstract Move nWeak();
 	public abstract Move slide();
 	public abstract Move nAir();
-	public abstract Move sCharge();
+	public abstract Move nCharge();
 	public abstract Move nSpecial();
 	public abstract Move uSpecial();
 	public abstract Move rollForward();
@@ -50,7 +50,7 @@ public abstract class MoveList {
 	}
 
 	public IDMove selectCharge() {
-		if (user.isGrounded()) return new IDMove(sCharge(), noStaleMove);
+		if (user.isGrounded()) return new IDMove(nCharge(), noStaleMove);
 		else return new IDMove(nAir(), noStaleMove);
 	}
 

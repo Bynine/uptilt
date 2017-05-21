@@ -88,7 +88,7 @@ public class M_Frog extends M_Wasp {
 
 	/* CHARGE ATTACKS */
 
-	public Move sCharge() {
+	public Move nCharge() {
 		Move m = new Move(user, 40);
 		m.setAnimation("sprites/fighters/frog/scharge.png", 6, 5);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 30, 50));

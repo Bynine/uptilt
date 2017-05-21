@@ -526,7 +526,10 @@ public abstract class Fighter extends Hittable{
 		if (hitstunTimer.getCounter() > 1 && velocity.y < 0){	
 			if (tumbling) {
 				if (inputHandler.isTeching()) tech();
-				else state = State.FALLEN;
+				else {
+					SFX.proportionalHit(knockbackIntensity(velocity)).play();
+					state = State.FALLEN;
+				}
 			}
 			hitstunTimer.end();
 		}
@@ -596,6 +599,7 @@ public abstract class Fighter extends Hittable{
 
 	protected float directionalInfluenceAngle(Vector2 knockback){
 		float diStrength = 8;
+		if (team == GlobalRepo.GOODTEAM) diStrength = 40;
 		if (getInputHandler().getXInput() < unregisteredInputMax && getInputHandler().getXInput() < unregisteredInputMax) return knockback.angle();
 		Vector2 di = new Vector2(getInputHandler().getXInput(), getInputHandler().getYInput());
 		float parallelAngle = Math.round(knockback.angle() - di.angle());

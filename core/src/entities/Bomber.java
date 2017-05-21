@@ -6,13 +6,13 @@ import movelists.M_Wasp;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Wasp extends Fighter {
+public class Bomber extends Fighter {
 
-	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 7, 1, 7, PlayMode.LOOP);
+	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 2, 1, 16, PlayMode.LOOP);
 	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 4, 1, 12, PlayMode.LOOP);
 	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/run.png", 6, 1, 8, PlayMode.LOOP);
 	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/tumble.png", 4, 1, 8, PlayMode.LOOP);
@@ -30,7 +30,7 @@ public class Wasp extends Fighter {
 	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
 	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fallen.png")));
 
-	public Wasp(float posX, float posY, int team) {
+	public Bomber(float posX, float posY, int team) {
 		super(posX, posY, team);
 		baseWeight = 87;
 		runAcc = 2.3f;
