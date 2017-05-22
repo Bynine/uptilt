@@ -13,10 +13,10 @@ import main.UptiltEngine;
 import entities.Fighter;
 
 public class EnemySpawner {
-	final List<Enemy> enemyList = new ArrayList<Enemy>();
-	private int initAmount, amount, capacity;
-	float frequency;
-	final List<Fighter> spawnedEntities = new ArrayList<Fighter>();
+	private final List<Enemy> enemyList = new ArrayList<Enemy>();
+	private int initAmount, amount, capacity, killed;
+	private float frequency;
+	private final List<Fighter> spawnedEntities = new ArrayList<Fighter>();
 	private final boolean random;
 	
 	public static final int ENDLESS = -5;
@@ -46,7 +46,10 @@ public class EnemySpawner {
 		Iterator<Fighter> spawnIter = spawnedEntities.iterator();
 		while (spawnIter.hasNext()){
 			Fighter spawn = spawnIter.next();
-			if (spawn.getLives() == 0) spawnIter.remove();
+			if (spawn.getLives() == 0) {
+				spawnIter.remove();
+				killed++;
+			}
 		}
 	}
 
@@ -103,5 +106,9 @@ public class EnemySpawner {
 	
 	public int getCapacity(){
 		return capacity;
+	}
+	
+	public int getKilled(){
+		return killed;
 	}
 }

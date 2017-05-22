@@ -7,14 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.GlobalRepo;
-import entities.AlloyMook;
-import entities.Gunmin;
-import entities.Heavy;
-import entities.HyperSpeedy;
-import entities.Mook;
-import entities.Rocketmin;
-import entities.Speedy;
-import entities.Wasp;
+import entities.*;
 
 public class CombatGenerator {
 
@@ -26,8 +19,7 @@ public class CombatGenerator {
 	public static final int DIFF_OHNO	= 4;
 	private static final int DIFF_FUCK	= 5;
 
-	protected static Enemy mooks = new Enemy(Mook.class, Brain.MookBrain.class);
-	protected static Enemy elites = new Enemy(Mook.class, Brain.MookBrain.class);
+	protected static Enemy mooks = new Enemy(Basic.class, Brain.MookBrain.class);
 	protected static Enemy guns = new Enemy(Gunmin.class, Brain.MookBrain.class);
 	protected static Enemy alloys = new Enemy(AlloyMook.class, Brain.MookBrain.class);
 	protected static Enemy rockets = new Enemy(Rocketmin.class, Brain.MookBrain.class);
@@ -71,11 +63,10 @@ public class CombatGenerator {
 			new EnemySpawner(Arrays.asList(mooks, alloys),		 				16, 32, 40, true)
 			));
 	protected static List<EnemySpawner> ohnoList = new ArrayList<EnemySpawner>(Arrays.asList(
-//			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	10, 8, 60, true),
-//			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	16, 6, 60, true),
-//			
-//			new EnemySpawner(Arrays.asList(alloys),		 				20, 40, 20, true)
-			new EnemySpawner(Arrays.asList(kickers),	8, 2, 120, true)
+			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	10, 8, 60, true),
+			new EnemySpawner(Arrays.asList(alloys, rockets, speedies, hypers),	16, 6, 60, true),
+			
+			new EnemySpawner(Arrays.asList(alloys),		 				20, 40, 20, true)
 			));
 	protected static List<EnemySpawner> fuckList = new ArrayList<EnemySpawner>(Arrays.asList(
 			new EnemySpawner(Arrays.asList(hypers), 12, 6, 60, true)
@@ -85,25 +76,25 @@ public class CombatGenerator {
 	protected EnemySpawner esTest = new EnemySpawner(Arrays.asList(mooks, alloys), 1, 1, 10, true);
 
 	static Combat generate(int difficulty){
-		EnemySpawner enemySpawner;
-
-		switch(difficulty){
-		case DIFF_BABB: enemySpawner = newEnemySpawner(babbList); break;
-		case DIFF_EASY: enemySpawner = newEnemySpawner(easyList); break;
-		case DIFF_MIDD: enemySpawner = newEnemySpawner(middList); break;
-		case DIFF_HARD: enemySpawner = newEnemySpawner(hardList); break;
-		case DIFF_OHNO: enemySpawner = newEnemySpawner(ohnoList); break;
-		case DIFF_FUCK: enemySpawner = newEnemySpawner(fuckList); break;
-		default: enemySpawner = newEnemySpawner(babbList);
-		}
-
+		return new Combat(getDifficultyEnemySpawner(difficulty));
+	}
+	
+	static Combat generateEndless(int difficulty) {
+		EnemySpawner enemySpawner = getDifficultyEnemySpawner(difficulty);
+		enemySpawner.setToEndless();
 		return new Combat(enemySpawner);
 	}
 	
-	public static Combat generateEndless(int difficulty) {
-		EnemySpawner enemySpawner = newEnemySpawner(middList);
-		enemySpawner.setToEndless();
-		return new Combat(enemySpawner);
+	private static EnemySpawner getDifficultyEnemySpawner(int difficulty){
+		switch(difficulty){
+		case DIFF_BABB: return newEnemySpawner(babbList);
+		case DIFF_EASY: return newEnemySpawner(easyList);
+		case DIFF_MIDD: return newEnemySpawner(middList);
+		case DIFF_HARD: return newEnemySpawner(hardList);
+		case DIFF_OHNO: return newEnemySpawner(ohnoList);
+		case DIFF_FUCK: return newEnemySpawner(fuckList);
+		default: return newEnemySpawner(babbList);
+		}
 	}
 
 	private static EnemySpawner newEnemySpawner(List<EnemySpawner> enemyList){

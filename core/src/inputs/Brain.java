@@ -174,7 +174,7 @@ public abstract class Brain{
 		void update(InputPackage pack){
 			super.update(pack);
 			body.yInput = 0;
-			if (changeDirection.timeUp()) headTowardPlayer(changeDirection);
+			if (changeDirection.timeUp() && Math.abs(pack.distanceXFromPlayer) > 25 ) headTowardPlayer(changeDirection);
 			if (!performJump.timeUp()) performJump(performJump);
 			if (shouldGetUp(0.02)) getUp();
 			else if (pack.distanceYFromPlayer > 20 && tryJump.timeUp()) jumpAtPlayer(tryJump, performJump);
@@ -184,9 +184,9 @@ public abstract class Brain{
 		
 		void chooseAttack(){
 			if		(shouldAttack(0.02, 70,  true))		performJump(performJump);
-			if 		(shouldAttack(0.20, 30, false))		attackPlayer(InputHandler.commandAttack);
-			else if (shouldAttack(0.09, 30,  true))		attackPlayer(InputHandler.commandSpecial);
-			else if (shouldAttack(0.05, 40, 80, false)) attackPlayer(InputHandler.commandCharge);
+			if 		(shouldAttack(0.22, 25, false))		attackPlayer(InputHandler.commandAttack);
+			else if (shouldAttack(0.08, 30,  true))		attackPlayer(InputHandler.commandSpecial);
+			else if (shouldAttack(0.04, 40, 70, false)) attackPlayer(InputHandler.commandCharge);
 		}
 
 	}

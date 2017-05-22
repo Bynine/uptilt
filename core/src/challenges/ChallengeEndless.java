@@ -1,16 +1,23 @@
 package challenges;
 
-import com.badlogic.gdx.math.Vector2;
+import main.GlobalRepo;
+import maps.Stage_Standard;
 
 public class ChallengeEndless extends Challenge {
 
 	public ChallengeEndless(int difficulty){
 		super(difficulty);
 		numLives = 1;
-		activeCombat = CombatGenerator.generateEndless(difficulty);
-		stageList.add(getRoomByRound(difficulty));
-		startEndlessCombat(null, new Vector2(200, 200));
+		stageList.add(new Stage_Standard());
+		combatPosition.set(GlobalRepo.TILE * 22, GlobalRepo.TILE * 6);
 		begin();
+		startCombatHelper(null, combatPosition);
+		activeCombat = CombatGenerator.generateEndless(difficulty);
+	}
+	
+	@Override
+	public String getEnemyCounter() {
+		return "KOs: " + activeCombat.getNumKilled();
 	}
 	
 }

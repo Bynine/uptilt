@@ -5,9 +5,8 @@ import java.util.List;
 
 public class Combat {
 
-	protected List<EnemySpawner> fSList = new ArrayList<EnemySpawner>();
-	protected boolean restarted = false;
-	protected int numEnemies = 0;
+	private List<EnemySpawner> fSList = new ArrayList<EnemySpawner>();
+	private int numEnemies = 0;
 	SpecialEffect specialEffect;
 
 	public Combat(EnemySpawner es){
@@ -33,6 +32,12 @@ public class Combat {
 	
 	public int getNumEnemies(){
 		return numEnemies;
+	}
+	
+	public int getNumKilled(){
+		int killed = 0;
+		for (EnemySpawner fs: fSList) killed += fs.getKilled();
+		return killed;
 	}
 	
 	enum SpecialEffect{

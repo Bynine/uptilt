@@ -22,8 +22,8 @@ public abstract class Challenge {
 	protected int place = 0;
 	protected long score = 0;
 	protected int numLives = 5;
-	private Mode mode = Mode.ADVENTURE;
-	private final Vector2 combatPosition = new Vector2(0, 0);
+	protected Mode mode = Mode.ADVENTURE;
+	protected final Vector2 combatPosition = new Vector2(0, 0);
 	private boolean endCombat = false, combatNotEnded = false;
 	final int difficulty;
 
@@ -59,8 +59,10 @@ public abstract class Challenge {
 		endCombat = false;
 		UptiltEngine.changeRoom(stageList.get(place));
 		activeCombat = CombatGenerator.generate(difficulty);
-		ChallengeGraphicsHandler.readyGo();
-		UptiltEngine.wait(waitBetween);
+		if (!UptiltEngine.debugToggle){
+			ChallengeGraphicsHandler.readyGo();
+			UptiltEngine.wait(waitBetween);
+		}
 		for (Fighter player: UptiltEngine.getPlayers()) player.refresh();
 	}
 
@@ -97,12 +99,7 @@ public abstract class Challenge {
 		else activeCombat = CombatGenerator.generate(difficulty);
 	}
 
-	public void startEndlessCombat(CombatStarter cs, Vector2 position) {
-		startCombatHelper(cs, position);
-		activeCombat = CombatGenerator.generate(difficulty);
-	}
-	
-	private void startCombatHelper(CombatStarter cs, Vector2 position){
+	protected void startCombatHelper(CombatStarter cs, Vector2 position){
 		activeCombatStarter = cs;
 		combatPosition.set(position);
 		mode = Mode.COMBAT;
@@ -127,17 +124,19 @@ public abstract class Challenge {
 		if (position == 0) return new Stage_Adventure();
 		return new Stage_Adventure2();
 	}
-	
+
 	public long getScore(){
 		return score;
 	}
 
-	private static enum Mode{
+	protected static enum Mode{
 		COMBAT, ADVENTURE
 	}
 
 	public void score(int i) {
 		score += i;
 	}
+	
+	public abstract String getEnemyCounter();
 
 }

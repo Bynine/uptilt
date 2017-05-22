@@ -48,7 +48,7 @@ public class GraphicsHandler {
 	public static final float ZOOM2X = 1/2f;
 	public static final float ZOOM1X = 1/1f;
 	static float ZOOM = ZOOM2X;
-	
+
 	private final static Vector2 origCamPosition = new Vector2(0, 0);
 
 	public static void begin() {
@@ -83,7 +83,7 @@ public class GraphicsHandler {
 			centerX = UptiltEngine.getPlayers().get(0).getPosition().x;
 			centerY = UptiltEngine.getPlayers().get(0).getPosition().y + yDisplacement;
 		}
-		
+
 		cam.position.x = (cam.position.x*(camAdjustmentLimiter-1) + centerX)/camAdjustmentLimiter;
 		cam.position.y = (cam.position.y*(camAdjustmentLimiter-1) + yDisplacement + centerY)/camAdjustmentLimiter;
 
@@ -126,7 +126,7 @@ public class GraphicsHandler {
 		}
 		renderer.render(arr);
 		renderer.getBatch().setShader(null);
-		
+
 		batch.begin();  // render entities
 		for (Entity e: MapHandler.activeRoom.getEntityList()) renderEntity(e);
 		batch.end();
@@ -191,10 +191,8 @@ public class GraphicsHandler {
 		}
 		font.draw(batch, "score: " +  UptiltEngine.getChallenge().getScore(), 
 				cam.position.x, cam.position.y - SCREENHEIGHT * stockLocationMod);
-		int numEnemies = UptiltEngine.getChallenge().getActiveCombat().getNumEnemies();
-		if (numEnemies > 0){
-			font.draw(batch, "remaining: " + numEnemies, cam.position.x + SCREENWIDTH * (stockLocationMod/1.6f), cam.position.y - SCREENHEIGHT * stockLocationMod);
-		}
+		font.draw(batch,  UptiltEngine.getChallenge().getEnemyCounter(), 
+				cam.position.x + SCREENWIDTH * (stockLocationMod/1.6f), cam.position.y - SCREENHEIGHT * stockLocationMod);
 		if (UptiltEngine.isPaused()) {
 			font.draw(batch, "PAUSED", cam.position.x, cam.position.y);
 			font.draw(batch, "Press Select to quit", cam.position.x, cam.position.y - GlobalRepo.TILE * 2);
@@ -214,7 +212,7 @@ public class GraphicsHandler {
 		List<Float> bounds = cameraBoundaries();
 		return new Rectangle(bounds.get(0), bounds.get(2), bounds.get(1) - bounds.get(0), bounds.get(3) - bounds.get(2));
 	}
-	
+
 	public static Vector3 getCameraPos(){
 		return cam.position;
 	}

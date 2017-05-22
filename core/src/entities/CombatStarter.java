@@ -15,6 +15,7 @@ public class CombatStarter extends ImmobileEntity{
 	public CombatStarter(float posX, float posY) {
 		super(posX, posY);
 		image = new Sprite(new TextureRegion(new Texture(Gdx.files.internal("sprites/entities/combatstarter.png"))));
+		collision = Collision.GHOST;
 	}
 	
 	void handleTouchHelper(Entity e){

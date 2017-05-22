@@ -21,10 +21,10 @@ class DebugMenu extends Menu{
 
 	private static List<PlayerType> playableCharacters = new ArrayList<PlayerType>(Arrays.asList(
 			new PlayerType(Wasp.class, "Wasp"), new PlayerType(Frog.class, "Frog"),
-			new PlayerType(Grappler.class, "Teddy"), new PlayerType(Owl.class, "Owl"),
-			new PlayerType(Mook.class, "Mook"), new PlayerType(AlloyMook.class, "AlloyMook"),
+			new PlayerType(Basic.class, "Basic"), new PlayerType(AlloyMook.class, "AlloyMook"),
 			new PlayerType(Gunmin.class, "Gunmin"), new PlayerType(Rocketmin.class, "Rocketmin"),
 			new PlayerType(Speedy.class, "Speedy"), new PlayerType(HyperSpeedy.class, "HyperSpeedy"),
+			new PlayerType(Grappler.class, "Teddy"), new PlayerType(Owl.class, "Owl"),
 			new PlayerType(Dog.class, "Dog"), new PlayerType(Dummy.class, "Dummy")
 			));
 	private static MenuOption<PlayerType> p1Char = new MenuOption<PlayerType>(playableCharacters);

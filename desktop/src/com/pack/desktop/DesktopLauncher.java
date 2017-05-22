@@ -9,13 +9,14 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class DesktopLauncher {
 	
 	private static final int FPS = 60;
+	private static final int DONTRENDER = -1;
 	
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Up Tilt";
 		cfg.vSyncEnabled = false;
 		cfg.foregroundFPS = FPS;
-		cfg.backgroundFPS = FPS;
+		cfg.backgroundFPS = DONTRENDER;
 		cfg.width = GraphicsHandler.SCREENWIDTH;
 		cfg.height= GraphicsHandler.SCREENHEIGHT;
 		new LwjglApplication(new UptiltEngine(), cfg);

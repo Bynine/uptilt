@@ -21,8 +21,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class UptiltEngine extends ApplicationAdapter {
 
-	private static final Timer hitlagTimer = new Timer(0);
-	private static final Timer waitTimer = new Timer(0);
+	private static final Timer hitlagTimer = new Timer(0), waitTimer = new Timer(0);
 	private static final List<Timer> timerList = new ArrayList<Timer>(Arrays.asList(hitlagTimer, waitTimer));
 	private static final List<Fighter> playerList = new ArrayList<Fighter>();
 	private static int deltaTime = 0;
@@ -35,7 +34,6 @@ public class UptiltEngine extends ApplicationAdapter {
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
-	public static boolean 	roundToggle 	= true;
 	public static boolean 	debugToggle 	= false;
 	public static boolean	musicToggle		= false;
 	private static float	volume			= 1f;
@@ -150,7 +148,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		}
 		GraphicsHandler.begin();
 		MapHandler.begin();
-		challenge = new ChallengeAdventure(difficulty);
+		challenge = new ChallengeEndless(difficulty);
 	}
 	
 	public static void startDebugMenu(){

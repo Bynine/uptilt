@@ -17,5 +17,11 @@ public class ChallengeAdventure extends Challenge{
 		}
 		begin();
 	}
+
+	@Override
+	public String getEnemyCounter() {
+		if (null == activeCombat || activeCombat.getNumEnemies() <= 0) return "";
+		else return "Remaining: " + activeCombat.getNumEnemies();
+	}
 	
 }

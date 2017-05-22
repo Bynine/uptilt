@@ -41,7 +41,6 @@ public abstract class Projectile extends Entity{
 	}
 
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
-		System.out.println(life.getCounter() + " " + life.getEndTime());
 		updateVelocity(rectangleList, entityList);
 		if (life.timeUp()) setRemove();
 		setupRectangles(rectangleList, entityList);
@@ -50,7 +49,6 @@ public abstract class Projectile extends Entity{
 		if (deltaTime > 1) handleTouch(entityList);
 
 		updateTimers();
-		System.out.println(life.getCounter() + " " + life.getEndTime());
 		updatePosition();
 		updateImagePosition(deltaTime);
 	}
@@ -245,19 +243,21 @@ public abstract class Projectile extends Entity{
 		private final int hitSetTimer = 8;
 		void updateVelocity(List<Rectangle> rectangleList, List<Entity> entityList){
 			for (Entity en: entityList){
-				if (en != this && en != owner && life.getCounter() > 10){
-					if (Intersector.overlaps(getImage().getBoundingRectangle(), en.getHurtBox()) && bounceTimer.timeUp() ) {
-						velocity.x *= 0.5;
-						velocity.y += 3;
-						if ((life.getEndTime() - life.getCounter()) > hitSetTimer) {
-							life.setEndTime(hitSetTimer);
-							life.restart();
-						}
-						bounceTimer.restart();
-					}
+				if (en instanceof Hittable && en != this && en != owner && life.getCounter() > 10){
+					if (Intersector.overlaps(getImage().getBoundingRectangle(), en.getHurtBox()) && bounceTimer.timeUp() ) boing();
 				}
 			}
 			super.limitingForces(rectangleList, entityList);
+		}
+		
+		void boing(){
+			velocity.x *= 0.5;
+			velocity.y += 3;
+			if ((life.getEndTime() - life.getCounter()) > hitSetTimer) {
+				life.setEndTime(hitSetTimer);
+				life.restart();
+			}
+			bounceTimer.restart();
 		}
 
 		void checkWalls(){
