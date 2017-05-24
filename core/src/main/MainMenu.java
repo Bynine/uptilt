@@ -16,7 +16,7 @@ import entities.*;
 class MainMenu extends Menu {
 
 	private static List<PlayerType> playableCharacters = new ArrayList<PlayerType>(Arrays.asList(
-			new PlayerType(Wasp.class, "Wasp"), new PlayerType(Frog.class, "Frog")
+			new PlayerType(Bomber.class, "Bomber")
 			));
 	private static MenuOption<PlayerType> p1Char = new MenuOption<PlayerType>(playableCharacters);
 	private static MenuOption<PlayerType> p2Char = new MenuOption<PlayerType>(playableCharacters);

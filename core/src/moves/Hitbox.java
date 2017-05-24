@@ -150,27 +150,29 @@ public class Hitbox extends ActionCircle{
 		UptiltEngine.causeHitlag(hitlag);
 	}
 
-	private final int hitlagCap = 20;
-	private final float hitlagRatio = 0.5f;
-	private final float electricHitlagMultiplier = 1.5f;
 	protected int hitlagFormula(float knockback) {
+		final int hitlagCap = 20;
+		final float hitlagRatio = 0.5f;
+		final float electricHitlagMultiplier = 1.5f;
+		
 		int hitlag = (int) (knockback * hitlagRatio);
 		if (hitlag > hitlagCap) hitlag = hitlagCap;
 		if (property == Property.ELECTRIC) hitlag *= electricHitlagMultiplier;
 		return hitlag;
 	}
 
-	private static final float hitstunRatio = 4f;
 	public int hitstunFormula(Hittable target, float knockback){
+		final float hitstunRatio = 4f;
 		if (BKB + KBG == 0) return 0;
 		return  2 + (int) (knockback * hitstunRatio * target.getHitstun());
 	}
 
-	private float crouchCancelMod = .75f;
-	private final float kbgMod = 0.032f;
-	private final float weightMod = 0.01f;
-	private final float minKnockback = 0.25f;
 	public float knockbackFormula(Hittable target){
+		final float crouchCancelMod = .75f;
+		final float kbgMod = 0.029f;
+		final float weightMod = 0.01f;
+		final float minKnockback = 0.2f;
+		
 		if (BKB + KBG == 0) return 0;
 		float knockback = heldCharge * (BKB + ( (KBG * target.getPercentage() * kbgMod) / (target.getWeight() * weightMod) ));
 		knockback -= target.getArmor();

@@ -34,14 +34,14 @@ public class UptiltEngine extends ApplicationAdapter {
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
-	public static boolean 	debugToggle 	= false;
+	public static boolean 	debugToggle 	= true;
 	public static boolean	musicToggle		= false;
 	private static float	volume			= 1f;
 	private static ShaderProgram p2Palette;
 
 	public void create () {
 		p2Palette = new ShaderProgram(Gdx.files.internal("shaders/vert.glsl"), Gdx.files.internal("shaders/spooky.glsl"));
-		Fighter player1 = new Wasp(0, 0, 0);
+		Fighter player1 = new Bomber(0, 0, 0);
 		beginFighter(player1, 0);
 		GraphicsHandler.begin();
 		MapHandler.begin();

@@ -43,7 +43,7 @@ public class GraphicsHandler {
 	private static ShaderProgram dimension;
 	private static TextureRegion guiBar = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/guibar.png")));
 
-	public static final int SCREENWIDTH  = (int) ((48 * GlobalRepo.TILE));
+	public static final int SCREENWIDTH  = (int) ((42 * GlobalRepo.TILE));
 	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
 	public static final float ZOOM2X = 1/2f;
 	public static final float ZOOM1X = 1/1f;

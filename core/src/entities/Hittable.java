@@ -30,7 +30,7 @@ public abstract class Hittable extends Entity {
 	protected float baseHitSpeed = 0.6f;
 	protected float baseHitstun = 1, basePower = 1, baseKnockIntoDamage = 1, armor = 0, baseWeight = 100;
 	protected float walkSpeed = 2f, runSpeed = 4f, airSpeed = 3f;
-	protected float jumpStrength = 5f, doubleJumpStrength = 8.5f, dashStrength = 5f;
+	protected float jumpStrength = 5f, doubleJumpStrength = 8.5f, dashStrength = 8f;
 	protected float walkAcc = 0.5f, runAcc = 0.75f, airAcc = 0.25f, jumpAcc = 0.54f;
 	protected float wallJumpStrengthX = 8f, wallJumpStrengthY = 7.2f;
 	protected float wallSlideSpeed = -1f;

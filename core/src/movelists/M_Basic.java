@@ -39,7 +39,7 @@ public class M_Basic extends MoveList {
 		m.setContinueOnLanding();
 		m.setStopsInAir();
 		m.setAnimation("sprites/fighters/basic/slide.png", frames, frame);
-		Hitbox early = new Hitbox(user, 3.0f, 2.5f, 11, 40, 16, -12, 24, new SFX.MidHit());
+		Hitbox early = new Hitbox(user, 2.8f, 2.6f, 11, 40, 16, -12, 24, new SFX.MidHit());
 		Hitbox late  = new Hitbox(user, 2.0f, 2.0f, 7, 40, 16, -12, 24, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
 		m.eventList.addConstantVelocity(user, 0, 14, 0, Action.ChangeVelocity.noChange);

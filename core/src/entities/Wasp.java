@@ -42,7 +42,7 @@ public class Wasp extends Fighter {
 		friction = 0.80f;
 		gravity = -0.54f;
 		jumpAcc = 1.09f;
-		dashStrength = 0f;
+		dashStrength = 2f;
 		doubleJumpStrength = 10.7f;
 		wallJumpStrengthX = 7.5f;
 		wallJumpStrengthY = 8.4f;

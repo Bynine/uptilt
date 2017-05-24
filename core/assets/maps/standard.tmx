@@ -117,7 +117,6 @@
   <object id="23" x="832" y="448" width="64"/>
  </objectgroup>
  <objectgroup name="ENTITIES">
-  <object id="24" name="trash" gid="3" x="832" y="512" width="32" height="32"/>
-  <object id="26" name="ammo" gid="10" x="512" y="512" width="32" height="32"/>
+  <object id="24" name="trash" gid="3" x="896" y="512" width="32" height="32"/>
  </objectgroup>
 </map>

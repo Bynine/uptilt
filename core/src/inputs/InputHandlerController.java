@@ -100,8 +100,6 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 		return control.getButton(commandJump);
 	}
 
-	private final float flick = 0.80f;
-
 	public boolean flickLeft(){
 		return leftX.flick(-1);
 	}
@@ -168,7 +166,7 @@ public class InputHandlerController extends InputHandlerPlayer implements Contro
 	private class StickDir{
 		static final int lastSize = 2;
 		final List<Float> lastPositions = new ArrayList<Float>(lastSize);
-		private float curr = 0, prev = 0;
+		private float curr = 0, prev = 0, flick = 0.9f;
 		final int axis;
 		
 		StickDir(int axis){

@@ -1,8 +1,7 @@
 package entities;
 
 import main.GlobalRepo;
-import movelists.M_Wasp;
-
+import movelists.M_Bomber;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -12,45 +11,45 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Bomber extends Fighter {
 
-	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/stand.png", 2, 1, 16, PlayMode.LOOP);
-	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/walk.png", 4, 1, 12, PlayMode.LOOP);
-	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/run.png", 6, 1, 8, PlayMode.LOOP);
-	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/kicker/tumble.png", 4, 1, 8, PlayMode.LOOP);
-	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fjump.png")));
-	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/njump.png")));
-	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/bjump.png")));
-	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fall.png")));
-	private TextureRegion ascendImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/ascend.png")));
-	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/crouch.png")));
-	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/dash.png")));
-	private TextureRegion dodgeImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/dodgebegin.png")));
-	private TextureRegion jumpSquatImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/crouch.png")));
-	private TextureRegion slideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/slide.png")));
-	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/helpless.png")));
-	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/grab.png")));
-	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/kicker/fallen.png")));
+	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/stand.png", 1, 1, 1, PlayMode.LOOP);
+	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/walk.png", 4, 1, 12, PlayMode.LOOP);
+	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/run.png", 6, 1, 8, PlayMode.LOOP);
+	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/tumble.png", 4, 1, 8, PlayMode.LOOP);
+	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/fjump.png")));
+	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/njump.png")));
+	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/bjump.png")));
+	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/fall.png")));
+	private TextureRegion ascendImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/ascend.png")));
+	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/crouch.png")));
+	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/dash.png")));
+	private TextureRegion dodgeImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/dodgebegin.png")));
+	private TextureRegion jumpSquatImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/crouch.png")));
+	private TextureRegion slideImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/slide.png")));
+	private TextureRegion helplessImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/helpless.png")));
+	private TextureRegion grabImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/grab.png")));
+	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/fallen.png")));
 
 	public Bomber(float posX, float posY, int team) {
 		super(posX, posY, team);
-		baseWeight = 87;
-		runAcc = 2.3f;
-		runSpeed = 7.8f;
-		walkAcc = 0.9f;
-		walkSpeed = 5f;
-		airSpeed = 3.1f;
-		airAcc = 0.27f;
-		friction = 0.80f;
-		gravity = -0.54f;
-		jumpAcc = 1.09f;
+		baseWeight = 100;
+		runAcc = 2.1f;
+		runSpeed = 6.5f;
+		walkAcc = 0.7f;
+		walkSpeed = 4f;
+		airSpeed = 3.8f;
+		airAcc = 0.32f;
+		friction = 0.85f;
+		gravity = -0.52f;
+		jumpAcc = 1.08f;
 		dashStrength = 0f;
-		doubleJumpStrength = 10.7f;
-		wallJumpStrengthX = 7.5f;
+		doubleJumpStrength = 10.5f;
+		wallJumpStrengthX = 6.5f;
 		wallJumpStrengthY = 8.4f;
-		fallSpeed = -7f;
+		fallSpeed = -6.7f;
 		jumpSquatTimer.setEndTime(3);
 		footStoolDuration = 25;
 		dashTimer.setEndTime(20);
-		moveList = new M_Wasp(this);
+		moveList = new M_Bomber(this);
 		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
 	}
 	

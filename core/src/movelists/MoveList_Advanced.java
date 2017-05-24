@@ -15,6 +15,7 @@ public abstract class MoveList_Advanced extends MoveList{
 	public abstract Move nWeak();
 	public abstract Move uWeak();
 	public abstract Move dWeak();
+	public abstract Move sWeak();
 	public abstract Move slide();
 
 	/* charge attacks */
@@ -82,6 +83,7 @@ public abstract class MoveList_Advanced extends MoveList{
 	private static final int IDuweak = 1;
 	private static final int IDdweak = 2;
 	private static final int IDnweak = 3;
+	private static final int IDsweak = 4;
 	private static final int IDuspecial = 10;
 	private static final int IDdspecial = 11;
 	private static final int IDnspecial = 12;
@@ -109,6 +111,7 @@ public abstract class MoveList_Advanced extends MoveList{
 			if (user.isRunning()) return new IDMove(slide(), IDslide);
 			else if (user.isHoldUp()) return new IDMove(uWeak(), IDuweak);
 			else if (user.isHoldDown()) return new IDMove(dWeak(), IDdweak);
+			else if (user.isHoldForward()) return new IDMove(sWeak(), IDsweak);
 			else return new IDMove(nWeak(), IDnweak);
 		}
 		else return selectAerial();
