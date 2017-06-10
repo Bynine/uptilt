@@ -22,6 +22,7 @@ public abstract class Entity {
 	final Vector2 velocity = new Vector2();
 	State state, prevState, preJumpSquatState;
 	Direction direction = Direction.RIGHT;
+	Layer layer = Layer.FOREGROUND;
 	protected Sprite image;
 	Collision collision;
 
@@ -275,16 +276,20 @@ public abstract class Entity {
 	public boolean toRemove() { 
 		return toRemove; 
 	} 
+	private final int OOBGrace = 2;
 	public boolean isOOB(Rectangle boundary) {
-		int OOBGrace = 2;
-		boolean highNotHitstun = (position.y > (boundary.y + + boundary.height + image.getHeight()*OOBGrace)) && !hitstunTimer.timeUp();
+		
 		if (
 				(position.x < (boundary.x - image.getWidth()*OOBGrace)) ||
 				(position.x > (boundary.x + boundary.width + image.getWidth()*OOBGrace))  ||
 				(position.y < (boundary.y - image.getHeight()*OOBGrace))  ||
-				(highNotHitstun))
+				(isOffTop(boundary))
+				)
 			return true;
 		return false;
+	}
+	public boolean isOffTop(Rectangle boundary){
+		return (position.y > (boundary.y + boundary.height + image.getHeight()*OOBGrace)) && !hitstunTimer.timeUp();
 	}
 	public Vector2 getPosition() { return position; }
 	public Vector2 getVelocity() { return velocity; }
@@ -305,9 +310,11 @@ public abstract class Entity {
 		return intensity; 
 	}
 	public Color getColor() { return new Color(1, 1, 1, 1); }
+	public Layer getLayer() { return layer; }
 	private final List<State> groundedStates = new ArrayList<State>(Arrays.asList(State.STAND, State.WALK, State.RUN, State.DASH, State.CROUCH, State.DODGE));
 
 	public static enum Direction{ LEFT, RIGHT }
+	public static enum Layer{ FOREGROUND, BACKGROUND }
 	public static enum State{ STAND, WALK, DASH, RUN, CROUCH, DODGE, JUMPSQUAT, FALLEN, JUMP, FALL, WALLSLIDE, HELPLESS }
 	public static enum Collision{ SOLID, CREATURE, GHOST }
 	public float getGravity() { return gravity; }

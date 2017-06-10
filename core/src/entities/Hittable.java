@@ -72,7 +72,7 @@ public abstract class Hittable extends Entity {
 		}
 	}
 	
-	private void checkPushAway(Hittable hi){
+	void checkPushAway(Hittable hi){
 		int pushDistance = 16 + 2 * ((int) image.getWidth() - defaultTexture.getRegionWidth());
 		boolean toPush = isTouching(hi, pushDistance) && Math.abs(hi.velocity.x) < 1 && Math.abs(this.velocity.x) < 1;
 		if (getTeam() == hi.getTeam()) toPush = isTouching(hi, 0);

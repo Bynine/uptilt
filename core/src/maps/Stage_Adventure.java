@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Stage_Adventure extends Stage {
 
 	public Stage_Adventure(){
-		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/debug.mp3"));
+		roomMusic = Gdx.audio.newMusic(Gdx.files.internal("music/sand.mp3"));
 		setup();
 		name = "ADVENTURE";
 	}

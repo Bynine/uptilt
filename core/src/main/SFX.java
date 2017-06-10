@@ -50,5 +50,6 @@ public abstract class SFX {
 	public static class Tech extends SFX{ public Tech(){ setSFX("/tech.mp3"); } }
 	public static class Collect extends SFX{ public Collect(){ setSFX("/melee/itemdrop.wav"); } }
 	public static class Victory extends SFX{ public Victory(){ setSFX("/tada.mp3"); } }
+	public static class Break extends SFX{ public Break(){ setSFX("/melee/bury.wav"); } }
 	
 }

@@ -200,7 +200,7 @@ public abstract class Projectile extends Entity{
 			position.y = rocket.position.y - displacement;
 			ac = 		 new ProjectileHitbox(null, 11.0f, 4.5f, 20, Hitbox.SAMURAI, 0, 0, 40, new SFX.HeavyHit(), this, lifeTime);
 			Hitbox ac2 = new ProjectileHitbox(null,  8.0f, 3.5f, 12, Hitbox.SAMURAI, facingOffset, 0, 60, new SFX.HeavyHit(), this, lifeTime);
-			Hitbox ac3 = new ProjectileHitbox(null,  5.0f, 1.5f, 0, 10, facingOffset*2, 0, 120, new SFX.LightHit(), this, lifeTime);
+			Hitbox ac3 = new ProjectileHitbox(null,  5.0f, 1.5f, 0,  Hitbox.SAMURAI, facingOffset*2, 0, 120, new SFX.LightHit(), this, lifeTime);
 			ac.setRefresh(2);
 			ac2.setRefresh(4);
 			ac.setHitstunType(HitstunType.SUPER);

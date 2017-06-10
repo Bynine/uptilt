@@ -17,8 +17,11 @@ public class EntityLoader {
 
 		switch(m.getName().toLowerCase()){
 		case "trash": return new TrashCan(x, y);
+		case "coconut": return new TrashCan(x, y);
+		case "treasure": return new TreasureChest(x, y);
 		case "spikes": return new Hazard.Spikes(x, y);
 		case "combatstarter": return new CombatStarter(x, y);
+		case "breakblock": return new BreakableBlock(x, y);
 		case "endcombatstarter": return new CombatStarter.EndCombatStarter(x, y);
 		default: {
 			Dummy dummy = new Dummy(x, y, 1);

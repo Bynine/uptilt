@@ -91,9 +91,9 @@ public class M_Basic extends MoveList {
 		
 		Move m = new Move(user, length);
 		m.setAnimation("sprites/fighters/basic/nspecial.png", frames, frame);
-		Hitbox early = new Hitbox(user, 4.0f, 2.5f, 16, Hitbox.SAMURAI, 4, 0, hitboxSize, new SFX.HeavyHit());
-		Hitbox late  = new Hitbox(user, 3.0f, 2.0f, 16, Hitbox.SAMURAI, 4, 0, hitboxSize, new SFX.MidHit());
-		new ActionCircleGroup(Arrays.asList(early, late));
+		Hitbox early = new Hitbox(user, 1.0f, 1.0f, 4, 60, 4, 0, hitboxSize, new SFX.MidHit());
+		Hitbox late  = new Hitbox(user, 3.0f, 1.5f, 8, 70, 4, 0, hitboxSize, new SFX.LightHit());
+		early.setRefresh(4);
 		m.eventList.addArmor(m, frame * 2, frame * 4, 4);
 		m.eventList.addActionCircle(early, frame * 2, frame * 3);
 		m.eventList.addActionCircle(late, frame * 3, frame * 4);
@@ -102,7 +102,7 @@ public class M_Basic extends MoveList {
 
 	@Override
 	public Move uSpecial() {
-		Move m = new Move(user, 80);
+		Move m = new Move(user, 60);
 		m.setHelpless();
 		m.setAnimation("sprites/fighters/basic/uspecial.png", 1, 1);
 		m.eventList.addConstantVelocity(user, 6, 70, Action.ChangeVelocity.noChange, 4);

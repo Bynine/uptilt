@@ -12,12 +12,13 @@ import com.badlogic.gdx.math.Rectangle;
 public class Bomber extends Fighter {
 
 	private Animation standImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/stand.png", 1, 1, 1, PlayMode.LOOP);
-	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/walk.png", 4, 1, 12, PlayMode.LOOP);
-	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/run.png", 6, 1, 8, PlayMode.LOOP);
+	private Animation walkImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/walk.png", 1, 1, 1, PlayMode.LOOP);
+	private Animation runImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/run.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation tumbleImage = GlobalRepo.makeAnimation("sprites/fighters/bomber/tumble.png", 4, 1, 8, PlayMode.LOOP);
 	private TextureRegion fJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/fjump.png")));
 	private TextureRegion nJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/njump.png")));
 	private TextureRegion bJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/bjump.png")));
+	private TextureRegion dJumpImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/doublejump.png")));
 	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/fall.png")));
 	private TextureRegion ascendImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/ascend.png")));
 	private TextureRegion crouchImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/bomber/crouch.png")));
@@ -34,13 +35,13 @@ public class Bomber extends Fighter {
 		baseWeight = 100;
 		runAcc = 2.1f;
 		runSpeed = 6.5f;
-		walkAcc = 0.7f;
-		walkSpeed = 4f;
-		airSpeed = 3.8f;
-		airAcc = 0.32f;
+		walkAcc = 0.6f;
+		walkSpeed = 3f;
+		airSpeed = 3.2f;
+		airAcc = 0.24f;
 		friction = 0.85f;
 		gravity = -0.52f;
-		jumpAcc = 1.08f;
+		jumpAcc = 1.00f;
 		dashStrength = 0f;
 		doubleJumpStrength = 10.5f;
 		wallJumpStrengthX = 6.5f;
@@ -58,7 +59,8 @@ public class Bomber extends Fighter {
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime){
-		if (Math.abs(velocity.x) > 1 && Math.signum(velocity.x) != direct()) return bJumpImage; 
+		if (!doubleJumpTimer.timeUp()) return dJumpImage;
+		else if (Math.abs(velocity.x) > 1 && Math.signum(velocity.x) != direct()) return bJumpImage; 
 		else if (Math.abs(velocity.x) > airSpeed) return fJumpImage;
 		else return nJumpImage;
 	}

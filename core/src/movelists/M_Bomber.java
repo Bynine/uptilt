@@ -81,11 +81,11 @@ public class M_Bomber extends MoveList_Advanced{
 	public Move slide() { 
 		Move m = new Move(user, 32);
 		m.dontTurn();
-		m.setAnimation("sprites/fighters/bomber/slideattack.png", 1, 1);
+		m.setAnimation("sprites/fighters/bomber/slideattack.png", 2, 16);
 		Hitbox early = new Hitbox(user, 4.0f, 2.4f, 10, 65, 12, -4, 12, new SFX.MidHit());
 		Hitbox late  = new Hitbox(user, 3.0f, 1.0f, 07, 90, 16, -4,  8, new SFX.LightHit());
 		new ActionCircleGroup(Arrays.asList(early, late));
-		m.eventList.addConstantVelocity(user, 4, 12, 12, Action.ChangeVelocity.noChange);
+		m.eventList.addConstantVelocity(user, 4, 12, 9, Action.ChangeVelocity.noChange);
 		m.eventList.addActionCircle(early, 3, 10);
 		m.eventList.addActionCircle(late, 11, 20);
 		return m;
@@ -237,7 +237,7 @@ public class M_Bomber extends MoveList_Advanced{
 	/* SPECIAL ATTACKS */
 
 	int start = 15;
-	int end = start + 25;
+	int end = start + 15;
 	public Move uSpecial() {
 		Move m = new Move(user, end + 1);
 		m.setAnimation("sprites/fighters/bomber/uspecial.png", 1, 1);
@@ -245,9 +245,9 @@ public class M_Bomber extends MoveList_Advanced{
 		h1.setMovesAheadMod(2);
 		m.eventList.addConstantVelocity(user, 0, start, ConstantVelocity.noChange, 0);
 		m.eventList.addUseSpecial(user, 11, -1);
-		m.eventList.addConstantAngledVelocity(user, start, end, 12);
+		m.eventList.addConstantAngledVelocity(user, start, end, 10);
 		m.eventList.addActionCircle(h1, start, end);
-		m.eventList.addVelocityChange(user, end, 0, 0);
+		//m.eventList.addVelocityChange(user, end, 0, 0);
 		m.setHelpless();
 		return m;
 	}

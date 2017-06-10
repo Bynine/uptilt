@@ -34,7 +34,7 @@ public class UptiltEngine extends ApplicationAdapter {
 	/* DEBUG */
 	public static boolean 	fpsLogToggle 	= false;
 	public static boolean 	p2Toggle 		= false;
-	public static boolean 	debugToggle 	= true;
+	public static boolean 	debugToggle 	= false;
 	public static boolean	musicToggle		= false;
 	private static float	volume			= 1f;
 	private static ShaderProgram p2Palette;
@@ -148,7 +148,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		}
 		GraphicsHandler.begin();
 		MapHandler.begin();
-		challenge = new ChallengeEndless(difficulty);
+		challenge = new ChallengeAdventure(difficulty);
 	}
 	
 	public static void startDebugMenu(){

@@ -8,10 +8,13 @@ import maps.Stage;
 import maps.Stage_Standard;
 import moves.ActionCircle;
 import moves.Grabbox;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+
 import entities.Entity;
+import entities.FallingEnemy;
 import entities.Fighter;
 import entities.Graphic;
 import entities.Hittable;
@@ -23,6 +26,7 @@ public class MapHandler {
 	private static final List<Rectangle> rectangleList = new ArrayList<>();
 	static int mapWidth;
 	static int mapHeight; 
+	private static final float musicVolume = 0.25f;
 
 	static void begin(){
 		activeRoom = new Stage_Standard();
@@ -42,17 +46,23 @@ public class MapHandler {
 	}
 
 	static void updateEntities(){
+		activeRoom.getMusic().setVolume(musicVolume);
+		activeRoom.getMusic().play();
 		Iterator<Entity> entityIter = activeRoom.getEntityList().iterator();
 		while (entityIter.hasNext()) {
 			Entity en = entityIter.next();
 			boolean shouldUpdate = UptiltEngine.outOfHitlag() || en instanceof Graphic;
 			if (shouldUpdate) en.update(rectangleList, activeRoom.getEntityList(), UptiltEngine.getDeltaTime()); 
-			boolean toRemove = en.toRemove() || en.isOOB(new Rectangle(0, 0, mapWidth, mapHeight));
-			if (UptiltEngine.getChallenge().isInCombat()) toRemove = toRemove || en instanceof Fighter && en.isOOB(GraphicsHandler.getCameraBoundary());
+			Rectangle boundary = new Rectangle(0, 0, mapWidth, mapHeight);
+			Rectangle cameraBoundary = GraphicsHandler.getCameraBoundary();
+			boolean toRemove = en.toRemove() || en.isOOB(boundary);
+			if (UptiltEngine.getChallenge().isInCombat()) toRemove = toRemove || (en instanceof Fighter && en.isOOB(cameraBoundary));
 			if (toRemove) {
 				if (en instanceof Fighter){
 					Fighter fi = ((Fighter) en);
 					if (kill(fi)) {
+						if (fi.getPosition().y > cameraBoundary.y + cameraBoundary.height) activeRoom.addEntity(
+								new FallingEnemy(fi.getPosition().x, cameraBoundary.y + cameraBoundary.height));
 						if (fi.getTeam() == GlobalRepo.BADTEAM) UptiltEngine.getChallenge().score(20);
 						entityIter.remove();
 					}
@@ -118,6 +128,7 @@ public class MapHandler {
 	}
 
 	public static void updateRoomMap(Stage room) {
+		activeRoom.getMusic().stop();
 		activeRoom = room;
 		activeMap = activeRoom.getMap();
 		activeRoom.initEntities();

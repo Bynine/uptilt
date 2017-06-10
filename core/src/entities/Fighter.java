@@ -33,7 +33,8 @@ public abstract class Fighter extends Hittable{
 	protected boolean doubleJumped, blockHeld;
 	public int queuedCommand = InputHandler.commandNone;
 	protected final Timer inputQueueTimer = new Timer(8), wallJumpTimer = new Timer(10), attackTimer = new Timer(0), grabbingTimer = new Timer(0), 
-			dashTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(1), footStoolTimer = new Timer(20), slowedTimer = new Timer(0);
+			dashTimer = new Timer(20), invincibleTimer = new Timer(0), dodgeTimer = new Timer(1), footStoolTimer = new Timer(20), slowedTimer = new Timer(0),
+			doubleJumpTimer = new Timer (12);
 	protected float prevStickX = 0, stickX = 0, stickY = 0;
 
 	private ShaderProgram palette = null;
@@ -65,7 +66,7 @@ public abstract class Fighter extends Hittable{
 		spawnPoint = new Vector2(posX, posY);
 		this.setInputHandler(inputHandler);
 		timerList.addAll(Arrays.asList(inputQueueTimer, wallJumpTimer, attackTimer, grabbingTimer, dashTimer, invincibleTimer,
-				dodgeTimer, footStoolTimer, slowedTimer));
+				dodgeTimer, footStoolTimer, slowedTimer, doubleJumpTimer));
 		state = State.STAND;
 		randomAnimationDisplacement = (int) (8 * Math.random());
 		baseHurtleBK = 8;
@@ -94,12 +95,16 @@ public abstract class Fighter extends Hittable{
 		setActiveMove(moveList.selectThrow());
 		if (null != getActiveMove()) {
 			startAttack(getActiveMove());
-			grabbingTimer.end();
-			caughtFighter.caughtTimer.end();
-			caughtFighter.hitstunTimer.setEndTime(5);
-			caughtFighter.hitstunTimer.restart();
-			caughtFighter = null;
+			dropTarget();
 		}
+	}
+	
+	private void dropTarget(){
+		grabbingTimer.end();
+		caughtFighter.caughtTimer.end();
+		caughtFighter.hitstunTimer.setEndTime(5);
+		caughtFighter.hitstunTimer.restart();
+		caughtFighter = null;
 	}
 
 	private void handleMove(){
@@ -386,12 +391,14 @@ public abstract class Fighter extends Hittable{
 		if (prevStickX >  unregisteredInputMax && velocity.x < 0) velocity.x = 0; 
 		velocity.x += 1 * stickX;
 		doubleJumped = true;
+		doubleJumpTimer.restart();
 		tumbling = false;
 	}
 
 	private void footStool(Fighter footStoolee){
 		boolean prevDJ = doubleJumped;
 		doubleJump();
+		doubleJumpTimer.end();
 		doubleJumped = prevDJ;
 		new SFX.FootStool().play();
 		footStoolee.velocity.set(footStoolKB);
@@ -454,7 +461,10 @@ public abstract class Fighter extends Hittable{
 		}
 	}
 
+	private float prevX = 0, currX = 0, prevY = 0, currY = 0;
 	void updateImage(float deltaTime){
+		prevX = image.getWidth();
+		prevY = image.getHeight();
 		TextureRegion prevImage = image;
 		selectImage(deltaTime);
 		if (!jumpSquatTimer.timeUp()) setImage(getJumpSquatFrame(deltaTime));
@@ -467,6 +477,9 @@ public abstract class Fighter extends Hittable{
 			else setImage(getHitstunFrame(deltaTime));
 		}
 		if (!grabbingTimer.timeUp()) setImage(getGrabFrame(deltaTime));
+		
+		currX = image.getWidth();
+		currY = image.getHeight();
 		if (!prevImage.equals(image)) adjustImage(deltaTime, prevImage);
 	}
 
@@ -474,8 +487,15 @@ public abstract class Fighter extends Hittable{
 		if (prevImage != getWallSlideFrame(deltaTime) && state == State.WALLSLIDE && direction == Direction.RIGHT) wallCling();
 		float adjustedPosX = (image.getWidth() - prevImage.getRegionWidth())/2;
 		if (!doesCollide(position.x - adjustedPosX, position.y) && state != State.WALLSLIDE) position.x -= adjustedPosX;
-		if (doesCollide(position.x, position.y)) resetStance();
-		if (doesCollide(position.x, position.y)) setImage(prevImage);
+		float dispX = prevX - currX;
+		float dispY = prevY - currY;
+		
+		if (doesCollide(position.x, position.y) && !doesCollide(position.x - dispX, position.y)) position.x -= dispX;
+		if (doesCollide(position.x, position.y) && !doesCollide(position.x + dispX, position.y)) position.x += dispX;
+		if (doesCollide(position.x, position.y) && !doesCollide(position.x, position.y - dispY)) position.y -= dispY;
+		if (doesCollide(position.x, position.y) && !doesCollide(position.x, position.y + dispY)) position.y += dispY;
+		
+		//if (doesCollide(position.x, position.y)) setImage(prevImage); // failsafe
 	}
 
 	private int maxAdjust = 50;
@@ -535,7 +555,8 @@ public abstract class Fighter extends Hittable{
 		}
 		tumbling = false;
 		super.ground();
-		if (null != getActiveMove() && !getActiveMove().move.continuesOnLanding()) endAttack();
+		boolean upThroughThinPlatform = velocity.y >= 0;
+		if (null != getActiveMove() && !getActiveMove().move.continuesOnLanding() && !upThroughThinPlatform) endAttack();
 		if (velocity.y < 0 && getActiveMove() == null && state != State.FALLEN){
 			startAttack(new IDMove(moveList.land(), MoveList_Advanced.noStaleMove));
 		}
@@ -610,6 +631,11 @@ public abstract class Fighter extends Hittable{
 		double diModifier = signMod * Math.signum(180 - di.angle()) * diStrength * Math.pow(sin, 2);
 		knockback.setAngle((float) (knockback.angle() + diModifier));
 		return knockback.angle();
+	}
+	
+	protected void takeKnockback(Vector2 knockback, int hitstun, boolean shouldChangeKnockback, HitstunType ht){
+		super.takeKnockback(knockback, hitstun, shouldChangeKnockback, ht);
+		if (null != caughtFighter) dropTarget();
 	}
 	
 	public void isNowGrabbing(Hittable target, int caughtTime){
@@ -696,15 +722,12 @@ public abstract class Fighter extends Hittable{
 		invincibleTimer.setEndTime(i);
 	}
 
-
 	private final float minDirect = 0.85f;
 	public boolean isHoldUp() 		{ return -stickY > minDirect; }
 	public boolean isHoldDown()		{ return stickY > minDirect; }
 	public boolean isHoldForward() 	{ return Math.signum(stickX) == direct() && Math.abs(stickX) > minDirect; }
 	public boolean isHoldBack() 	{ return Math.signum(stickX) != direct() && Math.abs(stickX) > minDirect; }
 	
-	
-
 	abstract TextureRegion getWalkFrame(float deltaTime);
 	abstract TextureRegion getRunFrame(float deltaTime);
 	abstract TextureRegion getJumpFrame(float deltaTime);

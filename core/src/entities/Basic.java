@@ -19,7 +19,7 @@ public class Basic extends Fighter {
 	private Animation jumpImage = GlobalRepo.makeAnimation("sprites/fighters/basic/jump.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation crouchImage = GlobalRepo.makeAnimation("sprites/fighters/basic/crouch.png", 1, 1, 1, PlayMode.LOOP);
 	private Animation helplessImage = GlobalRepo.makeAnimation("sprites/fighters/basic/tumble.png", 4, 1, 8, PlayMode.LOOP_REVERSED);
-	private TextureRegion hitstunImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/basic/hitstun.png")));
+	private Animation hitstunImage = GlobalRepo.makeAnimation("sprites/fighters/basic/hitstun.png", 2, 1, 8, PlayMode.LOOP);
 	private TextureRegion fallImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/basic/fall.png")));
 	private TextureRegion fallenImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/basic/fallen.png")));
 	private TextureRegion dashImage = new TextureRegion(new Texture(Gdx.files.internal("sprites/fighters/basic/dash.png")));
@@ -30,7 +30,7 @@ public class Basic extends Fighter {
 		image = new Sprite(standImage.getKeyFrame(0));
 		gravity = -0.45f;
 		baseWeight = 90;
-		jumpAcc = 0.52f;
+		jumpAcc = 0.49f;
 		airSpeed = 1.8f;
 		walkSpeed = 1.7f;
 		runSpeed = 2.5f;
@@ -61,7 +61,7 @@ public class Basic extends Fighter {
 	TextureRegion getDodgeFrame(float deltaTime) { return standImage.getKeyFrame(deltaTime); }
 	TextureRegion getJumpSquatFrame(float deltaTime) { return standImage.getKeyFrame(deltaTime); }
 	TextureRegion getTumbleFrame(float deltaTime) { return helplessImage.getKeyFrame(deltaTime); }
-	TextureRegion getHitstunFrame(float deltaTime) { return hitstunImage; }
+	TextureRegion getHitstunFrame(float deltaTime) { return hitstunImage.getKeyFrame(deltaTime); }
 	TextureRegion getFallenFrame(float deltaTime) { return fallenImage; }
 
 }

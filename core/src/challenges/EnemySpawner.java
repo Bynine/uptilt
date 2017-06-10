@@ -55,7 +55,11 @@ public class EnemySpawner {
 
 	void spawnNewEnemy(){
 		Fighter fi = null;
-		Vector2 spawnPoint = UptiltEngine.getChallenge().getCombatPosition();
+		Vector2 spawnPoint = new Vector2(UptiltEngine.getChallenge().getCombatPosition());
+		float dispX = GlobalRepo.TILE * 3;
+		float dispY = GlobalRepo.TILE * 3;
+		if (Math.random() < 0.5f) spawnPoint.set(spawnPoint.x - dispX, spawnPoint.y + dispY);
+		else spawnPoint.set(spawnPoint.x + dispX, spawnPoint.y + dispY);
 		Enemy en = getEnemy();
 		try {
 			fi = en.type.getDeclaredConstructor(float.class, float.class, int.class).newInstance(spawnPoint.x, spawnPoint.y, 1);

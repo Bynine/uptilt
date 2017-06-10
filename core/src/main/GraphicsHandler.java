@@ -40,8 +40,8 @@ public class GraphicsHandler {
 	private static final float screenAdjust = 2f;
 	private static final ShapeRenderer debugRenderer = new ShapeRenderer();
 	private static BitmapFont font = new BitmapFont();
-	private static ShaderProgram dimension;
 	private static TextureRegion guiBar = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/guibar.png")));
+	private static ShaderProgram hitstunShader;
 
 	public static final int SCREENWIDTH  = (int) ((42 * GlobalRepo.TILE));
 	public static final int SCREENHEIGHT = (int) ((24 * GlobalRepo.TILE));
@@ -52,7 +52,7 @@ public class GraphicsHandler {
 	private final static Vector2 origCamPosition = new Vector2(0, 0);
 
 	public static void begin() {
-		dimension = new ShaderProgram(Gdx.files.internal("shaders/vert.glsl"), Gdx.files.internal("shaders/dimension.glsl"));
+		hitstunShader = new ShaderProgram(Gdx.files.internal("shaders/vert.glsl"), Gdx.files.internal("shaders/hit.glsl"));
 		batch = new SpriteBatch();
 		cam.setToOrtho(false, SCREENWIDTH, SCREENHEIGHT);
 		cam.zoom = ZOOM;
@@ -114,8 +114,16 @@ public class GraphicsHandler {
 		int[] arr;
 		renderer.setView(parallaxCam);
 
-		if (UptiltEngine.getChallenge().isInCombat()) renderer.getBatch().setShader(dimension);
-		arr = new int[]{0, 1};  // render back
+		//if (UptiltEngine.getChallenge().isInCombat()) renderer.getBatch().setShader(dimension);
+		arr = new int[]{0};  // render sky
+		renderer.render(arr);
+		
+		batch.begin();  // render bg entities
+		for (Entity e: MapHandler.activeRoom.getEntityList()) if (e.getLayer() == Entity.Layer.BACKGROUND) renderEntity(e);
+		batch.end();
+		font.setColor(1, 1, 1, 1);
+		
+		arr = new int[]{1};  // render back
 		renderer.render(arr);
 
 		renderer.setView(cam);
@@ -127,8 +135,8 @@ public class GraphicsHandler {
 		renderer.render(arr);
 		renderer.getBatch().setShader(null);
 
-		batch.begin();  // render entities
-		for (Entity e: MapHandler.activeRoom.getEntityList()) renderEntity(e);
+		batch.begin();  // render fg entities
+		for (Entity e: MapHandler.activeRoom.getEntityList()) if (e.getLayer() == Entity.Layer.FOREGROUND) renderEntity(e);
 		batch.end();
 		font.setColor(1, 1, 1, 1);
 
@@ -149,14 +157,17 @@ public class GraphicsHandler {
 			drawFighterPercentage(fi);
 			if (isOffScreen(fi) && !fi.isInHitstun()) drawFighterIcon(fi);
 			if (UptiltEngine.debugToggle) drawState(e);
+			
 			batch.setColor(batch.getColor().r - 0.1f, batch.getColor().g - 0.1f, batch.getColor().g - 0.1f, 1);
-			if (!fi.hitstunTimer.timeUp()) 
-				batch.setColor(batch.getColor().r, batch.getColor().g - 0.5f, batch.getColor().g - 0.5f, 1);
-			else if (fi.isInvincible()) 
+			if (fi.isInvincible()) 
 				batch.setColor(batch.getColor().r - 0.5f, batch.getColor().g * 2, batch.getColor().g * 2, 1);
 			else if (fi.isCharging()) 
 				batch.setColor(batch.getColor().r + 0.1f, batch.getColor().g + 0.1f, batch.getColor().g + 0.1f, 1);
 			if (null != fi.getPalette()) batch.setShader(fi.getPalette());
+		}
+		if (e instanceof Hittable){
+			Hittable h = (Hittable) e;
+			if (h.hitstunTimer.getCounter() < 2) batch.setShader(hitstunShader);
 		}
 		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		batch.setColor(1, 1, 1, 1);
@@ -248,7 +259,7 @@ public class GraphicsHandler {
 
 	private static double shakeScreenHelper() { 
 		double posOrNeg = Math.signum(0.5 - Math.random());
-		return posOrNeg * 6.0 * (0.9 + (Math.random()/10.0));
+		return posOrNeg * 9.0 * (0.95 + (Math.random()/20.0));
 	}
 
 	public static void debugRender(){
