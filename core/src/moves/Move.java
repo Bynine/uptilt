@@ -6,7 +6,6 @@ import moves.Effect.Charge;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Rectangle;
-
 import entities.Fighter;
 import entities.Entity.Direction;
 import timers.DurationTimer;
@@ -36,7 +35,7 @@ public class Move {
 		}
 		if (null != user && null != hurtBox){
 			hurtBox.x = user.getPosition().x + hurtBoxDispX;
-			if (user.getDirection() == Direction.LEFT) hurtBox.x += hurtBox.getWidth()/2;
+			if (user.getDirection() == Direction.LEFT) hurtBox.x += hurtBox.width/2;
 			hurtBox.y = user.getPosition().y + hurtBoxDispY;
 		}
 	}

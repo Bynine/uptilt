@@ -1,12 +1,10 @@
 package entities;
 
-import main.GlobalRepo;
 import movelists.M_Grappler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Grappler extends Fighter {
 	
@@ -28,10 +26,6 @@ public class Grappler extends Fighter {
 		moveList = new M_Grappler(this);
 	}
 	
-	public Rectangle getNormalHurtBox(){
-		return GlobalRepo.makeHurtBoxDynamic(this, 0.9f, 0.9f);
-	}
-
 	TextureRegion getJumpFrame(float deltaTime) { return stand; }
 	TextureRegion getStandFrame(float deltaTime) { return stand; }
 	TextureRegion getWalkFrame(float deltaTime) { return stand; }

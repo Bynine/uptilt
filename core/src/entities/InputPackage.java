@@ -35,7 +35,7 @@ public class InputPackage {
 		awayFromWall = distanceFromEdges(-48, fighter);
 		distanceFromCenter = UptiltEngine.getChallenge().getCombatPosition().x - fighter.position.x;
 		distanceXFromPlayer = target.position.x - fighter.position.x;
-		distanceYFromPlayer = target.position.y - (fighter.position.y + fighter.getHurtBox().getHeight()/2);
+		distanceYFromPlayer = target.position.y - (fighter.position.y + fighter.getHurtBox().height/2);
 		direct = fighter.direct();
 		if (null != fighter.getActiveMove()) activeMove = fighter.getActiveMove().move;
 		else activeMove = null;

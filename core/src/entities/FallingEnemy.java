@@ -16,11 +16,11 @@ public class FallingEnemy extends Entity {
 		super(posX, posY);
 		layer = Layer.BACKGROUND;
 		collision = Collision.GHOST;
+		velocity.y = (float) (-3.5 + (Math.random() * 1.5));
 	}
 	
 	public void update(List<Rectangle> rectangleList, List<Entity> entityList, int deltaTime){
 		updatePosition();
-		velocity.y = -3;
 		setImage(anim.getKeyFrame(deltaTime));
 	}
 

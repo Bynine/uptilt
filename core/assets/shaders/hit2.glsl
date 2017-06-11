@@ -9,10 +9,9 @@ uniform mat4 u_projTrans;
 
 void main() {
 		vec3 color = texture2D(u_texture, v_texCoords).rgb * v_color;
-		float grey = (color.g + color.b + color.r) / 3;
-		float value = 150.0/255.0;
-        color.g = color.g + grey + value;
-        color.b = color.b + grey + value;
-        color.r = color.r + grey + value;
+		float value = 1;
+        color.g = value;
+        color.b = value;
+        color.r = value;
         gl_FragColor = vec4(color, texture2D(u_texture, v_texCoords).a);
 }

@@ -151,8 +151,8 @@ public class Hitbox extends ActionCircle{
 	}
 
 	protected int hitlagFormula(float knockback) {
-		final int hitlagCap = 20;
-		final float hitlagRatio = 0.5f;
+		final int hitlagCap = 24;
+		final float hitlagRatio = 0.6f;
 		final float electricHitlagMultiplier = 1.5f;
 		
 		int hitlag = (int) (knockback * hitlagRatio);

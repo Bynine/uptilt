@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Wasp extends Fighter {
 
@@ -52,10 +51,6 @@ public class Wasp extends Fighter {
 		dashTimer.setEndTime(20);
 		moveList = new M_Wasp(this);
 		defaultIcon = new TextureRegion(new Texture(Gdx.files.internal("sprites/graphics/iconwasp.png")));
-	}
-	
-	public Rectangle getNormalHurtBox(){
-		return GlobalRepo.makeHurtBoxDynamic(this, 0.8f, 0.9f);
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime){

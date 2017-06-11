@@ -178,8 +178,8 @@ public class M_Bomber extends MoveList_Advanced{
 	public Move uAir() {
 		Move m = new Move(user, 24);
 		m.setAnimation("sprites/fighters/bomber/uair.png", 3, 8);
-		Hitbox h1top =	new Hitbox(user, 2.3f, 0.0f, 3, 90, 0, 20, 15, new SFX.LightHit());
-		Hitbox h1bott =	new Hitbox(user, 2.5f, 0.0f, 3, 90, 0,  0, 16, new SFX.LightHit());
+		Hitbox h1top =	new Hitbox(user, 2.5f, 0.0f, 3, 90, 0, 20, 15, new SFX.LightHit());
+		Hitbox h1bott =	new Hitbox(user, 2.8f, 0.0f, 3, 90, 0,  0, 16, new SFX.LightHit());
 		Hitbox h2top = 	new Hitbox(user, 2.0f, 4.1f, 8, 90, 0, 24, 18, new SFX.MidHit());
 		Hitbox h2bott =	new Hitbox(user, 2.0f, 4.1f, 8, 90, 0,  4, 20, new SFX.MidHit());
 		new ActionCircleGroup(Arrays.asList(h1top, h1bott));
@@ -192,45 +192,58 @@ public class M_Bomber extends MoveList_Advanced{
 	}
 
 	public Move dAir() {
-		Move m = new Move(user, 24);
+		int frames = 5;
+		int frame = 6;
+		int refresh = 4;
+		int damage = 3;
+		float bkb = 1.6f;
+		float kbg = 0.4f;
+		
+		Move m = new Move(user, frames * frame);
 		m.setHurtBox(GlobalRepo.makeHurtBoxInner(user, 24, 60));
-		m.setAnimation("sprites/fighters/bomber/dair.png", 3, 10);
-		Hitbox sweep =	new Hitbox(user, 1.2f, 2.1f, 11, 320, 12,   0, 20, new SFX.MidHit());
-		Hitbox foot =	new Hitbox(user, 2.4f, 2.6f, 14, 270,  3, -30, 17, new SFX.HeavyHit());
-		new ActionCircleGroup(Arrays.asList(sweep, foot));
-		m.eventList.addActionCircle(sweep, 10, 13);
-		m.eventList.addActionCircle(foot, 11, 16);
+		m.setAnimation("sprites/fighters/bomber/dair.png", frames, frame);
+		Hitbox h1 =	new Hitbox(user, bkb, kbg, damage, 80, 0,	0, 	 20, new SFX.LightHit());
+		Hitbox h2 =	new Hitbox(user, bkb, kbg, damage, 80, 6, -12,   20, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(h1, h2));
+		h1.setRefresh(refresh);
+		h2.setRefresh(refresh);
+		m.eventList.addActionCircle(h1, frame, frame * frames);
+		m.eventList.addActionCircle(h2, frame, frame * frames);
 		return m;
 	}
 
 	public Move fAir() {
+		int frame = 9;
+		int frames = 4;
+		
 		Move m = new Move(user, 30);
-		m.setAnimation("sprites/fighters/bomber/fair.png", 3, 10);
-		Hitbox early1 = new Hitbox(user, 3.4f, 2.5f, 13, 	48, 24, 0, 17, new SFX.HeavyHit());
-		Hitbox early2 = new Hitbox(user, 3.4f, 2.5f, 13, 	48,  8, 0, 21, new SFX.HeavyHit());
-		Hitbox late1 =  new Hitbox(user, 2.1f, 1.0f,  8, 	75, 22, 0, 15, new SFX.LightHit());
-		Hitbox late2 =  new Hitbox(user, 2.1f, 1.0f,  8, 	75, 6,  0, 19, new SFX.LightHit());
-		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
-		m.eventList.addActionCircle(early1, 10, 15);
-		m.eventList.addActionCircle(early2, 10, 15);
-		m.eventList.addActionCircle(late1, 16, 23);
-		m.eventList.addActionCircle(late2, 16, 23);
+		m.setAnimation("sprites/fighters/bomber/fair.png", frames, frame);
+		Hitbox early = new Hitbox(user, 3.4f, 2.7f, 14,  48,  4,  0, 20, new SFX.MeatyHit());
+		Hitbox spike = new Hitbox(user, 4.4f, 3.5f, 14, 290, 10, -16,12,  new SFX.HeavyHit());
+		Hitbox late =  new Hitbox(user, 2.1f, 1.0f,  8,  75,  8, -6, 15, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(early, spike, late));
+		m.eventList.addActionCircle(early, frame*2, frame*3);
+		m.eventList.addActionCircle(spike, frame*2, frame*2 + 4);
+		m.eventList.addActionCircle(late, frame*3, frame*4);
 		return m;
 	}
 
 	public Move bAir() {
-		Move m = new Move(user, 24);
-		m.setHurtBox(GlobalRepo.makeHurtBoxOuter(user, 10, 60));
-		m.setAnimation("sprites/fighters/bomber/bair.png", 2, 16);
-		Hitbox early1 = new Hitbox(user, 2.8f, 2.7f, 12, 	72, -24,  1, 17, new SFX.MidHit());
-		Hitbox early2 = new Hitbox(user, 2.8f, 2.7f, 12, 	72,  -8, -6, 20, new SFX.MidHit());
-		Hitbox late1 =  new Hitbox(user, 2.0f, 1.5f,  9, 	30, -22,  0, 12, new SFX.LightHit());
-		Hitbox late2 =  new Hitbox(user, 2.0f, 1.5f,  9, 	30,  -6, -3, 14, new SFX.LightHit());
-		new ActionCircleGroup(Arrays.asList(early1, early2, late1, late2));
-		m.eventList.addActionCircle(early1, 4, 12);
-		m.eventList.addActionCircle(early2, 4, 12);
-		m.eventList.addActionCircle(late1, 13, 24);
-		m.eventList.addActionCircle(late2, 13, 24);
+		int frame = 8;
+		int frames = 3;
+		
+		Move m = new Move(user, frame * frames);
+		m.setHurtBox(GlobalRepo.makeHurtBoxOuter(user, 10, 50));
+		m.setAnimation("sprites/fighters/bomber/bair.png", frames, frame);
+		Hitbox fist1 = new Hitbox(user, 3.1f, 2.6f,  13, 	62, -16,  1, 17, new SFX.MidHit());
+		Hitbox body1 = new Hitbox(user, 2.5f, 1.5f,  11, 	78,   0, -6, 20, new SFX.MidHit());
+		Hitbox fist2 =  new Hitbox(user, 2.0f, 1.5f, 10, 	30, -18,  0, 12, new SFX.LightHit());
+		Hitbox body2 =  new Hitbox(user, 1.5f, 1.5f,  9, 	40,   0, -3, 14, new SFX.LightHit());
+		new ActionCircleGroup(Arrays.asList(fist1, body1, fist2, body2));
+		m.eventList.addActionCircle(fist1, frame, frame*2);
+		m.eventList.addActionCircle(body1, frame, frame*2);
+		m.eventList.addActionCircle(fist2, frame*2, frame*3);
+		m.eventList.addActionCircle(body2, frame*2, frame*3);
 		return m;
 	}
 
@@ -323,8 +336,8 @@ public class M_Bomber extends MoveList_Advanced{
 		Move m = new Move(user, 10);
 		m.setAnimation("sprites/fighters/bomber/dthrow.png", 1, 1);
 		m.dontTurn();
-		Hitbox down = new Hitbox(user, 3, 0, 4, 270, 8, 0, throwSize, new SFX.LightHit());
-		Hitbox up = new Hitbox(user, 3, 1.2f, 8, 82, 8, -8, throwSize, new SFX.MidHit());
+		Hitbox down = 	new Hitbox(user, 3.0f, 0.0f, 4, 270, 8,  0, throwSize, new SFX.LightHit());
+		Hitbox up = 	new Hitbox(user, 5.6f, 0.1f, 8,  82, 8, -8, throwSize, new SFX.MeatyHit());
 		down.setNoReverse();
 		up.setNoReverse();
 		m.eventList.addActionCircle(down, 0, 1);
@@ -357,23 +370,20 @@ public class M_Bomber extends MoveList_Advanced{
 	public Move uAirThrow(){
 		Move m = new Move(user, 8);
 		m.setAnimation("sprites/fighters/bomber/uairthrow.png", 1, 1);
-		Hitbox h1 = new Hitbox(user, 7, 0.1f, 13, 90, 8, 0, throwSize, new SFX.MidHit());
+		Hitbox h1 = new Hitbox(user, 8, 0.1f, 10, 90, 8, 0, throwSize, new SFX.MidHit());
 		h1.setNoReverse();
 		m.eventList.addActionCircle(h1, 0, 4);
-		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 6);
+		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 7);
 		return m;
 	}
 
 	public Move dAirThrow(){
-		Move m = new Move(user, 30);
-		m.setAnimation("sprites/fighters/bomber/airgrab.png", 1, 1);
-		Hitbox down = new Hitbox(user, 3.4f, 0, 5, 270, 8, 0, throwSize, new SFX.LightHit());
+		Move m = new Move(user, 16);
+		m.setAnimation("sprites/fighters/bomber/dthrow.png", 1, 1);
+		Hitbox down = new Hitbox(user, 3.2f, 2.8f, 14, 270, 8, 0, throwSize, new SFX.HeavyHit());
 		down.setNoReverse();
 		m.eventList.addActionCircle(down, 0, 4);
-		m.eventList.addConstantVelocity(user, 0, 20, 0, 0);
-		m.eventList.addUseSpecial(user, 19, -1);
-		m.eventList.addProjectile(user, Projectile.DownwardGrenade.class, 20);
-		m.eventList.addVelocityChange(user, 21, -3, 3);
+		m.eventList.addVelocityChange(user, 0, Action.ChangeVelocity.noChange, 6);
 		return m;
 	}
 

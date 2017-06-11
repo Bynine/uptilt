@@ -148,7 +148,7 @@ public class UptiltEngine extends ApplicationAdapter {
 		}
 		GraphicsHandler.begin();
 		MapHandler.begin();
-		challenge = new ChallengeAdventure(difficulty);
+		challenge = new ChallengeEndless(difficulty);
 	}
 	
 	public static void startDebugMenu(){

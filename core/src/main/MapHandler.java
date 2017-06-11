@@ -26,7 +26,7 @@ public class MapHandler {
 	private static final List<Rectangle> rectangleList = new ArrayList<>();
 	static int mapWidth;
 	static int mapHeight; 
-	private static final float musicVolume = 0.25f;
+	private static final float musicVolume = 0; //0.25f;
 
 	static void begin(){
 		activeRoom = new Stage_Standard();

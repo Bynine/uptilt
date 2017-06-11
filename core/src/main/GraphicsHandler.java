@@ -21,8 +21,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -167,7 +167,7 @@ public class GraphicsHandler {
 		}
 		if (e instanceof Hittable){
 			Hittable h = (Hittable) e;
-			if (h.hitstunTimer.getCounter() < 2) batch.setShader(hitstunShader);
+			if (h.hitstunTimer.getCounter() < GlobalRepo.WHITEFREEZE) batch.setShader(hitstunShader);
 		}
 		batch.draw(e.getImage(), e.getPosition().x, e.getPosition().y);
 		batch.setColor(1, 1, 1, 1);
@@ -275,9 +275,9 @@ public class GraphicsHandler {
 		}
 		debugRenderer.setColor(0, 1, 0, 0.4f);
 		for (Entity e: MapHandler.activeRoom.getEntityList()){
-			Rectangle r = e.getHurtBox();
+			Rectangle ell = e.getHurtBox();
 			if (e instanceof Hittable) {
-				debugRenderer.rect(r.x, r.y, r.width, r.height);
+				debugRenderer.rect(ell.x, ell.y, ell.width, ell.height);
 			}
 		}
 		debugRenderer.end();

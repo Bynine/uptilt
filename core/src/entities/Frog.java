@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Frog extends Fighter {
 	
@@ -57,10 +56,6 @@ public class Frog extends Fighter {
 	protected void dealDamage(float DAM){
 		float specialMod = 1/30f;
 		if (!activeMoveIsSpecial()) changeSpecial(specialMod * DAM);
-	}
-	
-	public Rectangle getNormalHurtBox(){
-		return GlobalRepo.makeHurtBoxDynamic(this, 0.9f, 0.9f);
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime){

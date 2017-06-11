@@ -22,9 +22,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Fighter extends Hittable{
@@ -266,14 +266,17 @@ public abstract class Fighter extends Hittable{
 
 	public boolean tryStickDown(){
 		upDownStick();
-		if (isGrounded()) fallThroughThinFloor();
+		if (isGrounded() && canAct()) fallThroughThinFloor();
 		return true; 
 	}
 	
 	private void fallThroughThinFloor(){
 		for (Rectangle r: tempRectangleList){
 			Rectangle checker = new Rectangle(getCenter().x, position.y - 1, 1, 1);
-			if (checker.overlaps(r) && r.getHeight() <= 1) position.y -= 2;
+			if (checker.overlaps(r) && r.getHeight() <= 1) {
+				endAttack();
+				position.y -= 2;
+			}
 		}
 	}
 
@@ -434,7 +437,7 @@ public abstract class Fighter extends Hittable{
 	}
 
 	public Rectangle getNormalHurtBox(){
-		return image.getBoundingRectangle();
+		return super.getHurtBox();
 	}
 
 	private void selectImage(float deltaTime){

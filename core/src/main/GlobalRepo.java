@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Rectangle;
-
 import entities.Entity;
 import entities.Entity.Direction;
 import entities.Hittable;
@@ -23,6 +22,7 @@ public class GlobalRepo {
 	public static final int BADTEAM = 1;
 	public static final int NOTEAM = 2;
 	public static final float ENEMYHITSTUNMOD = 1.5f;
+	public static final int WHITEFREEZE = 1;
 	
 	/* GLOBAL METHODS */
 
@@ -45,6 +45,10 @@ public class GlobalRepo {
 		System.out.println(str + " at " + UptiltEngine.getDeltaTime());
 	}
 	
+	public static Rectangle makeRectangleFromRectangle(Rectangle r){
+		return new Rectangle(r.x, r.y, r.width, r.height);
+	}
+	
 	public static Rectangle makeHurtBox(Entity user, int width, int height){
 		return makeHurtBoxHelper(user, width, height);
 	}
@@ -57,12 +61,12 @@ public class GlobalRepo {
 	}
 	
 	private static Rectangle makeHurtBoxHelper(Entity user, int width, int height){
-		Rectangle hurtBox = user.getImage().getBoundingRectangle();
-		float changeX = hurtBox.getWidth() - width;
-		float changeY = hurtBox.getHeight() - height;
+		Rectangle hurtBox = GlobalRepo.makeRectangleFromRectangle(user.getImage().getBoundingRectangle());
+		float changeX = hurtBox.width - width;
+		float changeY = hurtBox.height - height;
 		hurtBox.setSize(width, height);
-		float newX = hurtBox.getX() + changeX/2;
-		float newY = hurtBox.getY() + changeY/2;
+		float newX = hurtBox.x + changeX/2;
+		float newY = hurtBox.y + changeY/2;
 		hurtBox.setPosition(newX, newY);
 		return hurtBox;
 	}

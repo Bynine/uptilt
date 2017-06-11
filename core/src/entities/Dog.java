@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Dog extends Fighter{
 	
@@ -31,10 +30,6 @@ public class Dog extends Fighter{
 		baseWeight = 85;
 		dashStrength = -1;
 		moveList = new M_Dog(this);
-	}
-	
-	public Rectangle getNormalHurtBox(){
-		return GlobalRepo.makeHurtBoxDynamic(this, 0.9f, 0.8f);
 	}
 	
 	TextureRegion getJumpFrame(float deltaTime) { return stand; }

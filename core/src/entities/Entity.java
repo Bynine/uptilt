@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import main.GlobalRepo;
 import main.MapHandler;
 import main.SFX;
 import main.UptiltEngine;
@@ -13,8 +14,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Entity {
@@ -204,7 +205,7 @@ public abstract class Entity {
 	}
 
 	public Rectangle getHurtBox(){
-		return image.getBoundingRectangle();
+		return GlobalRepo.makeRectangleFromRectangle(image.getBoundingRectangle());
 	}
 
 	public void flip(){
@@ -296,7 +297,13 @@ public abstract class Entity {
 	public Direction getDirection() { return direction; }
 	public void setDirection (Direction d) { direction = d; }
 	public Collision getCollision() { return collision; }
-	public Sprite getImage() { return image; }
+	public Sprite getImage() { 
+		if (image == null) {
+			System.out.println(this + " couldn't load its image");
+			return new Sprite();
+		}
+		return image; 
+		}
 	protected boolean inGroundedState() { return groundedStates.contains(state);}
 	protected boolean inGroundedState(State prevState) { return groundedStates.contains(prevState); }
 	public Vector2 getCenter() {
